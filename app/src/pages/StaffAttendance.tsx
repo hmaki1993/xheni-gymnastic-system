@@ -20,6 +20,7 @@ export default function StaffAttendance() {
     // History Modal State
     const [showHistoryModal, setShowHistoryModal] = useState(false);
     const [ptAttendance, setPtAttendance] = useState<any[]>([]);
+    const [selectedCoachId, setSelectedCoachId] = useState<string | null>(null);
     const [enlargedImage, setEnlargedImage] = useState<string | null>(null);
 
     const fetchCoachesStatus = async () => {
