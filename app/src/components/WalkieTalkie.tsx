@@ -12,6 +12,7 @@ export default function WalkieTalkie({ role, userId }: { role: string; userId: s
     const audioChunks = useRef<Blob[]>([]);
     const audioContext = useRef<AudioContext | null>(null);
     const holdTimer = useRef<any>(null);
+    const mouseDownTime = useRef<number>(0);
     const isHolding = useRef(false);
 
     // Recording Start Beep
@@ -36,7 +37,7 @@ export default function WalkieTalkie({ role, userId }: { role: string; userId: s
             mediaRecorder.current = new MediaRecorder(stream, { mimeType: 'audio/webm' });
             audioChunks.current = [];
 
-            mediaRecorder.current.ondataavailable = (e) => {
+            mediaRecorder.current.ondataavailable = (e: BlobEvent) => {
                 if (e.data.size > 0) audioChunks.current.push(e.data);
             };
 
@@ -57,7 +58,7 @@ export default function WalkieTalkie({ role, userId }: { role: string; userId: s
     const stopRecording = () => {
         if (mediaRecorder.current && mediaRecorder.current.state === 'recording') {
             mediaRecorder.current.stop();
-            mediaRecorder.current.stream.getTracks().forEach(track => track.stop());
+            mediaRecorder.current.stream.getTracks().forEach((track: MediaStreamTrack) => track.stop());
             setIsRecording(false);
             playBeep('end');
         }
@@ -65,29 +66,46 @@ export default function WalkieTalkie({ role, userId }: { role: string; userId: s
 
     const handlePressStart = (e: React.MouseEvent | React.TouchEvent) => {
         if (role !== 'admin') return;
-        e.preventDefault();
+        mouseDownTime.current = Date.now();
         isHolding.current = true;
+
+        if (holdTimer.current) clearTimeout(holdTimer.current);
+
         holdTimer.current = setTimeout(() => {
             if (isHolding.current && !isRecording) {
                 startRecording();
             }
-        }, 200); // Threshold for PTT
+        }, 250); // Slightly longer threshold for stability
     };
 
-    const handlePressEnd = () => {
+    const handlePressEnd = (e: React.MouseEvent | React.TouchEvent) => {
+        if (!isHolding.current) return;
         isHolding.current = false;
-        if (holdTimer.current) clearTimeout(holdTimer.current);
+
+        if (holdTimer.current) {
+            clearTimeout(holdTimer.current);
+            holdTimer.current = null;
+        }
+
+        // If we were recording (PTT session), stop it
         if (isRecording) {
             stopRecording();
         }
     };
 
-    const handleToggle = () => {
+    const handleToggle = (e: React.MouseEvent) => {
         if (role !== 'admin') return;
-        if (isRecording) {
-            stopRecording();
-        } else {
-            startRecording();
+
+        const pressDuration = Date.now() - mouseDownTime.current;
+
+        // If it was a long press (PTT), handlePressEnd already stopped it.
+        // We only toggle if it was a quick "tap"
+        if (pressDuration < 250) {
+            if (isRecording) {
+                stopRecording();
+            } else {
+                startRecording();
+            }
         }
     };
 
@@ -180,14 +198,10 @@ export default function WalkieTalkie({ role, userId }: { role: string; userId: s
                 <button
                     onMouseDown={handlePressStart}
                     onMouseUp={handlePressEnd}
+                    onMouseLeave={handlePressEnd}
                     onTouchStart={handlePressStart}
                     onTouchEnd={handlePressEnd}
-                    onClick={(e) => {
-                        // If it wasn't a long press, treat as toggle
-                        if (!isRecording || !isHolding.current) {
-                            handleToggle();
-                        }
-                    }}
+                    onClick={handleToggle}
                     className={`relative w-11 h-11 flex items-center justify-center rounded-full transition-all duration-300 border-2 ${isRecording
                         ? 'bg-red-500/20 border-red-500 shadow-[0_0_20px_rgba(239,68,68,0.5)] scale-110'
                         : 'bg-primary/5 border-primary/20 hover:border-primary/50 text-primary'
