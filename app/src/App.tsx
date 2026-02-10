@@ -65,28 +65,45 @@ function App() {
           <BackButtonHandler />
           <Toaster
             position="top-center"
+            reverseOrder={false}
+            gutter={8}
             toastOptions={{
               duration: 4000,
+              className: 'premium-toast',
               style: {
-                background: 'var(--color-surface)',
-                color: 'inherit', // Uses body color which adapts to theme
-                boxShadow: '0 10px 30px rgba(0,0,0,0.15)',
-                border: '1px solid rgba(128,128,128,0.1)',
-                borderRadius: '12px',
-                padding: '16px',
-                fontSize: '15px',
-                fontWeight: '500',
+                background: 'rgba(5, 5, 5, 0.85)',
+                backdropFilter: 'blur(16px)',
+                WebkitBackdropFilter: 'blur(16px)',
+                color: '#fff',
+                boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5), inset 0 0 0 1px rgba(255, 255, 255, 0.05)',
+                borderRadius: '24px',
+                padding: '16px 24px',
+                fontSize: '14px',
+                fontWeight: '600',
+                letterSpacing: '0.01em',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
               },
               success: {
+                style: {
+                  border: '1px solid rgba(16, 185, 129, 0.2)',
+                  boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5), inset 0 0 0 1px rgba(16, 185, 129, 0.1)',
+                },
                 iconTheme: {
-                  primary: 'var(--color-primary)',
-                  secondary: 'var(--color-surface)',
+                  primary: '#10b981',
+                  secondary: 'transparent',
                 },
               },
               error: {
+                style: {
+                  border: '1px solid rgba(239, 68, 68, 0.2)',
+                  boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5), inset 0 0 0 1px rgba(239, 68, 68, 0.1)',
+                },
                 iconTheme: {
                   primary: '#ef4444',
-                  secondary: 'var(--color-surface)',
+                  secondary: 'transparent',
                 },
               },
             }}

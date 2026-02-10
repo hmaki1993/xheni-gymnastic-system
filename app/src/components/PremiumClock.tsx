@@ -45,9 +45,9 @@ export default function PremiumClock({ className = "" }: PremiumClockProps) {
             <div className="h-4 w-px bg-white/10"></div>
 
             {/* Refined Label Stack */}
-            <div className="flex flex-col items-start leading-none gap-0.5">
-                <span className="text-[7px] font-black text-white/20 uppercase tracking-[0.2em]">{format(time, 'eee')}</span>
-                <span className="text-[9px] font-black text-primary/80 uppercase tracking-widest">{amPm}</span>
+            <div className="flex flex-col items-start gap-1">
+                <span className="text-[7px] font-black text-white/20 uppercase tracking-[0.3em] leading-tight">{format(time, 'eee')}</span>
+                <span className="text-[9px] font-black text-primary/80 uppercase tracking-widest leading-tight">{amPm}</span>
             </div>
         </div>
     );
