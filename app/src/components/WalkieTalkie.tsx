@@ -56,11 +56,15 @@ export default function WalkieTalkie({ role, userId }: { role: string; userId: s
     };
 
     const stopRecording = () => {
+        setIsRecording(false); // Force state reset immediately for UI responsiveness
         if (mediaRecorder.current && mediaRecorder.current.state === 'recording') {
-            mediaRecorder.current.stop();
-            mediaRecorder.current.stream.getTracks().forEach((track: MediaStreamTrack) => track.stop());
-            setIsRecording(false);
-            playBeep('end');
+            try {
+                mediaRecorder.current.stop();
+                mediaRecorder.current.stream.getTracks().forEach((track: MediaStreamTrack) => track.stop());
+                playBeep('end');
+            } catch (err) {
+                console.error('Error stopping recorder:', err);
+            }
         }
     };
 
@@ -69,7 +73,7 @@ export default function WalkieTalkie({ role, userId }: { role: string; userId: s
 
         // Prevent synthetic mouse events on touch devices
         if (e.type === 'touchstart') {
-            // e.preventDefault(); // Don't prevent default to allow potential scrolling if button is large, but here it's small
+            e.preventDefault();
         }
 
         mouseDownTime.current = Date.now();
@@ -209,10 +213,15 @@ export default function WalkieTalkie({ role, userId }: { role: string; userId: s
                     onMouseLeave={handlePressEnd}
                     onTouchStart={handlePressStart}
                     onTouchEnd={(e) => {
+                        e.preventDefault(); // Prevent ghost clicks
                         handlePressEnd(e);
                         handleToggle(e as any); // Check for toggle-stop on mobile
                     }}
-                    onClick={handleToggle}
+                    onClick={(e) => {
+                        // If it's a mobile click triggered after touch, ignore it
+                        if ((Date.now() - mouseDownTime.current) < 50) return;
+                        handleToggle(e);
+                    }}
                     className={`relative w-11 h-11 flex items-center justify-center rounded-full transition-all duration-300 border-2 ${isRecording
                         ? 'bg-red-500/20 border-red-500 shadow-[0_0_20px_rgba(239,68,68,0.5)] scale-110'
                         : 'bg-primary/5 border-primary/20 hover:border-primary/50 text-primary'
