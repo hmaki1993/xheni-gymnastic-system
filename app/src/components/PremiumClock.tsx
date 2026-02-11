@@ -20,22 +20,22 @@ export default function PremiumClock({ className = "" }: PremiumClockProps) {
     const amPm = format(time, 'aaa');
 
     return (
-        <div className={`inline-flex items-center gap-3 px-4 py-1.5 bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 shadow-premium transition-all duration-700 group ${className}`}>
+        <div className={`inline-flex items-center gap-3 px-4 py-1.5 bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 transition-all duration-700 group ${className}`}>
             <div className="flex items-center gap-2.5">
                 {/* Minimalist Icon Box */}
                 <div className="flex items-center justify-center w-7 h-7 bg-primary/20 rounded-xl border border-primary/20 transition-all duration-500 group-hover:bg-primary/30">
                     <Clock className="w-3.5 h-3.5 text-primary drop-shadow-[0_0_5px_rgba(var(--primary-rgb),0.5)]" />
                 </div>
 
-                <div className="flex items-baseline gap-0.5" style={{ textShadow: '0 0 10px rgba(255, 255, 255, 0.2)' }}>
+                <div className="flex items-baseline gap-1" style={{ textShadow: '0 0 10px rgba(255, 255, 255, 0.1)' }}>
                     <span className="text-sm font-black text-white tracking-widest font-mono leading-none">
                         {hours}
                     </span>
-                    <span className="text-primary font-black animate-pulse text-sm leading-none -translate-y-px">:</span>
+                    <span className="text-primary font-black animate-pulse text-sm leading-none">:</span>
                     <span className="text-sm font-black text-white tracking-widest font-mono leading-none">
                         {minutes}
                     </span>
-                    <span className="text-[8px] font-black text-white/30 ml-1 font-mono tracking-tighter self-center uppercase">
+                    <span className="text-[9px] font-black text-white/30 ml-1 font-mono tracking-tighter self-center uppercase">
                         {seconds}
                     </span>
                 </div>

@@ -127,19 +127,9 @@ export default function Dashboard() {
                             <span className="text-[10px] font-black uppercase tracking-widest">Evaluations Hub</span>
                         </button>
 
-                        <div className="flex items-center gap-2 sm:gap-4 p-2 pr-4 sm:pr-6 bg-white/5 border border-white/10 rounded-full shadow-inner backdrop-blur-xl">
-                            <div className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2 rounded-full bg-white/5 border border-white/10 text-primary shadow-lg">
-                                <Calendar className="w-3 h-3 sm:w-4 sm:h-4 drop-shadow-[0_0_8px_currentColor]" strokeWidth={1.5} />
-                                <span className="text-[10px] font-black uppercase tracking-widest">{format(new Date(), 'MMM dd, yyyy')}</span>
-                            </div>
-
+                        <div className="flex items-center gap-2 sm:gap-4 p-2 bg-white/5 border border-white/10 rounded-full shadow-inner backdrop-blur-xl">
                             {settings.clock_position === 'dashboard' && (
-                                <>
-                                    <div className="h-6 w-px bg-white/10"></div>
-                                    <div className="scale-95 origin-left">
-                                        <PremiumClock className="!bg-transparent !border-none !shadow-none !p-0 !backdrop-blur-none" />
-                                    </div>
-                                </>
+                                <PremiumClock className="!bg-transparent !border-none !shadow-none !p-0 !backdrop-blur-none" />
                             )}
                         </div>
                     </div>

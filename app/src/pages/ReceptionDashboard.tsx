@@ -868,13 +868,7 @@ export default function ReceptionDashboard() {
                                     {format(new Date(), 'EEEE, dd MMMM yyyy')}
                                 </p>
                                 {settings.clock_position === 'dashboard' && (
-                                    <div className="flex items-center gap-3 p-1 pr-3.5 bg-white/[0.03] border border-white/10 rounded-full backdrop-blur-xl shadow-lg transition-all hover:bg-white/[0.05] ml-2 scale-75 origin-left">
-                                        <div className="flex items-center gap-2 px-2 py-1 rounded-full bg-accent/10 border border-accent/20 text-accent">
-                                            <Calendar className="w-3 h-3" />
-                                            <span className="text-[8px] font-black uppercase tracking-widest">{format(new Date(), 'hh:mm a')}</span>
-                                        </div>
-                                        <PremiumClock className="!bg-transparent !border-none !p-0 !shadow-none" />
-                                    </div>
+                                    <PremiumClock className="!bg-white/[0.03] !border-white/10 !rounded-full !shadow-lg backdrop-blur-xl ml-2" />
                                 )}
                             </div>
                         </div>

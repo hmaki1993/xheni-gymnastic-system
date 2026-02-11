@@ -607,16 +607,7 @@ export default function CoachDashboard() {
 
                     {/* Compact Date & Clock Widget */}
                     {settings.clock_position === 'dashboard' && (
-                        <div className="flex items-center gap-3 p-1.5 pr-4 bg-white/[0.03] border border-white/10 rounded-full backdrop-blur-xl shadow-lg transition-all hover:bg-white/[0.05]">
-                            <div className="flex items-center gap-2.5 px-3 py-1.5 rounded-full bg-accent/10 border border-accent/20 text-accent">
-                                <Calendar className="w-3.5 h-3.5" />
-                                <span className="text-[9px] font-black uppercase tracking-widest leading-none">{format(new Date(), 'hh:mm a')}</span>
-                            </div>
-
-                            <div className="scale-90 origin-left">
-                                <PremiumClock className="!bg-transparent !border-none !shadow-none !p-0" />
-                            </div>
-                        </div>
+                        <PremiumClock className="!bg-white/[0.03] !border-white/10 !rounded-full !shadow-lg backdrop-blur-xl" />
                     )}
                 </div>
             </div>
