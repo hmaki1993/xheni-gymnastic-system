@@ -312,7 +312,8 @@ export default function DashboardLayout() {
         }
 
         if (normalizedRole === 'coach') {
-            return note.type === 'student' || note.type === 'schedule';
+            const allowedTypes: string[] = ['student', 'schedule', 'pt_subscription', 'check_in', 'check_out', 'attendance_absence'];
+            return allowedTypes.includes(note.type);
         }
 
         if (normalizedRole === 'reception' || normalizedRole === 'receptionist') {
@@ -563,9 +564,6 @@ export default function DashboardLayout() {
                             {/* Unified Control Separator */}
                             <div className="hidden md:block h-8 w-px bg-surface-border mx-2"></div>
 
-                            {/* Walkie Talkie (Hoki Toki) */}
-                            {userId && <WalkieTalkie role={normalizedRole || 'coach'} userId={userId} />}
-
                             {/* Notifications Center */}
                             <div className="relative">
                                 <button
@@ -647,6 +645,9 @@ export default function DashboardLayout() {
                                     </div>
                                 )}
                             </div>
+
+                            {/* Walkie Talkie (Hoki Toki) */}
+                            {userId && <WalkieTalkie role={normalizedRole || 'coach'} userId={userId || ''} />}
                         </div>
 
                         {/* Status & Profile Hub */}

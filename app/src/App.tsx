@@ -68,22 +68,17 @@ function App() {
             position="top-center"
             toastOptions={{
               duration: 4000,
-              className: 'premium-toast',
+              className: 'premium-toast-vibrant',
               style: {
-                background: 'rgba(5, 5, 5, 0.85)',
-                backdropFilter: 'blur(16px)',
-                WebkitBackdropFilter: 'blur(16px)',
                 color: '#fff',
-                boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5), inset 0 0 0 1px rgba(255, 255, 255, 0.05)',
-                borderRadius: '24px',
-                padding: '16px 24px',
+                padding: '12px 24px',
                 fontSize: '14px',
-                fontWeight: '600',
-                letterSpacing: '0.01em',
-                border: '1px solid rgba(255, 255, 255, 0.1)',
+                fontWeight: '700',
+                letterSpacing: '0.02em',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '12px',
+                minWidth: 'fit-content',
               },
               success: {
                 iconTheme: {

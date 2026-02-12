@@ -72,17 +72,7 @@ export default function AddPaymentForm({ onClose, onSuccess }: AddPaymentFormPro
 
             if (error) throw error;
 
-            // Create notification for admin + receiver
-            if (selectedStudent || formData.is_guest) {
-                const payerName = formData.is_guest ? formData.guest_name : (selectedStudent?.full_name || 'Student');
-                await supabase.from('notifications').insert({
-                    type: 'payment',
-                    title: 'Payment Received',
-                    message: `Payment: ${parseFloat(formData.amount).toFixed(2)} ${currency.code} from ${payerName}`,
-                    target_role: 'admin_reception',
-                    is_read: false
-                });
-            }
+
 
             onSuccess();
             onClose();
@@ -113,9 +103,6 @@ export default function AddPaymentForm({ onClose, onSuccess }: AddPaymentFormPro
                             <h2 className="text-xl font-black text-white tracking-widest uppercase mb-1 drop-shadow-lg leading-tight">
                                 Record Payment
                             </h2>
-                            <p className="text-[9px] font-black text-white/40 uppercase tracking-widest">
-                                Financial Inflow Transaction
-                            </p>
                         </div>
                         <button
                             onClick={onClose}
@@ -167,7 +154,7 @@ export default function AddPaymentForm({ onClose, onSuccess }: AddPaymentFormPro
                                 <input
                                     required
                                     type="text"
-                                    placeholder="Guest Payer Name..."
+                                    placeholder=""
                                     className="w-full px-5 py-3 bg-white/[0.02] border border-white/5 rounded-2xl focus:border-amber-500/40 outline-none transition-all text-white placeholder:text-white/10 text-xs tracking-wide font-bold"
                                     value={formData.guest_name}
                                     onChange={e => setFormData({ ...formData, guest_name: e.target.value })}
@@ -227,7 +214,7 @@ export default function AddPaymentForm({ onClose, onSuccess }: AddPaymentFormPro
                             className="w-full px-5 py-4 bg-white/[0.02] border border-white/5 rounded-3xl focus:border-primary/40 outline-none transition-all h-24 resize-none text-white placeholder:text-white/10 text-xs font-bold tracking-wide"
                             value={formData.notes}
                             onChange={e => setFormData({ ...formData, notes: e.target.value })}
-                            placeholder="Optional transaction details..."
+                            placeholder=""
                         ></textarea>
                     </div>
                 </form>

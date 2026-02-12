@@ -39,15 +39,7 @@ export default function AddRefundForm({ onClose, onSuccess, onAdd }: AddRefundFo
                 refund_date: formData.refund_date
             });
 
-            // Notification: Refund (Admin + Reception)
-            const studentName = students?.find((s: any) => s.id === formData.student_id)?.full_name || 'Student';
-            await supabase.from('notifications').insert({
-                type: 'financial',
-                title: 'Refund Issued',
-                message: `Refund: ${parseFloat(formData.amount).toFixed(2)} ${currency.code} for ${studentName}`,
-                target_role: 'admin_reception',
-                is_read: false
-            });
+
 
             toast.success('Refund added successfully');
             onSuccess();
@@ -73,15 +65,12 @@ export default function AddRefundForm({ onClose, onSuccess, onAdd }: AddRefundFo
                 <div className="absolute inset-0 bg-gradient-to-br from-white/[0.03] via-transparent to-transparent pointer-events-none"></div>
 
                 {/* Header Section */}
-                <div className="relative z-10 px-8 pt-10 pb-6 border-b border-white/5 flex-shrink-0 bg-rose-500/5">
+                <div className="relative z-10 px-8 pt-10 pb-6 border-b border-white/5 flex-shrink-0">
                     <div className="flex items-start justify-between">
                         <div className="flex-1">
-                            <h2 className="text-xl font-black text-rose-500 tracking-widest uppercase mb-1 drop-shadow-lg leading-tight">
+                            <h2 className="text-xl font-black text-white tracking-widest uppercase mb-1 drop-shadow-lg leading-tight">
                                 Issue Refund
                             </h2>
-                            <p className="text-[9px] font-black text-white/40 uppercase tracking-widest">
-                                Financial Reversal Protocol
-                            </p>
                         </div>
                         <button
                             onClick={onClose}
@@ -152,7 +141,7 @@ export default function AddRefundForm({ onClose, onSuccess, onAdd }: AddRefundFo
                             rows={3}
                             value={formData.reason}
                             onChange={e => setFormData({ ...formData, reason: e.target.value })}
-                            placeholder="Optional explanation for internal records..."
+                            placeholder=""
                         />
                     </div>
                 </form>

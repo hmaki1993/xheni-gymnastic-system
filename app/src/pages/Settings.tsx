@@ -35,7 +35,11 @@ import {
     Key as KeyIcon,
     Search,
     Edit2,
-    Upload
+    Upload,
+    Calendar,
+    Clock,
+    ArrowRight,
+    ChevronDown
 } from 'lucide-react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useSubscriptionPlans, useAddPlan, useDeletePlan, useUpdatePlan } from '../hooks/useData';
@@ -159,6 +163,7 @@ export default function Settings() {
         { id: 'forest', name: 'Forest', primary: '#84cc16', secondary: '#14532d', bg: '#052e16', accent: '#34d399', surface: 'rgba(20, 83, 45, 0.7)', hover: '#84cc1680', input: '#042211' },
         { id: 'lavender', name: 'Lavender', primary: '#d8b4fe', secondary: '#4c1d95', bg: '#2e1065', accent: '#818cf8', surface: 'rgba(76, 29, 149, 0.7)', hover: '#d8b4fe80', input: '#210b4a' },
         { id: 'coffee', name: 'Coffee', primary: '#d4a373', secondary: '#281b15', bg: '#1a0f0a', accent: '#faedcd', surface: 'rgba(40, 27, 21, 0.7)', hover: '#d4a37380', input: '#1a110d' },
+        { id: 'shoqata', name: 'Shoqata', primary: '#1a2937', secondary: '#e3e4e4', bg: '#e3e4e4', accent: '#344351', surface: 'rgba(187, 189, 190, 0.7)', hover: '#1a293780', input: '#ffffff' },
     ];
 
     const [currentTheme, setCurrentTheme] = useState(() => localStorage.getItem('theme') || 'midnight');
@@ -793,6 +798,14 @@ function stripAlpha(hex: string) {
 function PremiumColorPicker({ label, value, onChange, description }: { label: string; value: string; onChange: (val: string) => void; description?: string }) {
     const [opacity, setOpacity] = useState(hexToRgba(value || '#000000ff').a);
     const [baseColor, setBaseColor] = useState(stripAlpha(value || '#000000'));
+
+    // Sync local state when value prop changes (e.g. via theme preset)
+    useEffect(() => {
+        const rgba = hexToRgba(value || '#000000ff');
+        setOpacity(rgba.a);
+        setBaseColor(stripAlpha(value || '#000000'));
+    }, [value]);
+
     const handleBaseChange = (newHex: string) => {
         setBaseColor(newHex);
         const { r: nr, g: ng, b: nb } = hexToRgba(newHex);
@@ -842,10 +855,16 @@ function SubscriptionPlansManager() {
     const addPlanMutation = useAddPlan();
     const deletePlanMutation = useDeletePlan();
     const updatePlanMutation = useUpdatePlan();
-    const [newPlan, setNewPlan] = useState({ name: '', duration_months: '' as any, price: '' as any });
+
+    const [newPlan, setNewPlan] = useState({
+        name: '',
+        duration_months: '' as any,
+        price: '' as any,
+        sessions_per_week: 3
+    });
     const [isAdding, setIsAdding] = useState(false);
     const [planToDelete, setPlanToDelete] = useState<string | null>(null);
-    const [editingPlan, setEditingPlan] = useState<{ id: string, name: string, duration_months: number, price: number } | null>(null);
+    const [editingPlan, setEditingPlan] = useState<{ id: string, name: string, duration_months: number, price: number, sessions_per_week: number } | null>(null);
 
     const handleUpdate = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -863,11 +882,22 @@ function SubscriptionPlansManager() {
 
     const handleAdd = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!newPlan.name) return;
+        const duration = parseInt(newPlan.duration_months);
+        const price = parseFloat(newPlan.price);
+
+        if (!newPlan.name || isNaN(duration) || isNaN(price)) {
+            toast.error('Please fill all fields correctly');
+            return;
+        }
+
         try {
-            await addPlanMutation.mutateAsync(newPlan);
+            await addPlanMutation.mutateAsync({
+                ...newPlan,
+                duration_months: duration,
+                price: price
+            });
             toast.success('Plan added successfully');
-            setNewPlan({ name: '', duration_months: '' as any, price: '' as any });
+            setNewPlan({ name: '', duration_months: '' as any, price: '' as any, sessions_per_week: 3 });
             setIsAdding(false);
             queryClient.invalidateQueries({ queryKey: ['subscription_plans'] });
         } catch (error: any) {
@@ -885,8 +915,6 @@ function SubscriptionPlansManager() {
             queryClient.invalidateQueries({ queryKey: ['subscription_plans'] });
         } catch (error: any) {
             console.error('Failed to delete plan:', error);
-
-            // Check for foreign key constraint violation (Postgres code 23503)
             if (error?.code === '23503' || error?.message?.includes('foreign key constraint') || error?.details?.includes('still referenced')) {
                 toast.error(t('settings.planInUseError') || 'Cannot delete: Plan is assigned to students/subscriptions.');
             } else {
@@ -897,99 +925,242 @@ function SubscriptionPlansManager() {
     };
 
     return (
-        <div className="glass-card p-6 md:p-8 rounded-[2rem] border border-white/10 shadow-premium">
-            <div className="flex items-center justify-between mb-6">
-                <h2 className="text-lg md:text-xl font-black text-white uppercase tracking-tight flex items-center gap-3">
-                    <div className="p-2.5 bg-primary/20 rounded-xl text-primary">
-                        <CreditCard className="w-5 h-5" />
-                    </div>
-                    {t('settings.subscriptionPlans')}
-                </h2>
-                <button onClick={() => setIsAdding(!isAdding)} className="p-2.5 bg-primary/10 text-primary hover:bg-primary/20 rounded-xl transition-all">
-                    <Plus className={`w-5 h-5 transition-transform ${isAdding ? 'rotate-45' : ''}`} />
+        <div className="glass-card p-6 md:p-8 rounded-[2.5rem] border border-white/10 shadow-premium overflow-hidden relative group/manager">
+            {/* Background Glow */}
+            <div className="absolute -top-24 -right-24 w-48 h-48 bg-primary/10 blur-[80px] rounded-full pointer-events-none group-hover/manager:bg-primary/20 transition-all duration-700"></div>
+
+            <div className="flex items-center justify-between mb-8 relative z-10">
+                <div className="space-y-1">
+                    <h2 className="text-xl md:text-2xl font-black text-white uppercase tracking-tight flex items-center gap-3">
+                        <div className="p-3 bg-primary/20 rounded-2xl text-primary shadow-lg shadow-primary/10">
+                            <CreditCard className="w-6 h-6" />
+                        </div>
+                        {t('settings.subscriptionPlans')}
+                    </h2>
+                    <p className="text-[10px] font-bold text-white/30 uppercase tracking-[0.2em] ml-1">Elite Training Packages</p>
+                </div>
+                <button
+                    onClick={() => setIsAdding(!isAdding)}
+                    className={`p-3 rounded-2xl transition-all duration-500 shadow-xl ${isAdding ? 'bg-rose-500/20 text-rose-500 hover:bg-rose-500/30' : 'bg-primary/20 text-primary hover:bg-primary/30 hover:scale-110 active:scale-95'}`}
+                >
+                    <Plus className={`w-6 h-6 transition-transform duration-500 ${isAdding ? 'rotate-45' : ''}`} />
                 </button>
             </div>
 
             {isAdding && (
-                <form onSubmit={handleAdd} className="mb-8 p-4 bg-white/5 rounded-[1.5rem] border border-white/5 space-y-4 animate-in zoom-in duration-300">
-                    <div className="space-y-1.5">
-                        <label className="text-[9px] font-black uppercase tracking-[0.2em] text-white/40 ml-2">{t('settings.planName')}</label>
-                        <input type="text" value={newPlan.name} onChange={e => setNewPlan({ ...newPlan, name: e.target.value })} className="w-full px-4 py-3 rounded-xl border border-white/10 bg-white/5 text-white outline-none focus:border-primary/50 transition-all font-bold text-sm" />
+                <form onSubmit={handleAdd} className="mb-10 p-6 bg-white/5 rounded-[2.5rem] border border-white/10 space-y-6 animate-in zoom-in slide-in-from-top-4 duration-500 relative z-10 transition-all">
+                    <div className="space-y-2">
+                        <label className="text-[10px] font-black uppercase tracking-[0.25em] text-white/40 ml-3">{t('settings.planName')}</label>
+                        <input
+                            type="text"
+                            value={newPlan.name}
+                            onChange={e => setNewPlan({ ...newPlan, name: e.target.value })}
+                            className="w-full px-6 py-4 rounded-2xl border border-white/10 bg-black/40 text-white outline-none focus:border-primary/50 focus:bg-black/60 transition-all font-bold text-sm shadow-inner"
+                        />
                     </div>
-                    <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-1.5">
-                            <label className="text-[9px] font-black uppercase tracking-[0.2em] text-white/40 ml-2">{t('settings.months')}</label>
-                            <input type="number" min="1" value={newPlan.duration_months} onChange={e => setNewPlan({ ...newPlan, duration_months: parseInt(e.target.value) || 1 })} className="w-full px-4 py-3 rounded-xl border border-white/10 bg-white/5 text-white outline-none focus:border-primary/50 transition-all font-bold text-sm" />
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div className="space-y-2">
+                            <label className="text-[10px] font-black uppercase tracking-[0.25em] text-white/40 ml-3 whitespace-nowrap">{t('settings.sessionsPerWeek')}</label>
+                            <div className="relative">
+                                <select
+                                    value={newPlan.sessions_per_week}
+                                    onChange={e => setNewPlan({ ...newPlan, sessions_per_week: parseInt(e.target.value) || 3 })}
+                                    className="w-full px-5 py-4.5 rounded-2xl border border-white/10 bg-black/40 text-white outline-none focus:border-primary/50 transition-all font-bold text-sm appearance-none cursor-pointer hover:bg-black/60 shadow-inner"
+                                >
+                                    {[1, 2, 3, 4, 5, 6].map(num => (
+                                        <option key={num} value={num} className="bg-[#0a0a0a] text-white">{num} {t('coaches.sessions')}</option>
+                                    ))}
+                                </select>
+                                <ChevronDown className="absolute right-5 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30 pointer-events-none" />
+                            </div>
                         </div>
-                        <div className="space-y-1.5">
-                            <label className="text-[9px] font-black uppercase tracking-[0.2em] text-white/40 ml-2">{t('settings.price')}</label>
-                            <input type="number" value={newPlan.price} onChange={e => setNewPlan({ ...newPlan, price: parseFloat(e.target.value) || 0 })} className="w-full px-4 py-3 rounded-xl border border-white/10 bg-white/5 text-white outline-none focus:border-primary/50 transition-all font-bold text-sm" />
+                        <div className="space-y-2">
+                            <label className="text-[10px] font-black uppercase tracking-[0.25em] text-white/40 ml-3 whitespace-nowrap">{t('settings.months')}</label>
+                            <input
+                                type="number"
+                                min="1"
+                                value={newPlan.duration_months}
+                                onChange={e => setNewPlan({ ...newPlan, duration_months: e.target.value })}
+                                className="w-full px-5 py-4.5 rounded-2xl border border-white/10 bg-black/40 text-white outline-none focus:border-primary/50 transition-all font-bold text-sm hover:bg-black/60 shadow-inner"
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <label className="text-[10px] font-black uppercase tracking-[0.25em] text-white/40 ml-3 whitespace-nowrap">{t('settings.price')}</label>
+                            <div className="relative">
+                                <input
+                                    type="number"
+                                    value={newPlan.price}
+                                    onChange={e => setNewPlan({ ...newPlan, price: e.target.value })}
+                                    className="w-full px-5 py-4.5 rounded-2xl border border-white/10 bg-black/40 text-white outline-none focus:border-primary/50 transition-all font-bold text-sm pr-16 hover:bg-black/60"
+                                />
+                                <span className="absolute right-5 top-1/2 -translate-y-1/2 text-[10px] font-black text-white/40 uppercase pointer-events-none">{currency.code}</span>
+                            </div>
                         </div>
                     </div>
-                    <button type="submit" className="w-full bg-primary text-white py-3 rounded-xl font-black uppercase tracking-widest text-[10px] hover:scale-[1.02] active:scale-95 transition-all shadow-lg shadow-primary/20">{t('settings.saveNewPlan')}</button>
+
+                    <button
+                        type="submit"
+                        disabled={!newPlan.name || !newPlan.duration_months || !newPlan.price}
+                        className="w-full bg-primary text-white py-4.5 rounded-2xl font-black uppercase tracking-[0.3em] text-[11px] hover:scale-[1.01] active:scale-95 transition-all shadow-xl shadow-primary/30 group/submit mt-4 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+                    >
+                        <span className="flex items-center justify-center gap-2">
+                            {t('settings.saveNewPlan')}
+                            <ArrowRight className="w-5 h-5 group-hover/submit:translate-x-1 transition-transform duration-300" />
+                        </span>
+                    </button>
                 </form>
             )}
 
-            <div className="space-y-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 relative z-10">
                 {isLoading ? (
-                    <div className="py-8 text-center text-white/20 animate-pulse uppercase font-black text-[9px] tracking-widest">{t('settings.loadingPlans')}</div>
+                    <div className="col-span-full py-12 text-center text-white/20 animate-pulse uppercase font-black text-[10px] tracking-[0.3em]">{t('settings.loadingPlans')}</div>
                 ) : plans?.length === 0 ? (
-                    <div className="py-8 text-center text-white/20 uppercase font-black text-[9px] tracking-widest">{t('settings.noPlans')}</div>
+                    <div className="col-span-full py-12 text-center text-white/20 uppercase font-black text-[10px] tracking-[0.3em] border-2 border-dashed border-white/5 rounded-[2rem]">{t('settings.noPlans')}</div>
                 ) : (
-                    plans?.map(plan => (
-                        <div key={plan.id} className="relative p-4 bg-white/5 rounded-[1.5rem] border border-white/5 group hover:border-primary/30 transition-all animate-in slide-in-from-left duration-500">
-                            {editingPlan?.id === plan.id ? (
-                                <form onSubmit={handleUpdate} className="space-y-3">
-                                    <div className="space-y-1.5">
-                                        <label className="text-[8px] font-black uppercase tracking-[0.2em] text-white/40 ml-2">{t('settings.planName')}</label>
-                                        <input type="text" value={editingPlan?.name || ''} onChange={e => editingPlan && setEditingPlan({ ...editingPlan, name: e.target.value })} className="w-full px-4 py-2.5 rounded-lg border border-white/10 bg-white/10 text-white outline-none focus:border-primary/50 transition-all font-bold text-xs" />
-                                    </div>
-                                    <div className="grid grid-cols-2 gap-3">
-                                        <div className="space-y-1.5">
-                                            <label className="text-[8px] font-black uppercase tracking-[0.2em] text-white/40 ml-2">{t('settings.months')}</label>
-                                            <input type="number" min="1" value={editingPlan?.duration_months || 1} onChange={e => editingPlan && setEditingPlan({ ...editingPlan, duration_months: parseInt(e.target.value) || 1 })} className="w-full px-4 py-2.5 rounded-lg border border-white/10 bg-white/10 text-white outline-none focus:border-primary/50 transition-all font-bold text-xs" />
+                    plans?.map((plan, idx) => (
+                        <div key={plan.id} className="group/card relative p-1 transition-all duration-300">
+                            {/* Sharp Highlight */}
+                            <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover/card:opacity-100 rounded-[2rem] transition-opacity duration-300"></div>
+
+                            <div className="relative h-full bg-[#111] rounded-[1.8rem] border border-white/5 p-6 flex flex-col justify-between group-hover/card:border-primary/50 group-hover/card:bg-[#151515] transition-all duration-300 shadow-2xl overflow-hidden">
+                                {/* Sharp Accent */}
+                                <div className="absolute -top-12 -right-12 w-32 h-32 bg-primary/20 rounded-full group-hover/card:bg-primary/30 transition-all duration-500 opacity-20"></div>
+
+                                {editingPlan?.id === plan.id ? (
+                                    <form onSubmit={handleUpdate} className="space-y-5 animate-in fade-in zoom-in-95 duration-300 relative z-10 w-full">
+                                        <div className="space-y-2">
+                                            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-white/30 ml-1">{t('settings.planName')}</label>
+                                            <input
+                                                type="text"
+                                                value={editingPlan?.name || ''}
+                                                onChange={e => editingPlan && setEditingPlan({ ...editingPlan, name: e.target.value })}
+                                                className="w-full px-5 py-3.5 rounded-2xl border border-white/5 bg-black/40 text-white outline-none focus:border-primary/40 transition-all font-black text-[13px] placeholder:text-white/10 uppercase tracking-tight"
+                                            />
                                         </div>
-                                        <div className="space-y-1.5">
-                                            <label className="text-[8px] font-black uppercase tracking-[0.2em] text-white/40 ml-2">{t('settings.price')}</label>
-                                            <input type="number" value={editingPlan?.price || 0} onChange={e => editingPlan && setEditingPlan({ ...editingPlan, price: parseFloat(e.target.value) || 0 })} className="w-full px-4 py-2.5 rounded-lg border border-white/10 bg-white/10 text-white outline-none focus:border-primary/50 transition-all font-bold text-xs" />
+
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div className="space-y-2">
+                                                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-white/30 ml-1">Days</label>
+                                                <div className="relative group/select">
+                                                    <select
+                                                        value={editingPlan?.sessions_per_week || 3}
+                                                        onChange={e => editingPlan && setEditingPlan({ ...editingPlan, sessions_per_week: parseInt(e.target.value) })}
+                                                        className="w-full px-5 py-3.5 rounded-2xl border border-white/5 bg-black/40 text-white outline-none focus:border-primary/40 transition-all font-black text-[13px] appearance-none cursor-pointer"
+                                                    >
+                                                        {[1, 2, 3, 4, 5, 6].map(num => <option key={num} value={num} className="bg-black text-white">{num} Sessions</option>)}
+                                                    </select>
+                                                    <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20 group-hover/select:text-primary transition-colors pointer-events-none" />
+                                                </div>
+                                            </div>
+                                            <div className="space-y-2">
+                                                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-white/30 ml-1">{t('settings.months')}</label>
+                                                <input
+                                                    type="number"
+                                                    min="1"
+                                                    value={editingPlan?.duration_months || 1}
+                                                    onChange={e => editingPlan && setEditingPlan({ ...editingPlan, duration_months: parseInt(e.target.value) || 1 })}
+                                                    className="w-full px-5 py-3.5 rounded-2xl border border-white/5 bg-black/40 text-white outline-none focus:border-primary/40 transition-all font-black text-[13px]"
+                                                />
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div className="flex gap-2">
-                                        <button type="submit" className="flex-1 bg-primary text-white py-2 rounded-lg font-black uppercase tracking-widest text-[8px] hover:scale-[1.02] active:scale-95 transition-all shadow-lg shadow-primary/20">{t('common.save')}</button>
-                                        <button type="button" onClick={() => setEditingPlan(null)} className="px-4 py-2 rounded-lg bg-white/5 text-white/40 font-black uppercase tracking-widest text-[8px] hover:bg-white/10 transition-all">{t('common.cancel')}</button>
-                                    </div>
-                                </form>
-                            ) : (
-                                <div className="flex items-center justify-between">
-                                    <div className="flex-1 cursor-pointer" onClick={() => setEditingPlan(plan)}>
-                                        <div className="text-white text-sm font-black uppercase tracking-wide group-hover:text-primary transition-colors">{plan.name}</div>
-                                        <div className="text-[9px] font-black uppercase tracking-widest text-white/20 mt-0.5">
-                                            {plan.duration_months} {plan.duration_months === 1 ? 'Month' : t('settings.months')} • {plan.price > 0 ? `${plan.price} ${currency.code}` : 'Free Tier'}
+
+                                        <div className="space-y-2">
+                                            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-white/30 ml-1">{t('settings.price')} ({currency.code})</label>
+                                            <input
+                                                type="number"
+                                                value={editingPlan?.price || 0}
+                                                onChange={e => editingPlan && setEditingPlan({ ...editingPlan, price: parseFloat(e.target.value) || 0 })}
+                                                className="w-full px-5 py-3.5 rounded-2xl border border-white/5 bg-black/40 text-white outline-none focus:border-primary/40 transition-all font-black text-[13px]"
+                                            />
                                         </div>
-                                    </div>
-                                    <div className="flex items-center gap-1">
-                                        <button onClick={() => setEditingPlan(plan)} className="p-2 text-white/60 focus:text-primary hover:text-primary hover:bg-primary/10 rounded-lg transition-all" title={t('common.edit')}><Edit2 className="w-4 h-4" /></button>
-                                        <button onClick={() => setPlanToDelete(plan.id)} className="p-2 text-white/60 focus:text-rose-400 hover:text-rose-400 hover:bg-rose-400/10 rounded-lg transition-all" title={t('common.delete')}><Trash2 className="w-4 h-4" /></button>
-                                    </div>
-                                </div>
-                            )}
+
+                                        <div className="grid grid-cols-2 gap-3 pt-2">
+                                            <button type="submit" className="bg-primary text-white py-4 rounded-2xl font-black uppercase tracking-[0.2em] text-[10px] hover:scale-[1.02] active:scale-95 transition-all shadow-lg shadow-primary/20">{t('common.save')}</button>
+                                            <button type="button" onClick={() => setEditingPlan(null)} className="bg-white/5 text-white/60 py-4 rounded-2xl font-black uppercase tracking-[0.2em] text-[10px] hover:bg-white/10 transition-all">{t('common.cancel')}</button>
+                                        </div>
+                                    </form>
+                                ) : (
+                                    <>
+                                        <div className="relative mb-5">
+                                            <div className="flex items-center justify-between mb-3">
+                                                <span className="px-2 py-0.5 rounded bg-primary/20 border border-primary/20 text-primary text-[7.5px] font-black uppercase tracking-[0.2em]">
+                                                    Package {idx + 1}
+                                                </span>
+                                                <div className="flex items-center gap-1 opacity-0 group-hover/card:opacity-100 transition-all duration-300">
+                                                    <button onClick={() => setEditingPlan(plan)} className="p-1.5 text-white/30 hover:text-primary transition-all"><Edit2 className="w-3 h-3" /></button>
+                                                    <button onClick={() => setPlanToDelete(plan.id)} className="p-1.5 text-white/30 hover:text-rose-500 transition-all"><Trash2 className="w-3 h-3" /></button>
+                                                </div>
+                                            </div>
+                                            <h3 className="text-[14px] font-black text-white uppercase tracking-tight group-hover/card:text-primary transition-colors leading-snug line-clamp-2">
+                                                {plan.name}
+                                            </h3>
+                                        </div>
+
+                                        <div className="space-y-2.5 mb-8">
+                                            <div className="flex items-center justify-between p-3.5 bg-black/40 rounded-2xl border border-white/5 transition-all">
+                                                <div className="flex items-center gap-2.5">
+                                                    <div className="p-2 bg-primary/10 rounded-lg shrink-0">
+                                                        <Calendar className="w-3 h-3 text-primary" />
+                                                    </div>
+                                                    <div className="space-y-0.5 min-w-0">
+                                                        <div className="text-[7px] font-black text-white/30 uppercase tracking-[0.2em] leading-none">{t('common.schedule')}</div>
+                                                        <div className="text-[12px] font-black text-white uppercase tracking-tighter leading-none truncate">
+                                                            {plan.sessions_per_week} <span className="text-[9px] text-white/20 font-bold lowercase">{t('dashboard.day')}s</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div className="w-1.5 h-1.5 rounded-full bg-primary/20 shrink-0"></div>
+                                            </div>
+
+                                            <div className="flex items-center justify-between p-3.5 bg-black/40 rounded-2xl border border-white/5 transition-all">
+                                                <div className="flex items-center gap-2.5">
+                                                    <div className="p-2 bg-primary/10 rounded-lg shrink-0">
+                                                        <Clock className="w-3 h-3 text-primary" />
+                                                    </div>
+                                                    <div className="space-y-0.5 min-w-0">
+                                                        <div className="text-[7px] font-black text-white/30 uppercase tracking-[0.2em] leading-none">{t('settings.validity')}</div>
+                                                        <div className="text-[12px] font-black text-white uppercase tracking-tighter leading-none truncate">
+                                                            {plan.duration_months} <span className="text-[9px] text-white/20 font-bold lowercase">{plan.duration_months === 1 ? t('dashboard.month') : `${t('dashboard.month')}s`}</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div className="w-1.5 h-1.5 rounded-full bg-primary/20 shrink-0"></div>
+                                            </div>
+                                        </div>
+
+                                        <div className="mt-auto pt-5 border-t border-white/5 flex items-center justify-between">
+                                            <div className="space-y-0.5">
+                                                <div className="text-[8px] font-black text-white/20 uppercase tracking-[0.3em] leading-none mb-1">{t('settings.packageValue')}</div>
+                                                <div className="flex items-baseline gap-1.5">
+                                                    <span className="text-2xl font-black text-white leading-none tracking-tighter">{plan.price > 0 ? plan.price : 'FREE'}</span>
+                                                    {plan.price > 0 && <span className="text-[10px] font-black text-primary uppercase">{currency.code}</span>}
+                                                </div>
+                                            </div>
+                                            <div className="p-2 bg-primary/10 rounded-xl text-primary opacity-0 group-hover/card:opacity-100 transition-all duration-300">
+                                                <ArrowRight className="w-4 h-4" />
+                                            </div>
+                                        </div>
+                                    </>
+                                )}
+                            </div>
                         </div>
                     ))
                 )}
             </div>
 
             {planToDelete && (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
-                    <div className="glass-card max-w-sm w-full p-8 rounded-[2rem] border border-white/10 shadow-2xl relative animate-in zoom-in duration-300">
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/80 backdrop-blur-xl animate-in fade-in duration-500">
+                    <div className="glass-card max-w-sm w-full p-10 rounded-[2.5rem] border border-white/10 shadow-[0_0_100px_rgba(244,63,94,0.15)] relative animate-in zoom-in slide-in-from-bottom-8 duration-500">
                         <div className="flex flex-col items-center text-center">
-                            <div className="p-4 bg-rose-500/20 rounded-full text-rose-500 mb-4 animate-pulse">
-                                <AlertTriangle className="w-8 h-8" />
+                            <div className="p-6 bg-rose-500/10 rounded-full text-rose-500 mb-6 animate-bounce">
+                                <AlertTriangle className="w-10 h-10 shadow-lg shadow-rose-500/20" />
                             </div>
-                            <h3 className="text-xl font-black text-white uppercase tracking-tight mb-3">{t('settings.deleteConfirmTitle')}</h3>
-                            <p className="text-white/40 font-bold uppercase text-[9px] tracking-widest leading-relaxed mb-8">{t('settings.deleteConfirmText')}</p>
-                            <div className="flex gap-3 w-full">
-                                <button onClick={() => setPlanToDelete(null)} className="flex-1 px-4 py-3 rounded-xl bg-white/5 text-white/60 font-black uppercase tracking-widest text-[9px] hover:bg-white/10 transition-all">{t('common.cancel')}</button>
-                                <button onClick={handleDelete} className="flex-1 px-4 py-3 rounded-xl bg-rose-500 text-white font-black uppercase tracking-widest text-[9px] shadow-lg shadow-rose-500/20 hover:bg-rose-600 transition-all hover:scale-105 active:scale-95">{t('common.delete')}</button>
+                            <h3 className="text-2xl font-black text-white uppercase tracking-tight mb-4">{t('settings.deleteConfirmTitle')}</h3>
+                            <p className="text-white/40 font-bold uppercase text-[10px] tracking-[0.2em] leading-relaxed mb-10">{t('settings.deleteConfirmText')}</p>
+                            <div className="flex gap-4 w-full">
+                                <button onClick={() => setPlanToDelete(null)} className="flex-1 px-6 py-4 rounded-xl bg-white/5 text-white/60 font-black uppercase tracking-widest text-[10px] hover:bg-white/10 transition-all">{t('common.cancel')}</button>
+                                <button onClick={handleDelete} className="flex-1 px-6 py-4 rounded-xl bg-rose-500 text-white font-black uppercase tracking-widest text-[10px] shadow-2xl shadow-rose-500/30 hover:bg-rose-600 transition-all hover:scale-105 active:scale-95">{t('common.delete')}</button>
                             </div>
                         </div>
                     </div>
@@ -998,6 +1169,7 @@ function SubscriptionPlansManager() {
         </div>
     );
 }
+
 
 function PremiumSwitch({ label, description, checked, onChange }: { label: string; description?: string; checked: boolean; onChange: (checked: boolean) => void }) {
     return (

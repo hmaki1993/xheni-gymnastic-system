@@ -45,14 +45,7 @@ export default function AddExpenseForm({ onClose, onSuccess, onAdd }: AddExpense
                 expense_date: formData.expense_date
             });
 
-            // Notification: Expense (Admin + Reception)
-            await supabase.from('notifications').insert({
-                type: 'financial',
-                title: 'Expense Recorded',
-                message: `Expense: ${parseFloat(formData.amount).toFixed(2)} ${currency.code} - ${formData.description} `,
-                target_role: 'admin_reception',
-                is_read: false
-            });
+
 
             toast.success('Expense added successfully');
             onSuccess();
@@ -109,7 +102,7 @@ export default function AddExpenseForm({ onClose, onSuccess, onAdd }: AddExpense
                             className="w-full px-5 py-3 bg-white/[0.02] border border-white/5 rounded-2xl focus:border-primary/40 outline-none transition-all text-white placeholder:text-white/10 text-xs tracking-wide font-bold"
                             value={formData.description}
                             onChange={e => setFormData({ ...formData, description: e.target.value })}
-                            placeholder="e.g. Monthly Rent, Equipment..."
+                            placeholder=""
                         />
                     </div>
 

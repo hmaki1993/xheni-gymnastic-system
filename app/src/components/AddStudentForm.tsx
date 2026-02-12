@@ -166,13 +166,13 @@ export default function AddStudentForm({ onClose, onSuccess, initialData }: AddS
                 mother_name: formData.mother_name,
                 email: formData.email,
                 address: formData.address,
-                birth_date: formData.birth_date,
+                birth_date: formData.birth_date && formData.birth_date.trim() !== '' ? formData.birth_date : null,
                 gender: formData.gender,
                 training_type: formData.training_type,
                 age: calculateAge(formData.birth_date),
                 contact_number: `${formData.country_code_student} ${formData.contact_number}`,
                 parent_contact: `${formData.country_code_parent} ${formData.parent_contact}`,
-                subscription_expiry: expiry,
+                subscription_expiry: expiry && expiry.trim() !== '' ? expiry : null,
                 training_days: formData.training_days,
                 training_schedule: formData.training_schedule,
                 coach_id: formData.coach_id && formData.coach_id.trim() !== '' ? formData.coach_id : null,
@@ -336,9 +336,6 @@ export default function AddStudentForm({ onClose, onSuccess, initialData }: AddS
                             <h2 className="text-xl font-black text-white tracking-widest uppercase mb-1 drop-shadow-lg leading-tight">
                                 {initialData ? 'Edit Gymnast' : t('dashboard.addStudent', 'New Athlete')}
                             </h2>
-                            <p className="text-[9px] font-black text-white/40 uppercase tracking-widest">
-                                {initialData ? 'Update registration details' : 'Register New Student'}
-                            </p>
                         </div>
                         <button
                             onClick={onClose}
@@ -651,7 +648,7 @@ export default function AddStudentForm({ onClose, onSuccess, initialData }: AddS
                     <div className="space-y-2 group/field">
                         <label className="text-[9px] font-black uppercase tracking-[0.3em] text-white/20 ml-1 group-focus-within/field:text-primary transition-colors">Additional Notes</label>
                         <textarea
-                            placeholder="Medical notes, allergies, or special requirements..."
+                            placeholder=""
                             className="w-full px-5 py-4 bg-white/[0.02] border border-white/5 rounded-[2rem] focus:border-primary/40 outline-none transition-all text-white placeholder:text-white/10 text-xs min-h-[100px] resize-none"
                             value={formData.notes}
                             onChange={e => setFormData({ ...formData, notes: e.target.value })}

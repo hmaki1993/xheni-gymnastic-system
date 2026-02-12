@@ -173,23 +173,7 @@ export default function AddPTSubscriptionForm({ onClose, onSuccess, editData }: 
                     console.error('Payment record failed:', payErr);
                 }
 
-                // New Notification for the assigned Coach
-                try {
-                    if (selectedCoach?.profile_id) {
-                        const studentName = isGuest ? formData.student_name : (students.find(s => s.id === formData.student_id)?.full_name);
 
-                        await supabase.from('notifications').insert({
-                            type: 'pt_subscription',
-                            title: 'New PT Subscription',
-                            message: `New PT Student: ${studentName}`,
-                            user_id: selectedCoach.profile_id, // Direct to coach
-                            is_read: false
-                        });
-                        console.log('PT Notification sent to coach:', selectedCoach.full_name);
-                    }
-                } catch (noteErr) {
-                    console.error('Coach notification failed:', noteErr);
-                }
             }
 
             // Invalidate queries to update Revenue UI and PT lists

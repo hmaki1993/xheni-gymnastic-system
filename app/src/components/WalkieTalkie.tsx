@@ -178,18 +178,18 @@ export default function WalkieTalkie({ role, userId }: { role: string; userId: s
                             console.error('🚫 WalkieTalkie: Auto-play blocked:', e);
                             toast((t) => (
                                 <span className="flex items-center gap-2">
-                                    🎙️ {role === 'admin' ? 'New Broadcast' : 'Admin Speaking...'}
+                                    🎙️ Walkie Talkie
                                     <button
                                         onClick={() => {
                                             audio.play();
                                             toast.dismiss(t.id);
                                         }}
-                                        className="bg-primary text-black px-2 py-1 rounded-md text-[10px] font-bold"
+                                        className="bg-primary text-black px-3 py-1.5 rounded-full text-[11px] font-black uppercase tracking-wider shadow-[0_0_15px_rgba(16,185,129,0.4)] hover:scale-105 active:scale-95 transition-all"
                                     >
                                         Listen
                                     </button>
                                 </span>
-                            ), { duration: 10000 });
+                            ), { duration: 10000, className: 'premium-toast-vibrant' });
                         });
 
                         audio.onended = () => {
@@ -205,7 +205,8 @@ export default function WalkieTalkie({ role, userId }: { role: string; userId: s
     }, [isMuted, userId]);
 
     return (
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
+            {/* Broadcast Button - ADMIN ONLY */}
             {role === 'admin' && (
                 <button
                     onMouseDown={handlePressStart}
@@ -213,48 +214,49 @@ export default function WalkieTalkie({ role, userId }: { role: string; userId: s
                     onMouseLeave={handlePressEnd}
                     onTouchStart={handlePressStart}
                     onTouchEnd={(e) => {
-                        e.preventDefault(); // Prevent ghost clicks
+                        e.preventDefault();
                         handlePressEnd(e);
-                        handleToggle(e as any); // Check for toggle-stop on mobile
+                        handleToggle(e as any);
                     }}
                     onClick={(e) => {
-                        // If it's a mobile click triggered after touch, ignore it
                         if ((Date.now() - mouseDownTime.current) < 50) return;
                         handleToggle(e);
                     }}
-                    className={`relative w-11 h-11 flex items-center justify-center rounded-full transition-all duration-300 border-2 ${isRecording
-                        ? 'bg-red-500/20 border-red-500 shadow-[0_0_20px_rgba(239,68,68,0.5)] scale-110'
-                        : 'bg-primary/5 border-primary/20 hover:border-primary/50 text-primary'
+                    className={`relative w-10 h-10 flex items-center justify-center rounded-full transition-all duration-300 border ${isRecording
+                        ? 'bg-red-500/20 border-red-500 shadow-[0_0_20px_rgba(239,68,68,0.4)] scale-110'
+                        : 'bg-white/5 border-white/10 hover:border-primary/50 text-white/70 hover:bg-white/10'
                         }`}
-                    title={isRecording ? "Click to Stop" : "Hold to Talk or Click to Toggle"}
+                    title={isRecording ? "Click to Stop" : "Broadcasting Mic (Hold to Talk)"}
                 >
                     {isUploading ? (
-                        <Loader2 className="w-5 h-5 animate-spin" />
+                        <Loader2 className="w-5 h-5 animate-spin text-primary" />
                     ) : isRecording ? (
                         <Radio className="w-5 h-5 text-red-500 animate-pulse" />
                     ) : (
-                        <Mic className="w-5 h-5" />
+                        <Mic className="w-4 h-4" />
                     )}
                 </button>
             )}
 
+            {/* Speaker Button - ALL AUTHORIZED ROLES */}
             <button
                 onClick={() => {
                     setIsMuted(!isMuted);
-                    // Unlock audio context on toggle if it's suspended
                     if (audioContext.current?.state === 'suspended') {
                         audioContext.current.resume();
                     }
                 }}
-                className={`w-10 h-10 flex items-center justify-center rounded-full border transition-all ${isMuted
+                className={`relative w-10 h-10 flex items-center justify-center rounded-full border transition-all ${isMuted
                     ? 'bg-rose-500/10 border-rose-500/20 text-rose-500'
-                    : 'bg-white/5 border-white/10 text-white/40 hover:text-white'
-                    } ${isIncoming ? 'animate-bounce border-primary shadow-[0_0_15px_rgba(var(--primary-rgb),0.5)]' : ''}`}
-                title={isIncoming ? "Admin is Speaking..." : "Mute/Unmute Hoki Toki"}
+                    : isIncoming
+                        ? 'bg-primary/10 border-primary/50 text-primary animate-bounce shadow-[0_0_15px_rgba(var(--primary-rgb),0.3)]'
+                        : 'bg-white/5 border-white/10 text-white/40 hover:text-white hover:bg-white/10'
+                    }`}
+                title={isIncoming ? "Admin is Speaking... (Click to Stop)" : "Hoki Toki Speaker (Mute/Unmute)"}
             >
                 {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
                 {isIncoming && !isMuted && (
-                    <span className="absolute -top-1 -right-1 w-3 h-3 bg-primary rounded-full animate-ping"></span>
+                    <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-primary rounded-full animate-ping"></span>
                 )}
             </button>
         </div>

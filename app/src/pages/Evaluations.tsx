@@ -58,6 +58,13 @@ export default function Evaluations() {
         if (userProfile?.id) fetchCurrentCoachId();
     }, [activeTab, userProfile]);
 
+    // Cleanup selection when switching tabs
+    useEffect(() => {
+        setSelectedBatchKeys([]);
+        setIsSelectMode(false);
+        setShowBulkConfirm(false);
+    }, [activeTab]);
+
     const fetchCurrentCoachId = async () => {
         if (!userProfile?.id) return;
         const { data } = await supabase.from('coaches').select('id').eq('profile_id', userProfile.id).single();
@@ -99,7 +106,7 @@ export default function Evaluations() {
             .from('skill_assessments')
             .select(`
                 *,
-                students(full_name, photo_url),
+                students(full_name),
                 coaches:coach_id(full_name)
             `)
             .order('created_at', { ascending: false });
@@ -210,8 +217,7 @@ export default function Evaluations() {
             // 1. Fetch Students
             const { data: studentsData } = await supabase
                 .from('students')
-                .select('id, full_name, photo_url, training_groups(name)')
-                .eq('is_active', true)
+                .select('id, full_name, contact_number, parent_contact, training_groups(name)')
                 .order('full_name');
 
             if (!studentsData) return;

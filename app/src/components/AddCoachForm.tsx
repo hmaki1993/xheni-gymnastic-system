@@ -169,16 +169,7 @@ export default function AddCoachForm({ onClose, onSuccess, initialData }: AddCoa
                     });
                 error = upsertError;
 
-                // --- NEW NOTIFICATION TRIGGER ---
-                if (!error) {
-                    await supabase.from('notifications').insert({
-                        title: 'New Staff Member',
-                        message: `${formData.full_name} has joined as ${t(`roles.${formData.role}`)}.`,
-                        type: 'coach',
-                        target_role: 'admin',
-                        is_read: false
-                    });
-                }
+
             }
 
             if (error) throw error;
@@ -212,9 +203,6 @@ export default function AddCoachForm({ onClose, onSuccess, initialData }: AddCoa
                             <h2 className="text-xl font-black text-white tracking-widest uppercase mb-1 drop-shadow-lg leading-tight">
                                 {initialData ? 'Edit Staff Member' : 'New Staff Member'}
                             </h2>
-                            <p className="text-[9px] font-black text-white/40 uppercase tracking-widest">
-                                {initialData ? 'Update Staff Credentials' : 'Register Staff Member'}
-                            </p>
                         </div>
                         <button
                             onClick={onClose}
@@ -332,7 +320,7 @@ export default function AddCoachForm({ onClose, onSuccess, initialData }: AddCoa
                         </div>
                     )}
 
-                    {/* Email & Phone Grid */}
+                    {/* Email & Password Grid */}
                     <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2 group/field">
                             <label className="text-[9px] font-black uppercase tracking-[0.3em] text-white/20 ml-1 group-focus-within/field:text-primary transition-colors">Email Address</label>
@@ -345,18 +333,19 @@ export default function AddCoachForm({ onClose, onSuccess, initialData }: AddCoa
                             />
                         </div>
                         <div className="space-y-2 group/field">
-                            <label className="text-[9px] font-black uppercase tracking-[0.3em] text-white/20 ml-1 group-focus-within/field:text-primary transition-colors">Phone Number</label>
+                            <label className="text-[9px] font-black uppercase tracking-[0.3em] text-white/20 ml-1 group-focus-within/field:text-primary transition-colors">Password</label>
                             <input
-                                required
-                                type="tel"
-                                className="w-full px-5 py-3 bg-white/[0.02] border border-white/5 rounded-2xl focus:border-primary/40 outline-none transition-all text-white placeholder:text-white/10 text-[10px] font-bold"
-                                value={formData.phone}
-                                onChange={e => setFormData({ ...formData, phone: e.target.value })}
+                                required={!initialData}
+                                type="password"
+                                className="w-full px-5 py-3 bg-white/[0.02] border border-white/5 rounded-2xl focus:border-primary/40 outline-none transition-all text-white placeholder:text-white/10 text-xs font-bold"
+                                value={formData.password}
+                                onChange={e => setFormData({ ...formData, password: e.target.value })}
+                                placeholder={initialData ? "••••••" : ""}
                             />
                         </div>
                     </div>
 
-                    {/* Role & Password Grid */}
+                    {/* Role & Phone Grid */}
                     <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2 group/field">
                             <label className="text-[9px] font-black uppercase tracking-[0.3em] text-white/20 ml-1 group-focus-within/field:text-primary transition-colors">Role</label>
@@ -378,14 +367,13 @@ export default function AddCoachForm({ onClose, onSuccess, initialData }: AddCoa
                         </div>
 
                         <div className="space-y-2 group/field">
-                            <label className="text-[9px] font-black uppercase tracking-[0.3em] text-white/20 ml-1 group-focus-within/field:text-primary transition-colors">Password</label>
+                            <label className="text-[9px] font-black uppercase tracking-[0.3em] text-white/20 ml-1 group-focus-within/field:text-primary transition-colors">Phone Number</label>
                             <input
-                                required={!initialData}
-                                type="password"
-                                className="w-full px-5 py-3 bg-white/[0.02] border border-white/5 rounded-2xl focus:border-primary/40 outline-none transition-all text-white placeholder:text-white/10 text-xs font-bold"
-                                value={formData.password}
-                                onChange={e => setFormData({ ...formData, password: e.target.value })}
-                                placeholder={initialData ? "••••••" : ""}
+                                required
+                                type="tel"
+                                className="w-full px-5 py-3 bg-white/[0.02] border border-white/5 rounded-2xl focus:border-primary/40 outline-none transition-all text-white placeholder:text-white/10 text-[10px] font-bold"
+                                value={formData.phone}
+                                onChange={e => setFormData({ ...formData, phone: e.target.value })}
                             />
                         </div>
                     </div>
