@@ -245,15 +245,15 @@ export default function DashboardLayout() {
     };
 
     const allNavItems = [
-        { to: '/', icon: LayoutDashboard, label: t('common.dashboard'), roles: ['admin', 'head_coach', 'coach', 'reception'] },
-        { to: '/students', icon: Users, label: t('common.students'), roles: ['admin', 'head_coach', 'reception'] },
-        { to: '/coaches', icon: UserCircle, label: t('common.coaches'), roles: ['admin', 'head_coach'] },
-        { to: '/schedule', icon: Calendar, label: t('common.schedule'), roles: ['admin', 'head_coach', 'reception'] },
-        { to: '/finance', icon: Wallet, label: t('common.finance'), roles: ['admin'] },
-        { to: '/evaluations', icon: ClipboardCheck, label: t('common.evaluations', 'Evaluations'), roles: ['admin', 'head_coach'] },
-        { to: '/my-work', icon: UserCircle, label: t('dashboard.myWork', 'My Work'), roles: ['head_coach'] },
-        { to: '/settings', icon: Settings, label: t('common.settings'), roles: ['admin', 'head_coach', 'coach', 'reception'] },
-        { to: '/admin/cameras', icon: Video, label: t('common.cameras'), roles: ['admin'] },
+        { to: '/app', icon: LayoutDashboard, label: t('common.dashboard'), roles: ['admin', 'head_coach', 'coach', 'reception'] },
+        { to: '/app/students', icon: Users, label: t('common.students'), roles: ['admin', 'head_coach', 'reception'] },
+        { to: '/app/coaches', icon: UserCircle, label: t('common.coaches'), roles: ['admin', 'head_coach'] },
+        { to: '/app/schedule', icon: Calendar, label: t('common.schedule'), roles: ['admin', 'head_coach', 'reception'] },
+        { to: '/app/finance', icon: Wallet, label: t('common.finance'), roles: ['admin'] },
+        { to: '/app/evaluations', icon: ClipboardCheck, label: t('common.evaluations', 'Evaluations'), roles: ['admin', 'head_coach'] },
+        { to: '/app/my-work', icon: UserCircle, label: t('dashboard.myWork', 'My Work'), roles: ['head_coach'] },
+        { to: '/app/settings', icon: Settings, label: t('common.settings'), roles: ['admin', 'head_coach', 'coach', 'reception'] },
+        { to: '/app/admin/cameras', icon: Video, label: t('common.cameras'), roles: ['admin'] },
     ];
 
     const normalizedRole = role?.toLowerCase().trim().replace(/\s+/g, '_');
@@ -709,7 +709,7 @@ export default function DashboardLayout() {
                                     </div>
                                     <div className="p-4 space-y-2">
                                         <button
-                                            onClick={() => { navigate('/settings'); setProfileOpen(false); }}
+                                            onClick={() => { navigate('/app/settings'); setProfileOpen(false); }}
                                             className="flex items-center w-full px-6 py-4 text-xs font-black text-white/50 hover:text-white hover:bg-white/10 rounded-2xl transition-all group/item uppercase tracking-[0.2em] gap-5 border border-transparent hover:border-white/10"
                                         >
                                             <div className="w-10 h-10 flex items-center justify-center rounded-xl bg-white/5 group-hover/item:bg-primary/20 group-hover/item:text-primary transition-all border border-white/5 group-hover/item:border-primary/30">
