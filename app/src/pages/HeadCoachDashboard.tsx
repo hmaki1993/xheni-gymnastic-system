@@ -288,7 +288,7 @@ export default function HeadCoachDashboard() {
                             <span className="text-[10px] font-black text-white uppercase tracking-widest text-center">Add Student</span>
                         </button>
                         <button
-                            onClick={() => navigate('/evaluations')}
+                            onClick={() => navigate('/app/evaluations')}
                             className="p-8 rounded-[2rem] bg-primary/5 hover:bg-primary/20 border border-primary/10 hover:border-primary/40 transition-all flex flex-col items-center justify-center gap-4 group/action"
                         >
                             <div className="w-12 h-12 rounded-2xl bg-primary/20 flex items-center justify-center text-primary group-hover/action:scale-110 transition-transform shadow-lg shadow-primary/20">

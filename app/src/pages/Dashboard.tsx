@@ -120,7 +120,7 @@ export default function Dashboard() {
                     {/* Compact Date & Clock Widget */}
                     <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 mt-4 sm:mt-0">
                         <button
-                            onClick={() => navigate('/evaluations')}
+                            onClick={() => navigate('/app/evaluations')}
                             className="flex items-center gap-2 px-4 sm:px-6 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary hover:bg-primary hover:text-white transition-all shadow-lg shadow-primary/5 group/eval"
                         >
                             <ClipboardCheck className="w-4 h-4 group-hover/eval:scale-110 transition-transform" />

@@ -515,6 +515,11 @@ export default function DashboardLayout() {
                         </button>
                     </div>
                 </div>
+                <div className="px-8 pb-10 text-center">
+                    <span className="text-[7px] font-black text-[#D4AF37]/60 uppercase tracking-[0.5em] block drop-shadow-[0_0_5px_rgba(212,175,55,0.3)] cursor-default">
+                        System built by Ahmed Hmaki
+                    </span>
+                </div>
             </aside>
 
             {/* Main Content Area */}
