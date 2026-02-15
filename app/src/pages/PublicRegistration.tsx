@@ -3,6 +3,7 @@ import { User, Calendar, Phone, CheckCircle, TrendingUp, Sparkles, ChevronRight,
 import { supabase } from '../lib/supabase';
 import toast from 'react-hot-toast';
 import { format, parseISO, addMonths } from 'date-fns';
+import { sendToN8n } from '../services/n8nService';
 
 const COUNTRIES = [
     { code: 'KW', dial_code: '+965', flag: '🇰🇼', name: 'Kuwait' },
@@ -202,6 +203,21 @@ export default function PublicRegistration() {
             setSuccess(true);
             toast.success('Registration Successful!');
 
+            // 6. Trigger n8n Automation (Welcome Message)
+            try {
+                const fullPhone = `${formData.country_code_parent} ${formData.parent_contact}`;
+                sendToN8n('new_student_registration', {
+                    student_id: studentId,
+                    student_name: formData.full_name,
+                    parent_phone: fullPhone,
+                    email: formData.email,
+                    subscription_plan: selectedPlan?.name || 'N/A',
+                    registration_date: new Date().toISOString()
+                });
+            } catch (n8nErr) {
+                console.error('Failed to trigger n8n automation:', n8nErr);
+            }
+
             // Reset form
             setTimeout(() => {
                 setSuccess(false);
@@ -294,7 +310,7 @@ export default function PublicRegistration() {
             <div className="relative z-10 mb-12 text-center scale-90 md:scale-100">
                 <div className="relative inline-block group mb-8">
                     <div className="absolute -inset-6 bg-gradient-to-r from-[#D4AF37]/20 to-transparent rounded-full blur-2xl opacity-40 group-hover:opacity-100 transition duration-1000"></div>
-                    <img src="/Whisk_00abd08a154989ca599400ffd45cb917dr-removebg-preview.jbj" alt="Healy Academy" className="relative h-32 w-auto object-contain drop-shadow-2xl brightness-110" />
+                    <img src="/logo_recovered.png" alt="Healy Academy" className="relative h-32 w-auto object-contain drop-shadow-2xl brightness-110" />
                 </div>
                 <h2 className="text-5xl font-black text-white uppercase tracking-tight premium-gradient-text-mind leading-tight">
                     Join The Legacy

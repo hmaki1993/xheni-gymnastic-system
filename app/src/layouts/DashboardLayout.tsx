@@ -277,6 +277,12 @@ export default function DashboardLayout() {
             return isMatch;
         }
 
+        // 🛑 STRICT PRIVACY: Head Coach never sees financial alerts
+        if (normalizedRole === 'head_coach' && (note.type === 'payment' || note.type === 'pt_subscription')) {
+            console.log('🔔 Notification Filter: STRICT BLOCK (Head Coach / Financial)', note.type);
+            return false;
+        }
+
         // 2. Target Role Filtering
         if (note.target_role) {
             if (normalizedRole === 'admin') return true; // Admin sees all role-targeted notes
@@ -307,7 +313,7 @@ export default function DashboardLayout() {
         if (normalizedRole === 'admin') return true; // Admin sees all global notes
 
         if (normalizedRole === 'head_coach') {
-            const allowedTypes: string[] = ['coach', 'check_in', 'check_out', 'attendance_absence', 'pt_subscription', 'student'];
+            const allowedTypes: string[] = ['coach', 'check_in', 'check_out', 'attendance_absence', 'student'];
             return allowedTypes.includes(note.type);
         }
 

@@ -112,7 +112,8 @@ i18n
                         active: 'Active',
                         inactive: 'Inactive',
                         father: 'Father',
-                        mother: 'Mother'
+                        mother: 'Mother',
+                        accessRestricted: 'Access Restricted: Only Admin or Head Coach can manage this'
                     },
                     cameras: {
                         subtitle: 'Monitor gym activities in real-time',
@@ -297,7 +298,8 @@ i18n
                         activeOnly: 'Active Only',
                         inactiveOnly: 'Inactive Only',
                         expiringOnly: 'Expiring Soon',
-                        clearFilters: 'Clear Filters'
+                        clearFilters: 'Clear Filters',
+                        outOfSessions: 'OUT OF SESSIONS'
                     },
                     coaches: {
                         title: 'Coaches',
@@ -375,20 +377,30 @@ i18n
                         only_you: 'Nobody else is online'
                     },
                     pt: {
-                        addSubscription: 'Add PT Subscription',
-                        sessionCount: 'Number of Sessions',
+                        addSubscription: 'PT Subscription',
+                        sessionCount: 'Sessions',
                         active: 'PT ACTIVE',
                         expired: 'Expired PT',
                         sessionsRemaining: 'Sessions Left',
                         sessionsTotal: 'Total Sessions',
                         progress: 'Training Progress',
-                        guestStudent: 'Guest Gymnast',
-                        academyStudent: 'Academy Gymnast',
+                        guestStudent: 'Guest',
+                        academyStudent: 'Internal',
                         renewalRequired: 'Renewal Required',
                         outOfSessions: 'Out of Sessions',
                         renewSubscription: 'Renew PT Subscription',
-                        title: 'PT Coaching',
-                        subtitle: 'Manage private coaching and session history'
+                        title: 'PT Subscription',
+                        subtitle: 'Manage training registration',
+                        clientType: 'Client Type',
+                        athleteName: 'Athlete Name',
+                        selectAthlete: 'Select Athlete',
+                        chooseAthlete: 'Choose Athlete Profile',
+                        personNumber: 'Person Number',
+                        selectCoach: 'Select Coach',
+                        chooseCoach: 'Choose Coach',
+                        totalPrice: 'Total Price',
+                        saveSubscription: 'Save Subscription',
+                        saveChanges: 'Save Changes'
                     },
                     finance: {
                         title: 'Finance',
@@ -426,7 +438,8 @@ i18n
                         checkOutSuccess: 'Checked out successfully',
                         studentAdded: 'Student added successfully',
                         subscriptionAdded: 'Subscription added successfully',
-                        ptGymnast: 'GYMNAST PT ATTENDANCE'
+                        ptGymnast: 'GYMNAST PT ATTENDANCE',
+                        attendanceHistory: 'Attendance History'
                     }
                 }
             },
@@ -536,7 +549,8 @@ i18n
                         active: 'نشط',
                         inactive: 'غير نشط',
                         father: 'الأب',
-                        mother: 'الأم'
+                        mother: 'الأم',
+                        accessRestricted: 'غير مسموح: متاح فقط للمدير أو كبير المدربين'
                     },
                     dashboard: {
                         welcome: 'مرحباً بك',
@@ -708,7 +722,8 @@ i18n
                         activeOnly: 'النشطين فقط',
                         inactiveOnly: 'غير النشطين فقط',
                         expiringOnly: 'المنتهي قريباً',
-                        clearFilters: 'مسح التصفية'
+                        clearFilters: 'مسح التصفية',
+                        outOfSessions: 'رصيد الجلسات منتهي'
                     },
                     coaches: {
                         title: 'المدربين',
@@ -784,20 +799,30 @@ i18n
                         only_you: 'لا يوجد أحد غيرك متصل حالياً'
                     },
                     pt: {
-                        addSubscription: 'إضافة اشتراك PT',
-                        sessionCount: 'عدد الجلسات',
-                        active: 'PT ACTIVE',
+                        addSubscription: 'اشتراك PT',
+                        sessionCount: 'الجلسات',
+                        active: 'PT نشط',
                         expired: 'اشتراك منتهي',
                         sessionsRemaining: 'الجلسات المتبقية',
                         sessionsTotal: 'إجمالي الجلسات',
                         progress: 'تقدم التدريب',
-                        guestStudent: 'لاعب زائر',
-                        academyStudent: 'لاعب الأكاديمية',
+                        guestStudent: 'زائر',
+                        academyStudent: 'عضو بالأكاديمية',
                         renewalRequired: 'مطلوب التجديد',
                         outOfSessions: 'انتهت الجلسات',
-                        renewSubscription: 'تجديد اشتراك PT',
-                        title: 'اشتراكات الـ PT',
-                        subtitle: 'إدارة التدريب الخاص وسجل الجلسات'
+                        renewSubscription: 'تجديد اشتراك الـ PT',
+                        title: 'اشتراك PT',
+                        subtitle: 'إدارة تسجيل التدريب',
+                        clientType: 'نوع العميل',
+                        athleteName: 'اسم اللاعب',
+                        selectAthlete: 'اختر اللاعب',
+                        chooseAthlete: 'اختر ملف اللاعب',
+                        personNumber: 'رقم الشخص',
+                        selectCoach: 'اختر المدرب',
+                        chooseCoach: 'اختر المدرب',
+                        totalPrice: 'السعر الإجمالي',
+                        saveSubscription: 'حفظ الاشتراك',
+                        saveChanges: 'حفظ التغييرات'
                     },
                     finance: {
                         title: 'المالية',
@@ -837,7 +862,8 @@ i18n
                         checkOutSuccess: 'تم تسجيل الانصراف بنجاح',
                         studentAdded: 'تم إضافة اللاعب بنجاح',
                         subscriptionAdded: 'تم إضافة الاشتراك بنجاح',
-                        ptGymnast: 'حضور PT الجيمناستيك'
+                        ptGymnast: 'حضور PT الجيمناستيك',
+                        attendanceHistory: 'سجل الحضور'
                     }
                 }
             }

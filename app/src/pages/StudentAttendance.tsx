@@ -29,7 +29,7 @@ export default function StudentAttendance() {
             // 1. Fetch Students
             const { data: students, error: studentsError } = await supabase
                 .from('students')
-                .select('id, full_name, training_schedule, training_days, training_type, coaches(full_name)')
+                .select('*, coaches(full_name), subscription_plans(name, sessions_limit)')
                 .contains('training_days', [todayDay]);
 
             if (studentsError) throw studentsError;
@@ -51,6 +51,7 @@ export default function StudentAttendance() {
                 .map(student => {
                     const record = attendance?.find(a => a.student_id === student.id);
                     const todaySchedule = student.training_schedule?.find((s: any) => s.day === todayDay);
+                    const plan = (student as any).subscription_plans;
 
                     let status = 'pending';
                     if (record) {
@@ -64,7 +65,8 @@ export default function StudentAttendance() {
                         scheduledStart: todaySchedule?.start || '',
                         status,
                         checkInTime: record?.check_in_time,
-                        checkOutTime: record?.check_out_time
+                        checkOutTime: record?.check_out_time,
+                        sessionsLimit: plan?.sessions_limit || 0
                     };
                 }).sort((a, b) => {
                     if (a.scheduledStart !== b.scheduledStart) return a.scheduledStart.localeCompare(b.scheduledStart);
@@ -132,12 +134,23 @@ export default function StudentAttendance() {
             } else if (newStatus === 'completed') {
                 if (!existing?.check_in_time) payload.check_in_time = new Date().toISOString(); // Auto check-in if missed
                 payload.check_out_time = new Date().toISOString();
-                // Ensure status is present in DB terms if 'completed' means checked out but present for the day? 
-                // In reception dashboard logic: "else if (record.check_out_time) status = 'completed';"
-                // But DB status remains 'present' usually or we update it?
-                // Dashboard logic: 
-                // if (newStatus === 'completed') { ... payload.check_out_time = new Date() ... }
-                // Let's assume standard upsert
+            }
+
+            // --- Session Counting Logic ---
+            if (newStatus === 'present' && (!existing || existing.status !== 'present')) {
+                // Fetch the student's current sessions_remaining
+                const { data: student } = await supabase
+                    .from('students')
+                    .select('*')
+                    .eq('id', studentId)
+                    .single();
+
+                if (student && student.sessions_remaining !== null && student.sessions_remaining > 0) {
+                    await supabase
+                        .from('students')
+                        .update({ sessions_remaining: student.sessions_remaining - 1 })
+                        .eq('id', studentId);
+                }
             }
 
             const { error } = await supabase
@@ -238,12 +251,21 @@ export default function StudentAttendance() {
 
                                 {/* Bottom: Info & Actions */}
                                 <div className="w-full flex items-center justify-between gap-2 mt-auto pt-3 border-t border-white/5">
-                                    {/* Time Badge */}
-                                    <div className="h-9 px-3 rounded-xl bg-black/20 border border-white/5 flex items-center gap-1.5 backdrop-blur-sm">
-                                        <span className="text-[9px] font-black text-white/30 uppercase tracking-widest">At</span>
-                                        <span className="text-xs font-black text-white/80 leading-none pt-0.5">
-                                            {student.scheduledStart ? format(new Date(`2000-01-01T${student.scheduledStart}`), 'HH:mm') : '--:--'}
-                                        </span>
+                                    {/* Action Info / Sessions */}
+                                    <div className="flex flex-col items-center gap-1">
+                                        {/* Time Badge */}
+                                        <div className="h-9 px-3 rounded-xl bg-black/20 border border-white/5 flex items-center gap-1.5 backdrop-blur-sm">
+                                            <span className="text-[9px] font-black text-white/30 uppercase tracking-widest">At</span>
+                                            <span className="text-xs font-black text-white/80 leading-none pt-0.5">
+                                                {student.scheduledStart ? format(new Date(`2000-01-01T${student.scheduledStart}`), 'HH:mm') : '--:--'}
+                                            </span>
+                                        </div>
+
+                                        {/* Sessions Counter Badge */}
+                                        <div className={`px-2 py-0.5 rounded-md border text-[8px] font-black uppercase tracking-tighter
+                                            ${student.sessions_remaining <= 2 ? 'bg-rose-500/10 border-rose-500/20 text-rose-500' : 'bg-primary/10 border-primary/20 text-primary'}`}>
+                                            {student.sessions_remaining ?? 0} / {student.sessionsLimit ?? 0} Sessions
+                                        </div>
                                     </div>
 
                                     {/* Actions */}

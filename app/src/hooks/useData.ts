@@ -161,7 +161,7 @@ export function useSubscriptionPlans() {
         queryFn: async () => {
             const { data, error } = await supabase
                 .from('subscription_plans')
-                .select('id, name, duration_months, price, sessions_per_week, created_at')
+                .select('*')
                 .order('duration_months', { ascending: true });
             if (error) {
                 console.error('Error fetching subscription plans:', error);
@@ -175,7 +175,7 @@ export function useSubscriptionPlans() {
 
 export function useAddPlan() {
     return useMutation({
-        mutationFn: async (plan: { name: string, duration_months: number, price: number, sessions_per_week: number }) => {
+        mutationFn: async (plan: { name: string, duration_months: number, price: number, sessions_per_week: number, sessions_limit?: number }) => {
             const { data, error } = await supabase
                 .from('subscription_plans')
                 .insert([plan])
@@ -201,14 +201,15 @@ export function useDeletePlan() {
 
 export function useUpdatePlan() {
     return useMutation({
-        mutationFn: async (plan: { id: string, name: string, duration_months: number, price: number, sessions_per_week: number }) => {
+        mutationFn: async (plan: { id: string, name: string, duration_months: number, price: number, sessions_per_week: number, sessions_limit?: number }) => {
             const { data, error } = await supabase
                 .from('subscription_plans')
                 .update({
                     name: plan.name,
                     duration_months: plan.duration_months,
                     price: plan.price,
-                    sessions_per_week: plan.sessions_per_week
+                    sessions_per_week: plan.sessions_per_week,
+                    sessions_limit: plan.sessions_limit
                 })
                 .eq('id', plan.id)
                 .select()

@@ -11,7 +11,8 @@ import toast from 'react-hot-toast';
 export default function StaffAttendance() {
     const { t } = useTranslation();
     const navigate = useNavigate();
-    const { role: contextRole } = useOutletContext<{ role: string }>() || { role: null };
+    const { role: rawRole } = useOutletContext<{ role: string }>() || { role: null };
+    const contextRole = (rawRole || '').toLowerCase().trim();
 
     const [coachesList, setCoachesList] = useState<any[]>([]);
     const [loadingCoaches, setLoadingCoaches] = useState(true);
@@ -47,8 +48,12 @@ export default function StaffAttendance() {
             // 3. Merge data
             const merged = (coaches || [])
                 .filter(coach => {
+                    const coachRole = (coach.role || '').toLowerCase().trim();
+
+                    // Always hide Admin from Staff Attendance list
+                    if (coachRole === 'admin') return false;
+
                     if (contextRole === 'head_coach') {
-                        const coachRole = coach.role?.toLowerCase().trim();
                         return coachRole !== 'reception' && coachRole !== 'receptionist' && coachRole !== 'cleaner';
                     }
                     return true;
@@ -343,7 +348,9 @@ export default function StaffAttendance() {
                                 {/* Action Buttons */}
                                 {(() => {
                                     const isCleaner = coach.role?.toLowerCase().trim() === 'cleaner';
-                                    if (isCleaner) {
+                                    const isAdminOrHeadOrReception = contextRole === 'admin' || contextRole === 'head_coach' || contextRole === 'reception' || contextRole === 'receptionist';
+
+                                    if (isAdminOrHeadOrReception) {
                                         return (
                                             <div className="w-full flex items-center justify-center gap-3 relative z-10 px-1" onClick={(e) => e.stopPropagation()}>
                                                 {coach.status !== 'present' && (
@@ -367,23 +374,8 @@ export default function StaffAttendance() {
                                             </div>
                                         );
                                     } else {
-                                        return coach.status !== 'absent' ? (
-                                            <div className="w-full flex items-center justify-center relative z-10 px-1" onClick={(e) => e.stopPropagation()}>
-                                                <button
-                                                    onClick={() => handleMarkAbsent(coach.id)}
-                                                    className="w-10 h-10 rounded-full bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/20 hover:border-rose-500/40 transition-all flex items-center justify-center group/btn shadow-lg"
-                                                    title="Mark Absent"
-                                                >
-                                                    <XCircle className="w-5 h-5 group-hover/btn:scale-110 transition-transform flex-shrink-0" />
-                                                </button>
-                                            </div>
-                                        ) : (
-                                            <div className="w-full flex items-center justify-center relative z-10 px-1">
-                                                <div className="w-10 h-10 rounded-full bg-white/5 border border-white/5 flex items-center justify-center opacity-50 cursor-not-allowed shadow-inner" title="Marked Absent">
-                                                    <XCircle className="w-5 h-5 text-white/40" />
-                                                </div>
-                                            </div>
-                                        );
+                                        // For other roles, just show status indicators if needed or nothing
+                                        return null;
                                     }
                                 })()}
                             </div>
@@ -562,12 +554,14 @@ function StaffAttendanceHistoryModal({ coachId, onClose }: { coachId: string, on
                                         {record && (
                                             <div className="flex flex-col items-center leading-none mt-1">
                                                 {record.check_in_time && (
-                                                    <span className="text-[9px] font-black text-white">
+                                                    <span className="text-[9px] font-black text-emerald-400/90 flex items-center gap-0.5">
+                                                        <LogIn className="w-2 h-2" />
                                                         {format(new Date(record.check_in_time), 'HH:mm')}
                                                     </span>
                                                 )}
                                                 {record.check_out_time && (
-                                                    <span className="text-[9px] font-black text-white/50">
+                                                    <span className="text-[9px] font-black text-rose-400/90 flex items-center gap-0.5">
+                                                        <LogOut className="w-2 h-2" />
                                                         {format(new Date(record.check_out_time), 'HH:mm')}
                                                     </span>
                                                 )}

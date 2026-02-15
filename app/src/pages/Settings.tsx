@@ -872,11 +872,36 @@ function SubscriptionPlansManager() {
         name: '',
         duration_months: '' as any,
         price: '' as any,
-        sessions_per_week: 3
+        sessions_per_week: 3,
+        sessions_limit: 0
     });
     const [isAdding, setIsAdding] = useState(false);
     const [planToDelete, setPlanToDelete] = useState<string | null>(null);
-    const [editingPlan, setEditingPlan] = useState<{ id: string, name: string, duration_months: number, price: number, sessions_per_week: number } | null>(null);
+    const [editingPlan, setEditingPlan] = useState<{ id: string, name: string, duration_months: number, price: number, sessions_per_week: number, sessions_limit?: number } | null>(null);
+
+    // Auto-calculate sessions_limit for newPlan
+    useEffect(() => {
+        const duration = parseInt(newPlan.duration_months);
+        if (!isNaN(duration) && newPlan.sessions_per_week) {
+            const calculated = duration * newPlan.sessions_per_week * 4;
+            if (newPlan.sessions_limit !== calculated) {
+                setNewPlan(prev => ({
+                    ...prev,
+                    sessions_limit: calculated
+                }));
+            }
+        }
+    }, [newPlan.duration_months, newPlan.sessions_per_week, newPlan.sessions_limit]);
+
+    // Auto-calculate sessions_limit for editingPlan
+    useEffect(() => {
+        if (editingPlan) {
+            const calculated = (editingPlan.duration_months || 0) * (editingPlan.sessions_per_week || 0) * 4;
+            if (editingPlan.sessions_limit !== calculated) {
+                setEditingPlan(prev => prev ? { ...prev, sessions_limit: calculated } : null);
+            }
+        }
+    }, [editingPlan?.duration_months, editingPlan?.sessions_per_week]);
 
     const handleUpdate = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -909,7 +934,7 @@ function SubscriptionPlansManager() {
                 price: price
             });
             toast.success('Plan added successfully');
-            setNewPlan({ name: '', duration_months: '' as any, price: '' as any, sessions_per_week: 3 });
+            setNewPlan({ name: '', duration_months: '' as any, price: '' as any, sessions_per_week: 3, sessions_limit: 0 });
             setIsAdding(false);
             queryClient.invalidateQueries({ queryKey: ['subscription_plans'] });
         } catch (error: any) {
@@ -998,6 +1023,15 @@ function SubscriptionPlansManager() {
                             />
                         </div>
                         <div className="space-y-2">
+                            <label className="text-[10px] font-black uppercase tracking-[0.25em] text-white/40 ml-3 whitespace-nowrap">Total Sessions</label>
+                            <input
+                                type="number"
+                                value={newPlan.sessions_limit}
+                                onChange={e => setNewPlan({ ...newPlan, sessions_limit: parseInt(e.target.value) || 0 })}
+                                className="w-full px-5 py-4.5 rounded-2xl border border-white/10 bg-black/40 text-emerald-400 outline-none focus:border-primary/50 transition-all font-black text-sm hover:bg-black/60 shadow-inner"
+                            />
+                        </div>
+                        <div className="space-y-2">
                             <label className="text-[10px] font-black uppercase tracking-[0.25em] text-white/40 ml-3 whitespace-nowrap">{t('settings.price')}</label>
                             <div className="relative">
                                 <input
@@ -1078,6 +1112,16 @@ function SubscriptionPlansManager() {
                                         </div>
 
                                         <div className="space-y-2">
+                                            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-white/30 ml-1">Total Sessions</label>
+                                            <input
+                                                type="number"
+                                                value={editingPlan?.sessions_limit || 0}
+                                                onChange={e => editingPlan && setEditingPlan({ ...editingPlan, sessions_limit: parseInt(e.target.value) || 0 })}
+                                                className="w-full px-5 py-3.5 rounded-2xl border border-white/5 bg-black/40 text-emerald-400 outline-none focus:border-primary/40 transition-all font-black text-[13px]"
+                                            />
+                                        </div>
+
+                                        <div className="space-y-2">
                                             <label className="text-[10px] font-black uppercase tracking-[0.2em] text-white/30 ml-1">{t('settings.price')} ({currency.code})</label>
                                             <input
                                                 type="number"
@@ -1138,6 +1182,21 @@ function SubscriptionPlansManager() {
                                                     </div>
                                                 </div>
                                                 <div className="w-1.5 h-1.5 rounded-full bg-primary/20 shrink-0"></div>
+                                            </div>
+
+                                            <div className="flex items-center justify-between p-3.5 bg-black/40 rounded-2xl border border-white/5 transition-all">
+                                                <div className="flex items-center gap-2.5">
+                                                    <div className="p-2 bg-emerald-500/10 rounded-lg shrink-0">
+                                                        <Sparkles className="w-3 h-3 text-emerald-500" />
+                                                    </div>
+                                                    <div className="space-y-0.5 min-w-0">
+                                                        <div className="text-[7px] font-black text-white/30 uppercase tracking-[0.2em] leading-none">Total Limit</div>
+                                                        <div className="text-[12px] font-black text-emerald-400 uppercase tracking-tighter leading-none truncate">
+                                                            {plan.sessions_limit ? `${plan.sessions_limit} Sessions` : 'Unlimited'}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div className="w-1.5 h-1.5 rounded-full bg-emerald-500/20 shrink-0"></div>
                                             </div>
                                         </div>
 

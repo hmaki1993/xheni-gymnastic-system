@@ -234,13 +234,13 @@ ${evaluations.behavior || 'Great attitude and focus!'}
                         {/* Month Selector */}
                         <div className="space-y-4">
                             <h3 className="text-[9px] font-black uppercase tracking-[0.4em] text-white/20 ml-1">Select Month</h3>
-                            <div className="relative group">
-                                <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20 group-hover:text-primary transition-colors" />
+                            <div className="flex items-center gap-4 bg-white/[0.03] border border-white/5 rounded-2xl px-6 py-4 focus-within:border-primary/30 transition-all hover:bg-white/[0.05] cursor-pointer group">
+                                <Calendar className="w-4 h-4 text-white/20 group-hover:text-primary transition-colors flex-shrink-0" />
                                 <input
                                     type="month"
                                     value={selectedMonth}
                                     onChange={(e) => setSelectedMonth(e.target.value)}
-                                    className="w-full bg-white/[0.03] border border-white/5 rounded-2xl px-6 py-4 text-sm font-black text-white/80 focus:border-primary/30 outline-none transition-all cursor-pointer hover:bg-white/[0.05] text-center"
+                                    className="flex-1 bg-transparent border-none outline-none text-sm font-black text-white/80 cursor-pointer text-left"
                                 />
                             </div>
                         </div>

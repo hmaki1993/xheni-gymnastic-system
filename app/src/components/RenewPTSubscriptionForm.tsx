@@ -11,9 +11,10 @@ interface RenewPTSubscriptionFormProps {
     subscription: any;
     onClose: () => void;
     onSuccess: () => void;
+    role?: string;
 }
 
-export default function RenewPTSubscriptionForm({ subscription, onClose, onSuccess }: RenewPTSubscriptionFormProps) {
+export default function RenewPTSubscriptionForm({ subscription, onClose, onSuccess, role }: RenewPTSubscriptionFormProps) {
     const { t } = useTranslation();
     const { currency } = useCurrency();
     const queryClient = useQueryClient();
@@ -160,19 +161,21 @@ export default function RenewPTSubscriptionForm({ subscription, onClose, onSucce
 
                     <div className="grid grid-cols-2 gap-6">
                         {/* Renewal Price */}
-                        <div className="space-y-2 group/field">
-                            <label className="text-[9px] font-black uppercase tracking-[0.3em] text-white/20 ml-1 group-focus-within/field:text-accent transition-colors">Renewal Commitment</label>
-                            <div className="relative">
-                                <input
-                                    required
-                                    type="number"
-                                    className="w-full px-5 py-3 bg-white/[0.02] border border-white/5 rounded-2xl focus:border-accent/40 outline-none transition-all text-white text-xs font-bold"
-                                    value={formData.renewal_price}
-                                    onChange={e => setFormData({ ...formData, renewal_price: parseFloat(e.target.value) || 0 })}
-                                />
-                                <div className="absolute right-5 top-1/2 -translate-y-1/2 text-[9px] font-black text-white/20 uppercase tracking-widest">{currency.code}</div>
+                        {role !== 'head_coach' && (
+                            <div className="space-y-2 group/field">
+                                <label className="text-[9px] font-black uppercase tracking-[0.3em] text-white/20 ml-1 group-focus-within/field:text-accent transition-colors">Renewal Commitment</label>
+                                <div className="relative">
+                                    <input
+                                        required
+                                        type="number"
+                                        className="w-full px-5 py-3 bg-white/[0.02] border border-white/5 rounded-2xl focus:border-accent/40 outline-none transition-all text-white text-xs font-bold"
+                                        value={formData.renewal_price}
+                                        onChange={e => setFormData({ ...formData, renewal_price: parseFloat(e.target.value) || 0 })}
+                                    />
+                                    <div className="absolute right-5 top-1/2 -translate-y-1/2 text-[9px] font-black text-white/20 uppercase tracking-widest">{currency.code}</div>
+                                </div>
                             </div>
-                        </div>
+                        )}
 
                         {/* New Expiry Date */}
                         <div className="space-y-2 group/field">

@@ -30,11 +30,14 @@ import PremiumClock from '../components/PremiumClock';
 import { useTheme } from '../context/ThemeContext';
 import toast from 'react-hot-toast';
 
-export default function ReceptionDashboard() {
+export default function ReceptionDashboard({ role }: { role?: string }) {
     const { t, i18n } = useTranslation();
     const { settings, userProfile } = useTheme();
     const navigate = useNavigate();
     const { role: contextRole } = useOutletContext<{ role: string }>() || { role: null };
+
+    // Prioritize passed role prop, fallback to context role
+    const userRole = (role || contextRole || '').toLowerCase().trim();
     const { currency } = useCurrency();
     const [salary, setSalary] = useState(0);
     const [totalEarnings, setTotalEarnings] = useState(0);
@@ -256,7 +259,7 @@ export default function ReceptionDashboard() {
             // 1. Fetch Students scheduled for today
             const { data: students, error: studentsError } = await supabase
                 .from('students')
-                .select('id, full_name, training_schedule, training_days, training_type, coaches(full_name)')
+                .select('*, coaches(full_name)')
                 .contains('training_days', [todayDay]);
 
             if (studentsError) {
@@ -637,6 +640,23 @@ export default function ReceptionDashboard() {
                     target_role: 'admin_head_reception',
                     is_read: false
                 });
+            }
+
+            // --- Session Counting Logic ---
+            if (newStatus === 'present' && (!existing || existing.status !== 'present')) {
+                // Fetch the student's current sessions_remaining
+                const { data: student } = await supabase
+                    .from('students')
+                    .select('*')
+                    .eq('id', studentId)
+                    .single();
+
+                if (student && student.sessions_remaining !== null && student.sessions_remaining > 0) {
+                    await supabase
+                        .from('students')
+                        .update({ sessions_remaining: student.sessions_remaining - 1 })
+                        .eq('id', studentId);
+                }
             }
 
             fetchRecentCheckIns();
@@ -1035,7 +1055,10 @@ export default function ReceptionDashboard() {
                 </button>
 
                 <button
-                    onClick={() => navigate('/schedule')}
+                    onClick={() => {
+                        console.log('Schedule button clicked');
+                        navigate('/app/schedule');
+                    }}
                     className="glass-card p-5 rounded-2xl border border-white/10 hover:border-purple-500/50 group transition-all text-left relative overflow-hidden"
                 >
                     <div className="absolute right-0 top-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
@@ -1062,20 +1085,24 @@ export default function ReceptionDashboard() {
 
                 {/* Student Attendance Widget */}
                 <div
-                    onClick={() => navigate('/attendance/students')}
+                    onClick={() => {
+                        console.log('Gymnast Attendance widget clicked');
+                        navigate('/app/attendance/students');
+                    }}
                     className="glass-card p-6 rounded-2xl border border-white/10 hover:border-primary/50 cursor-pointer group relative overflow-hidden transition-all duration-300"
                 >
-                    <div className="absolute right-0 top-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
-                        <Users className="w-24 h-24 text-primary" />
+                    <div className="absolute -bottom-6 -right-6 p-4 opacity-5 group-hover:opacity-10 transition-all duration-700 rotate-[15deg] group-hover:rotate-0 scale-125">
+                        <Users className="w-32 h-32 text-primary" />
                     </div>
                     <div className="relative z-10 flex flex-col justify-between h-full space-y-4">
                         <div className="flex items-start justify-between">
                             <div className="w-12 h-12 rounded-xl bg-primary/20 text-primary flex items-center justify-center group-hover:scale-110 transition-transform">
                                 <Users className="w-6 h-6" />
                             </div>
-                            <div className="px-3 py-1 bg-white/5 rounded-lg border border-white/5">
-                                <span className="text-xs font-bold text-white/60">
-                                    {todaysClasses.length} Scheduled
+                            <div className="px-3.5 py-1.5 bg-white/[0.03] backdrop-blur-xl rounded-full border border-white/10 shadow-2xl flex items-center gap-2 group-hover:border-primary/30 transition-all duration-500">
+                                <div className="w-1 h-1 rounded-full bg-primary animate-pulse shadow-[0_0_8px_rgba(var(--primary-rgb),0.8)]"></div>
+                                <span className="text-[9px] font-black text-white/60 uppercase tracking-[0.2em] leading-none">
+                                    {todaysClasses.length} SCHED
                                 </span>
                             </div>
                         </div>
@@ -1097,20 +1124,28 @@ export default function ReceptionDashboard() {
 
                 {/* Staff Attendance Widget */}
                 <div
-                    onClick={() => navigate('/attendance/staff')}
+                    onClick={() => {
+                        console.log('Staff Attendance clicked. Role:', userRole);
+                        if (userRole === 'admin' || userRole === 'head_coach' || userRole === 'reception' || userRole === 'receptionist') {
+                            navigate('/app/attendance/staff');
+                        } else {
+                            toast.error(t('common.accessRestricted') || 'Access Restricted: Only Admin, Head Coach, or Reception can manage staff attendance');
+                        }
+                    }}
                     className="glass-card p-6 rounded-2xl border border-white/10 hover:border-emerald-500/50 cursor-pointer group relative overflow-hidden transition-all duration-300"
                 >
-                    <div className="absolute right-0 top-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
-                        <Users className="w-24 h-24 text-emerald-500" />
+                    <div className="absolute -bottom-6 -right-6 p-4 opacity-5 group-hover:opacity-10 transition-all duration-700 rotate-[15deg] group-hover:rotate-0 scale-125">
+                        <Users className="w-32 h-32 text-emerald-500" />
                     </div>
                     <div className="relative z-10 flex flex-col justify-between h-full space-y-4">
                         <div className="flex items-start justify-between">
                             <div className="w-12 h-12 rounded-xl bg-emerald-500/20 text-emerald-500 flex items-center justify-center group-hover:scale-110 transition-transform">
                                 <Users className="w-6 h-6" />
                             </div>
-                            <div className="px-3 py-1 bg-white/5 rounded-lg border border-white/5">
-                                <span className="text-xs font-bold text-white/60">
-                                    {filteredCoaches.length} Staff
+                            <div className="px-3.5 py-1.5 bg-white/[0.03] backdrop-blur-xl rounded-full border border-white/10 shadow-2xl flex items-center gap-2 group-hover:border-emerald-500/30 transition-all duration-500">
+                                <div className="w-1 h-1 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.8)]"></div>
+                                <span className="text-[9px] font-black text-white/60 uppercase tracking-[0.2em] leading-none">
+                                    {filteredCoaches.length} STAFF
                                 </span>
                             </div>
                         </div>
@@ -1132,20 +1167,24 @@ export default function ReceptionDashboard() {
 
                 {/* PT Attendance Widget */}
                 <div
-                    onClick={() => navigate('/attendance/pt')}
+                    onClick={() => {
+                        console.log('PT Attendance widget clicked');
+                        navigate('/app/attendance/pt');
+                    }}
                     className="glass-card p-6 rounded-2xl border border-white/10 hover:border-accent/50 cursor-pointer group relative overflow-hidden transition-all duration-300"
                 >
-                    <div className="absolute right-0 top-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
-                        <Dumbbell className="w-24 h-24 text-accent" />
+                    <div className="absolute -bottom-6 -right-6 p-4 opacity-5 group-hover:opacity-10 transition-all duration-700 rotate-[15deg] group-hover:rotate-0 scale-125">
+                        <Dumbbell className="w-32 h-32 text-accent" />
                     </div>
                     <div className="relative z-10 flex flex-col justify-between h-full space-y-4">
                         <div className="flex items-start justify-between">
                             <div className="w-12 h-12 rounded-xl bg-accent/20 text-accent flex items-center justify-center group-hover:scale-110 transition-transform">
                                 <Dumbbell className="w-6 h-6" />
                             </div>
-                            <div className="px-3 py-1 bg-white/5 rounded-lg border border-white/5">
-                                <span className="text-xs font-bold text-white/60">
-                                    {filteredPT.length} Subs
+                            <div className="px-3.5 py-1.5 bg-white/[0.03] backdrop-blur-xl rounded-full border border-white/10 shadow-2xl flex items-center gap-2 group-hover:border-accent/30 transition-all duration-500">
+                                <div className="w-1 h-1 rounded-full bg-accent animate-pulse shadow-[0_0_8px_rgba(var(--accent-rgb),0.8)]"></div>
+                                <span className="text-[9px] font-black text-white/60 uppercase tracking-[0.2em] leading-none">
+                                    {filteredPT.length} SUBS
                                 </span>
                             </div>
                         </div>
@@ -1180,6 +1219,7 @@ export default function ReceptionDashboard() {
 
             {showAddPT && (
                 <AddPTSubscriptionForm
+                    role={userRole}
                     onClose={() => setShowAddPT(false)}
                     onSuccess={() => {
                         setShowAddPT(false);

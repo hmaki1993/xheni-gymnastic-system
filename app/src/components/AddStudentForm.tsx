@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabase';
 import { X, Save, UserPlus, Upload, ChevronDown } from 'lucide-react';
 import { parseISO, addMonths, format } from 'date-fns';
 import toast from 'react-hot-toast';
+import { sendToN8n } from '../services/n8nService';
 
 const COUNTRIES = [
     { code: 'KW', dial_code: '+965', flag: '🇰🇼', name: 'Kuwait' },
@@ -177,6 +178,7 @@ export default function AddStudentForm({ onClose, onSuccess, initialData }: AddS
                 training_schedule: formData.training_schedule,
                 coach_id: formData.coach_id && formData.coach_id.trim() !== '' ? formData.coach_id : null,
                 subscription_plan_id: formData.subscription_type && formData.subscription_type.trim() !== '' ? formData.subscription_type : null,
+                sessions_remaining: plans.find(p => p.id === formData.subscription_type)?.sessions_limit || null,
                 notes: formData.notes,
                 training_group_id: trainingGroupId || null // Assign to Training Group
             };
@@ -306,6 +308,26 @@ export default function AddStudentForm({ onClose, onSuccess, initialData }: AddS
                     color: '#fff',
                 },
             });
+
+            // 6. Trigger n8n Automation for new registrations
+            if (!initialData && studentId) {
+                try {
+                    const selectedPlan = plans.find(p => p.id === formData.subscription_type);
+                    const fullPhone = `${formData.country_code_parent} ${formData.parent_contact}`;
+                    sendToN8n('new_student_registration', {
+                        student_id: studentId,
+                        student_name: formData.full_name,
+                        parent_phone: fullPhone,
+                        email: formData.email,
+                        subscription_plan: selectedPlan?.name || 'N/A',
+                        registration_date: new Date().toISOString(),
+                        source: 'admin_dashboard'
+                    });
+                } catch (n8nErr) {
+                    console.error('Failed to trigger n8n automation:', n8nErr);
+                }
+            }
+
             onSuccess();
             onClose();
         } catch (error) {
@@ -583,6 +605,11 @@ export default function AddStudentForm({ onClose, onSuccess, initialData }: AddS
                         <div className="space-y-3 group/field">
                             <div className="flex items-center justify-between ml-1">
                                 <label className="text-[9px] font-black uppercase tracking-[0.3em] text-white/20 group-focus-within/field:text-primary transition-colors">Plan Type</label>
+                                {plans.find(p => p.id === formData.subscription_type)?.sessions_limit && (
+                                    <span className="text-[9px] font-black text-emerald-400 uppercase tracking-widest bg-emerald-400/10 px-2 py-0.5 rounded-lg border border-emerald-400/20 mr-2">
+                                        {plans.find(p => p.id === formData.subscription_type)?.sessions_limit} Sessions
+                                    </span>
+                                )}
                                 {plans.find(p => p.id === formData.subscription_type)?.price > 0 && (
                                     <span className="text-[9px] font-black text-primary uppercase tracking-widest bg-primary/10 px-2 py-0.5 rounded-lg border border-primary/20">
                                         {plans.find(p => p.id === formData.subscription_type)?.price} {currency.code}
@@ -595,6 +622,7 @@ export default function AddStudentForm({ onClose, onSuccess, initialData }: AddS
                                     value={formData.subscription_type}
                                     onChange={e => setFormData({ ...formData, subscription_type: e.target.value })}
                                 >
+                                    <option value="" className="bg-[#0a0a0f]">Select Plan</option>
                                     {plans.map(plan => (
                                         <option key={plan.id} value={plan.id} className="bg-[#0a0a0f]">{plan.name}</option>
                                     ))}

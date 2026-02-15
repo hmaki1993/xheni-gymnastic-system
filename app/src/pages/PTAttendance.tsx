@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, isToday, subMonths, addMonths } from 'date-fns';
-import { Dumbbell, Search, ChevronLeft, Clock, CheckCircle, Calendar, ChevronRight, X } from 'lucide-react';
+import { Dumbbell, Search, ChevronLeft, Clock, CheckCircle, Calendar, ChevronRight, X, User } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import toast from 'react-hot-toast';
 
@@ -59,7 +59,7 @@ export default function PTAttendance() {
                     status: sessionRecord ? 'present' : 'pending',
                     sessionId: sessionRecord?.id,
                     checkInTime: sessionRecord?.created_at,
-                    coachName: sub.coaches?.full_name,
+                    coachName: (Array.isArray(sub.coaches) ? sub.coaches[0]?.full_name : sub.coaches?.full_name),
                     completedSessions,
                     totalSessions
                 };
@@ -178,10 +178,9 @@ export default function PTAttendance() {
                                 {item.displayName}
                             </h3>
 
-                            {/* Coach */}
-                            <p className="text-[10px] text-white/40 font-bold uppercase tracking-wider mb-4 flex items-center gap-1">
-                                <Clock className="w-3 h-3" />
-                                {item.coachName || 'No Coach'}
+                            <p className="text-[10px] text-white/40 font-black uppercase tracking-[0.2em] mb-4 flex items-center gap-1.5 bg-white/5 px-2.5 py-1 rounded-lg">
+                                <User className="w-3 h-3 text-primary" />
+                                <span>COACH: {item.coachName || 'No Coach'}</span>
                             </p>
 
                             {/* Stats */}

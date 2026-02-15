@@ -11,6 +11,7 @@ interface AddPTSubscriptionFormProps {
     onClose: () => void;
     onSuccess: () => void;
     editData?: any;
+    role?: string;
 }
 
 interface Coach {
@@ -26,7 +27,7 @@ interface Student {
     full_name: string;
 }
 
-export default function AddPTSubscriptionForm({ onClose, onSuccess, editData }: AddPTSubscriptionFormProps) {
+export default function AddPTSubscriptionForm({ onClose, onSuccess, editData, role }: AddPTSubscriptionFormProps) {
     const { t } = useTranslation();
     const { currency } = useCurrency();
     const queryClient = useQueryClient();
@@ -208,10 +209,10 @@ export default function AddPTSubscriptionForm({ onClose, onSuccess, editData }: 
                     <div className="flex items-start justify-between">
                         <div className="flex-1">
                             <h2 className="text-xl font-black text-white tracking-widest uppercase mb-1 drop-shadow-lg leading-tight">
-                                {editData ? 'Modify Subscription' : 'New PT Subscription'}
+                                {t('pt.title')}
                             </h2>
                             <p className="text-[9px] font-black text-white/40 uppercase tracking-widest">
-                                {editData ? 'Update Training Lifecycle' : 'Professional Training Registration'}
+                                {t('pt.subtitle')}
                             </p>
                         </div>
                         <button
@@ -223,13 +224,13 @@ export default function AddPTSubscriptionForm({ onClose, onSuccess, editData }: 
                     </div>
                 </div>
 
-                {/* Scrollable Form Body */}
-                <form onSubmit={handleSubmit} className="relative z-10 px-8 py-6 overflow-y-auto custom-scrollbar flex-1 space-y-8">
+                {/* Compact Form Body */}
+                <form onSubmit={handleSubmit} className="relative z-10 px-8 py-4 space-y-4 flex-1">
 
                     {/* Mode Toggle & Student Selection */}
                     <div className="space-y-4">
                         <div className="flex items-center justify-between px-1">
-                            <label className="text-[9px] font-black uppercase tracking-[0.3em] text-white/20">Client Identification</label>
+                            <label className="text-[9px] font-black uppercase tracking-[0.3em] text-white/20">{t('pt.clientType')}</label>
                             <button
                                 type="button"
                                 onClick={() => {
@@ -238,34 +239,33 @@ export default function AddPTSubscriptionForm({ onClose, onSuccess, editData }: 
                                 }}
                                 className="px-4 py-1.5 rounded-full bg-white/5 border border-white/5 text-[8px] font-black uppercase tracking-widest text-primary hover:bg-primary/10 transition-all"
                             >
-                                {isGuest ? 'Internal Member' : 'External Guest'}
+                                {isGuest ? t('common.guest') : t('pt.academyStudent')}
                             </button>
                         </div>
 
                         <div className="animate-in fade-in slide-in-from-top-2 duration-500">
                             {isGuest ? (
                                 <div className="space-y-2 group/field">
-                                    <label className="text-[9px] font-black uppercase tracking-[0.3em] text-white/20 ml-1 group-focus-within/field:text-primary transition-colors">Guest Designation</label>
+                                    <label className="text-[9px] font-black uppercase tracking-[0.3em] text-white/20 ml-1 group-focus-within/field:text-primary transition-colors">{t('pt.athleteName')}</label>
                                     <input
                                         type="text"
                                         value={formData.student_name}
                                         onChange={(e) => setFormData({ ...formData, student_name: e.target.value })}
-                                        placeholder="Full Legal Name"
-                                        className="w-full px-5 py-3 bg-white/[0.02] border border-white/5 rounded-2xl focus:border-primary/40 outline-none transition-all text-white placeholder:text-white/10 text-xs font-bold"
+                                        className="w-full px-5 py-2.5 bg-white/[0.02] border border-white/5 rounded-2xl focus:border-primary/40 outline-none transition-all text-white placeholder:text-white/10 text-xs font-bold"
                                         required
                                     />
                                 </div>
                             ) : (
                                 <div className="space-y-2 group/field">
-                                    <label className="text-[9px] font-black uppercase tracking-[0.3em] text-white/20 ml-1 group-focus-within/field:text-primary transition-colors">Academy Gymnast</label>
+                                    <label className="text-[9px] font-black uppercase tracking-[0.3em] text-white/20 ml-1 group-focus-within/field:text-primary transition-colors">{t('pt.selectAthlete')}</label>
                                     <div className="relative">
                                         <select
                                             value={formData.student_id}
                                             onChange={(e) => setFormData({ ...formData, student_id: e.target.value })}
-                                            className="w-full px-5 py-3 bg-white/[0.02] border border-white/5 rounded-2xl focus:border-primary/40 outline-none transition-all text-white appearance-none cursor-pointer pr-12 text-xs font-bold"
+                                            className="w-full px-5 py-2.5 bg-white/[0.02] border border-white/5 rounded-2xl focus:border-primary/40 outline-none transition-all text-white appearance-none cursor-pointer pr-12 text-xs font-bold"
                                             required
                                         >
-                                            <option value="" disabled className="bg-[#0a0a0f]">Select Athlete Profile</option>
+                                            <option value="" disabled className="bg-[#0a0a0f]">{t('pt.chooseAthlete')}</option>
                                             {students.map(student => (
                                                 <option key={student.id} value={student.id} className="bg-[#0a0a0f]">{student.full_name}</option>
                                             ))}
@@ -277,30 +277,29 @@ export default function AddPTSubscriptionForm({ onClose, onSuccess, editData }: 
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-6">
+                    <div className="grid grid-cols-2 gap-4">
                         {/* Phone */}
                         <div className="space-y-2 group/field">
-                            <label className="text-[9px] font-black uppercase tracking-[0.3em] text-white/20 ml-1 group-focus-within/field:text-primary transition-colors">Secure Contact</label>
+                            <label className="text-[9px] font-black uppercase tracking-[0.3em] text-white/20 ml-1 group-focus-within/field:text-primary transition-colors">{t('pt.personNumber')}</label>
                             <input
                                 type="tel"
                                 value={formData.student_phone}
                                 onChange={(e) => setFormData({ ...formData, student_phone: e.target.value })}
-                                className="w-full px-5 py-3 bg-white/[0.02] border border-white/5 rounded-2xl focus:border-primary/40 outline-none transition-all text-white text-xs font-bold"
-                                placeholder="+XXX-XXXX-XXXX"
+                                className="w-full px-5 py-2.5 bg-white/[0.02] border border-white/5 rounded-2xl focus:border-primary/40 outline-none transition-all text-white text-xs font-bold"
                             />
                         </div>
 
                         {/* Coach Selection */}
                         <div className="space-y-2 group/field">
-                            <label className="text-[9px] font-black uppercase tracking-[0.3em] text-white/20 ml-1 group-focus-within/field:text-primary transition-colors">Assign Specialist</label>
+                            <label className="text-[9px] font-black uppercase tracking-[0.3em] text-white/20 ml-1 group-focus-within/field:text-primary transition-colors">{t('pt.selectCoach')}</label>
                             <div className="relative">
                                 <select
                                     value={formData.coach_id}
                                     onChange={(e) => setFormData({ ...formData, coach_id: e.target.value })}
-                                    className="w-full px-5 py-3 bg-white/[0.02] border border-white/5 rounded-2xl focus:border-primary/40 outline-none transition-all text-white appearance-none cursor-pointer pr-12 text-xs font-bold"
+                                    className="w-full px-5 py-2.5 bg-white/[0.02] border border-white/5 rounded-2xl focus:border-primary/40 outline-none transition-all text-white appearance-none cursor-pointer pr-12 text-xs font-bold"
                                     required
                                 >
-                                    <option value="" disabled className="bg-[#0a0a0f]">Lead Coach</option>
+                                    <option value="" disabled className="bg-[#0a0a0f]">{t('pt.chooseCoach')}</option>
                                     {coaches.map(coach => (
                                         <option key={coach.id} value={coach.id} className="bg-[#0a0a0f]">{coach.full_name}</option>
                                     ))}
@@ -311,52 +310,54 @@ export default function AddPTSubscriptionForm({ onClose, onSuccess, editData }: 
 
                         {/* Sessions Count */}
                         <div className="space-y-2 group/field">
-                            <label className="text-[9px] font-black uppercase tracking-[0.3em] text-white/20 ml-1 group-focus-within/field:text-primary transition-colors">Training Units</label>
+                            <label className="text-[9px] font-black uppercase tracking-[0.3em] text-white/20 ml-1 group-focus-within/field:text-primary transition-colors">{t('pt.sessionCount')}</label>
                             <input
                                 type="number"
                                 min="1"
                                 value={formData.sessions_total}
                                 onChange={(e) => setFormData({ ...formData, sessions_total: e.target.value })}
-                                className="w-full px-5 py-3 bg-white/[0.02] border border-white/5 rounded-2xl focus:border-primary/40 outline-none transition-all text-white text-xs font-bold"
+                                className="w-full px-5 py-2.5 bg-white/[0.02] border border-white/5 rounded-2xl focus:border-primary/40 outline-none transition-all text-white text-xs font-bold"
                                 required
                             />
                         </div>
 
                         {/* Start Date */}
                         <div className="space-y-2 group/field">
-                            <label className="text-[9px] font-black uppercase tracking-[0.3em] text-white/20 ml-1 group-focus-within/field:text-primary transition-colors">Activation Date</label>
+                            <label className="text-[9px] font-black uppercase tracking-[0.3em] text-white/20 ml-1 group-focus-within/field:text-primary transition-colors">{t('common.startDate')}</label>
                             <input
                                 type="date"
                                 value={formData.start_date}
                                 onChange={(e) => setFormData({ ...formData, start_date: e.target.value })}
-                                className="w-full px-5 py-3 bg-white/[0.02] border border-white/5 rounded-2xl focus:border-primary/40 outline-none transition-all text-white [color-scheme:dark] text-[10px] font-bold tracking-widest text-center"
+                                className="w-full px-5 py-2.5 bg-white/[0.02] border border-white/5 rounded-2xl focus:border-primary/40 outline-none transition-all text-white [color-scheme:dark] text-[10px] font-bold tracking-widest text-center"
                                 required
                             />
                         </div>
                     </div>
 
-                    {/* Investment / Price */}
-                    <div className="space-y-3 group/field">
-                        <label className="text-[9px] font-black uppercase tracking-[0.3em] text-white/20 ml-1 group-focus-within/field:text-primary transition-colors">Financial Investment</label>
-                        <div className="relative p-6 bg-white/[0.01] border border-white/5 rounded-[2rem] flex items-center justify-between group-focus-within/field:bg-white/[0.03] transition-all">
-                            <input
-                                type="number"
-                                min="0"
-                                value={formData.price}
-                                onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                                className="bg-transparent border-none outline-none text-4xl font-black text-white w-full tracking-tighter"
-                                required
-                            />
-                            <div className="flex flex-col items-end">
-                                <span className="text-[10px] font-black text-white/20 uppercase tracking-widest">{currency.code}</span>
-                                {selectedCoach && (
-                                    <span className="text-[8px] font-black text-primary/40 uppercase tracking-widest whitespace-nowrap mt-1">
-                                        Rate: {selectedCoach.pt_rate} / Session
-                                    </span>
-                                )}
+                    {/* Investment / Price - Compact & No Overlap */}
+                    {role !== 'head_coach' && (
+                        <div className="space-y-2 group/field">
+                            <label className="text-[9px] font-black uppercase tracking-[0.3em] text-white/20 ml-1 group-focus-within/field:text-primary transition-colors">{t('pt.totalPrice')}</label>
+                            <div className="relative p-3 bg-white/[0.01] border border-white/5 rounded-2xl flex items-center justify-between group-focus-within/field:bg-white/[0.03] transition-all">
+                                <input
+                                    type="number"
+                                    min="0"
+                                    value={formData.price}
+                                    onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+                                    className="bg-transparent border-none outline-none text-2xl font-black text-white flex-1 min-w-0 tracking-tighter focus:ring-0"
+                                    required
+                                />
+                                <div className="flex flex-col items-end flex-shrink-0 ml-4">
+                                    <span className="text-[9px] font-black text-white/20 uppercase tracking-widest">{currency.code}</span>
+                                    {selectedCoach && (
+                                        <span className="text-[7px] font-black text-primary/40 uppercase tracking-widest whitespace-nowrap">
+                                            {selectedCoach.pt_rate} / Sess
+                                        </span>
+                                    )}
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    )}
                 </form>
 
                 {/* Footer Section - Single Premium Button */}
@@ -377,7 +378,7 @@ export default function AddPTSubscriptionForm({ onClose, onSuccess, editData }: 
                             <span className="font-black uppercase tracking-[0.3em] text-[10px] animate-pulse">Processing...</span>
                         ) : (
                             <span className="font-black uppercase tracking-[0.3em] text-[10px] group-hover:tracking-[0.5em] transition-all duration-500">
-                                {editData ? 'Commit Updates' : 'Authorize Subscription'}
+                                {editData ? t('pt.saveChanges') : t('pt.saveSubscription')}
                             </span>
                         )}
                     </button>

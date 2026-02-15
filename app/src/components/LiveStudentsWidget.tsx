@@ -152,28 +152,16 @@ export default function LiveStudentsWidget({ coachId }: { coachId?: string | nul
                         <h2 className="text-2xl font-black text-white uppercase tracking-tighter flex items-center gap-2 leading-none">
                             {t('dashboard.liveFloor', 'Live Floor')}
                             <span className="flex h-2 w-2 relative shrink-0">
-                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75"></span>
-                                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                                <span className={`animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75 ${activeGroups.length === 0 ? 'hidden' : ''}`}></span>
+                                <span className={`relative inline-flex rounded-full h-2 w-2 ${activeGroups.length === 0 ? 'bg-white/20' : 'bg-emerald-500'}`}></span>
                             </span>
                         </h2>
                         <p className="text-[11px] font-black text-white/40 uppercase tracking-[0.2em] mt-1.5 truncate">
-                            {attendance.length} {t('dashboard.gymnastsOnFloor', 'Gymnasts')}
+                            {presentInActiveGroupsCount} {t('dashboard.gymnastsOnFloor', 'Gymnasts')}
                         </p>
                     </div>
                 </div>
 
-                <div className="relative group/clock flex items-center gap-3 px-4 py-2 bg-black/40 backdrop-blur-md rounded-2xl border border-white/10 shadow-[0_10px_25px_rgba(0,0,0,0.4)] hover:border-emerald-500/30 transition-all duration-500">
-                    <div className="flex flex-col items-end">
-                        <span className="text-[13px] font-black text-white tracking-widest leading-none">
-                            {format(currentTime, 'HH:mm')}
-                        </span>
-                        <span className="text-[8px] font-bold text-emerald-400/60 uppercase tracking-[0.2em] mt-1">
-                            {format(currentTime, 'aa')}
-                        </span>
-                    </div>
-                    <div className="w-[1px] h-6 bg-white/10" />
-                    <Clock className="w-4 h-4 text-emerald-500 group-hover/clock:animate-spin-slow transition-transform" />
-                </div>
             </div>
 
             {/* List of Active Groups */}
@@ -183,7 +171,7 @@ export default function LiveStudentsWidget({ coachId }: { coachId?: string | nul
                         <div className="w-10 h-10 border-4 border-emerald-500/20 border-t-emerald-500 rounded-full animate-spin"></div>
                         <span className="text-[10px] font-black uppercase tracking-widest text-white/40">Syncing Live Floor...</span>
                     </div>
-                ) : activeGroups.length === 0 && otherCheckedIn.length === 0 ? (
+                ) : activeGroups.length === 0 ? (
                     <div className="flex flex-col items-center justify-center h-full text-center py-20 grayscale opacity-40">
                         <div className="w-20 h-20 bg-white/5 rounded-3xl flex items-center justify-center mb-6 border border-white/10">
                             <Users className="w-10 h-10 text-white" />

@@ -27,6 +27,8 @@ interface Student {
     subscription_expiry: string;
     is_active: boolean;
     created_at: string;
+    coach_id?: string | null;
+    subscription_plan_id?: string | null;
     coaches?: {
         full_name: string;
     };
@@ -37,6 +39,7 @@ interface Student {
     training_groups?: {
         name: string;
     };
+    sessions_remaining?: number | null;
 }
 
 const StudentRow = memo(({
@@ -53,7 +56,8 @@ const StudentRow = memo(({
     subscriptionStatus,
     onViewProfile,
     role,
-    onGenerateReport
+    onGenerateReport,
+    sessionsRemaining
 }: any) => {
     return (
         <tr className={`group border-b border-white/[0.02] last:border-0 transition-all duration-300 ${isSelected ? 'bg-primary/10' : 'hover:bg-gradient-to-r hover:from-white/5 hover:to-transparent'}`}>
@@ -132,16 +136,26 @@ const StudentRow = memo(({
             <td className="px-5 py-8">
                 <div className="flex flex-col gap-2">
                     <span className="text-white font-black text-sm tracking-wide">
-                        {student.subscription_plans?.name || <span className="text-white/20 italic font-medium">{t('common.unknown')}</span>}
+                        {student.subscription_plans?.name || <span className="text-white/20 italic font-medium">No Plan Assigned</span>}
                     </span>
-                    {student.subscription_plans?.price !== undefined && (
-                        <div className="flex items-center gap-2 self-start px-3 py-1 bg-amber-500/10 border border-amber-500/20 rounded-lg shadow-[0_0_10px_rgba(245,158,11,0.1)] group-hover:bg-amber-500/20 transition-all duration-300">
-                            <div className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></div>
-                            <span className="text-[10px] font-black text-amber-400 uppercase tracking-wider">
-                                {student.subscription_plans.price} {currency.code}
-                            </span>
-                        </div>
-                    )}
+                    <div className="flex flex-wrap gap-2">
+                        {student.sessions_remaining !== null && (
+                            <div className="flex items-center gap-2 self-start px-2 py-0.5 bg-emerald-500/10 border border-emerald-500/20 rounded-lg shadow-[0_0_10px_rgba(16,185,129,0.1)] group-hover:bg-emerald-500/20 transition-all duration-300">
+                                <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></div>
+                                <span className="text-[10px] font-black text-emerald-400 uppercase tracking-wider">
+                                    {student.sessions_remaining} Sessions Left
+                                </span>
+                            </div>
+                        )}
+                        {student.subscription_plans?.price !== undefined && role !== 'head_coach' && (
+                            <div className="flex items-center gap-2 self-start px-3 py-1 bg-amber-500/10 border border-amber-500/20 rounded-lg shadow-[0_0_10px_rgba(245,158,11,0.1)] group-hover:bg-amber-500/20 transition-all duration-300">
+                                <div className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></div>
+                                <span className="text-[10px] font-black text-amber-400 uppercase tracking-wider">
+                                    {student.subscription_plans.price} {currency.code}
+                                </span>
+                            </div>
+                        )}
+                    </div>
                 </div>
             </td>
             <td className="px-5 py-8">
@@ -412,7 +426,8 @@ export default function Students() {
         }
     };
 
-    const getSubscriptionStatus = (expiryDate: string | null) => {
+    const getSubscriptionStatus = (expiryDate: string | null, sessionsRemaining: number | null = null) => {
+        if (sessionsRemaining === 0) return { label: t('students.outOfSessions') || 'OUT OF SESSIONS', color: 'bg-red-500/10 border-red-500/20 text-red-500' };
         if (!expiryDate) return { label: t('common.unknown'), color: 'bg-white/5 text-white/30 border-white/10' };
         const date = new Date(expiryDate);
         if (isNaN(date.getTime())) return { label: t('common.invalid'), color: 'bg-red-500/10 text-red-500 border-red-500/20' };
@@ -650,13 +665,15 @@ export default function Students() {
                                         </div>
 
                                         <div className="mt-4 md:mt-6 pt-3 md:pt-5 border-t border-white/5 flex items-end justify-between gap-2 md:gap-3">
-                                            <div className="space-y-0.5">
-                                                <p className="text-[7px] md:text-[8px] font-black text-white/20 uppercase tracking-[0.12em] md:tracking-[0.18em]">{t('common.price')}</p>
-                                                <div className="flex items-baseline gap-0.5 md:gap-1">
-                                                    <span className="text-base md:text-xl font-black text-white tracking-tighter leading-none">{subscription.total_price?.toLocaleString()}</span>
-                                                    <span className="text-[8px] md:text-[9px] font-bold text-white/30 uppercase tracking-wider md:tracking-widest">{currency.code}</span>
+                                            {role !== 'head_coach' && (
+                                                <div className="space-y-0.5">
+                                                    <p className="text-[7px] md:text-[8px] font-black text-white/20 uppercase tracking-[0.12em] md:tracking-[0.18em]">{t('common.price')}</p>
+                                                    <div className="flex items-baseline gap-0.5 md:gap-1">
+                                                        <span className="text-base md:text-xl font-black text-white tracking-tighter leading-none">{subscription.total_price?.toLocaleString()}</span>
+                                                        <span className="text-[8px] md:text-[9px] font-bold text-white/30 uppercase tracking-wider md:tracking-widest">{currency.code}</span>
+                                                    </div>
                                                 </div>
-                                            </div>
+                                            )}
 
                                             <div className="flex-1 max-w-[110px] md:max-w-[130px]">
                                                 {(() => {
@@ -928,13 +945,14 @@ export default function Students() {
                                         onToggleStatus={toggleStudentStatus}
                                         currency={currency}
                                         t={t}
-                                        subscriptionStatus={getSubscriptionStatus(student.subscription_expiry)}
+                                        subscriptionStatus={getSubscriptionStatus(student.subscription_expiry, student.sessions_remaining)}
                                         onViewProfile={setViewingProfileStudent}
                                         role={role}
                                         onGenerateReport={(s: any) => {
                                             setStudentForReport(s);
                                             setShowReportModal(true);
                                         }}
+                                        sessionsRemaining={student.sessions_remaining}
                                     />
                                 ))
                             )}
@@ -965,6 +983,7 @@ export default function Students() {
                 (showPTModal || ptToEdit) && (
                     <AddPTSubscriptionForm
                         editData={ptToEdit}
+                        role={role}
                         onClose={() => {
                             setShowPTModal(false);
                             setPtToEdit(null);
@@ -982,6 +1001,7 @@ export default function Students() {
                 showPTRenewModal && ptToRenew && (
                     <RenewPTSubscriptionForm
                         subscription={ptToRenew}
+                        role={role}
                         onClose={() => {
                             setShowPTRenewModal(false);
                             setPtToRenew(null);

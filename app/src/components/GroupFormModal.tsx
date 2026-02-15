@@ -47,22 +47,32 @@ export default function GroupFormModal({ initialData, onClose, onSuccess }: Grou
                 const parts = initialData.schedule_key.split('|');
                 if (parts.length > 0) {
                     const firstPart = parts[0].split(':');
-                    const start = firstPart[1];
-                    const end = firstPart[2];
+                    // Format is day:startH:startM:endH:endM
+                    if (firstPart.length >= 5) {
+                        const start = `${firstPart[1]}:${firstPart[2]}`; // HH:mm
+                        const end = `${firstPart[3]}:${firstPart[4]}`;   // HH:mm
 
-                    if (start && end) {
-                        try {
-                            const [startH, startM] = start.split(':').map(Number);
-                            const [endH, endM] = end.split(':').map(Number);
-                            const startTotal = startH * 60 + startM;
-                            const endTotal = endH * 60 + endM;
-                            duration = endTotal - startTotal;
-                        } catch (e) {
-                            console.error('Error parsing time for duration:', e);
+                        if (start && end) {
+                            try {
+                                const [startH, startM] = start.split(':').map(Number);
+                                const [endH, endM] = end.split(':').map(Number);
+                                const startTotal = startH * 60 + startM;
+                                const endTotal = endH * 60 + endM;
+                                duration = endTotal - startTotal;
+                            } catch (e) {
+                                console.error('Error parsing time for duration:', e);
+                            }
+                        }
+                        startTime = start;
+                    } else if (firstPart.length === 3) {
+                        // Fallback for potentially old format or simple day:time (unlikely but safe)
+                        const start = firstPart[1];
+                        // Try to see if it parses
+                        if (start.includes(':')) {
+                            startTime = start;
                         }
                     }
 
-                    startTime = start || '16:00';
                     days = parts.map((p: string) => p.split(':')[0]);
                 }
             }

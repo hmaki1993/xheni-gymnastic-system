@@ -15,7 +15,7 @@ Make sure your mobile is on the **same WiFi network** as your PC.
 Open your mobile browser and go to:
 
 ```
-http://192.168.0.104:5173/
+http://192.168.0.104:3000/
 ```
 
 ### Step 3: Test the App
@@ -56,7 +56,7 @@ http://192.168.0.104:5173/
 
 ## ✅ Success Checklist:
 - [ ] Mobile connected to same WiFi as PC
-- [ ] Opened `http://192.168.0.104:5173/` on mobile
+- [ ] Opened `http://192.168.0.104:3000/` on mobile
 - [ ] Can see Login page
 - [ ] Created account via Register
 - [ ] Successfully logged in

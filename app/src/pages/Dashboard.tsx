@@ -48,7 +48,7 @@ export default function Dashboard() {
 
     // Show Reception Dashboard
     if (role === 'reception' || role === 'receptionist') {
-        return <ReceptionDashboard />;
+        return <ReceptionDashboard role={role} />;
     }
 
     // If Admin or any other role, continue to show the main admin dashboard stats below
