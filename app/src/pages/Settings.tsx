@@ -650,17 +650,25 @@ export default function Settings() {
                                                 className="w-full px-4 py-3 rounded-xl border border-white/10 bg-white/5 text-white outline-none focus:border-primary/50 transition-all font-bold text-sm"
                                             />
                                         </div>
+                                        {/* Hiding Logo section for now as per user request */}
+                                        {/* 
                                         <div className="space-y-1.5">
-                                            <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">Logo URL</label>
-                                            <div className="flex gap-2">
-                                                <input
-                                                    type="text"
-                                                    value={draftSettings.logo_url || ''}
-                                                    onChange={e => setDraftSettings({ ...draftSettings, logo_url: e.target.value })}
-                                                    className="flex-1 px-4 py-3 rounded-xl border border-white/10 bg-white/5 text-white outline-none focus:border-primary/50 transition-all font-bold text-sm"
-                                                    placeholder="https://..."
-                                                />
-                                                <label className="cursor-pointer bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl px-4 flex items-center justify-center transition-all group">
+                                            <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">Logo</label>
+                                            <div className="flex items-center gap-4 p-4 bg-white/5 rounded-xl border border-white/10">
+                                                {draftSettings.logo_url ? (
+                                                    <div className="w-12 h-12 rounded-lg overflow-hidden border border-white/10 bg-black/20">
+                                                        <img src={draftSettings.logo_url} alt="Logo" className="w-full h-full object-contain" />
+                                                    </div>
+                                                ) : (
+                                                    <div className="w-12 h-12 rounded-lg bg-white/5 flex items-center justify-center border border-white/10">
+                                                        <Camera className="w-6 h-6 text-white/20" />
+                                                    </div>
+                                                )}
+                                                <div className="flex-1">
+                                                    <p className="text-[10px] font-bold text-white/60 mb-1">Academy Brand Identity</p>
+                                                    <p className="text-[8px] text-white/30 uppercase tracking-widest">SVG, PNG or JPG (Recommended: 512x512)</p>
+                                                </div>
+                                                <label className="cursor-pointer bg-primary/20 hover:bg-primary/30 border border-primary/30 rounded-xl px-5 py-2.5 flex items-center justify-center transition-all group active:scale-95">
                                                     <input
                                                         type="file"
                                                         accept="image/*"
@@ -669,13 +677,17 @@ export default function Settings() {
                                                         className="hidden"
                                                     />
                                                     {uploading ? (
-                                                        <Loader2 className="w-5 h-5 text-primary animate-spin" />
+                                                        <Loader2 className="w-4 h-4 text-primary animate-spin" />
                                                     ) : (
-                                                        <Upload className="w-5 h-5 text-white/40 group-hover:text-white transition-colors" />
+                                                        <div className="flex items-center gap-2">
+                                                            <Upload className="w-4 h-4 text-primary" />
+                                                            <span className="text-[9px] font-black uppercase tracking-widest text-primary">Upload</span>
+                                                        </div>
                                                     )}
                                                 </label>
                                             </div>
                                         </div>
+                                        */}
                                     </div>
                                     <button
                                         type="submit"
