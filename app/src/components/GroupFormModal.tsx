@@ -208,12 +208,12 @@ export default function GroupFormModal({ initialData, onClose, onSuccess }: Grou
                 onClick={onClose}
             />
 
-            <div className="w-full max-w-[800px] bg-black/60 backdrop-blur-3xl rounded-[3rem] border border-white/10 shadow-[0_50px_100px_rgba(0,0,0,0.9)] overflow-hidden animate-in zoom-in-95 slide-in-from-bottom-12 duration-700 relative flex flex-col max-h-[90vh]">
+            <div className="w-full max-w-[800px] bg-black/60 backdrop-blur-3xl rounded-[2rem] sm:rounded-[3rem] border border-white/10 shadow-[0_50px_100px_rgba(0,0,0,0.9)] overflow-hidden animate-in zoom-in-95 slide-in-from-bottom-12 duration-700 relative flex flex-col max-h-[90vh]">
                 {/* Dynamic Glass Shimmer */}
                 <div className="absolute inset-0 bg-gradient-to-br from-white/[0.03] via-transparent to-transparent pointer-events-none"></div>
 
                 {/* Header Section */}
-                <div className="relative z-10 px-8 pt-10 pb-6 border-b border-white/5 flex-shrink-0">
+                <div className="relative z-10 px-5 sm:px-8 pt-8 sm:pt-10 pb-4 sm:pb-6 border-b border-white/5 flex-shrink-0">
                     <div className="flex items-start justify-between">
                         <div className="flex-1">
                             <h2 className="text-xl font-black text-white tracking-widest uppercase mb-1 drop-shadow-lg leading-tight">
@@ -230,7 +230,7 @@ export default function GroupFormModal({ initialData, onClose, onSuccess }: Grou
                 </div>
 
                 {/* Scrollable Form Body */}
-                <form onSubmit={handleSubmit} className="relative z-10 px-8 py-6 overflow-y-auto custom-scrollbar flex-1 flex flex-col md:flex-row gap-8">
+                <form onSubmit={handleSubmit} className="relative z-10 px-5 sm:px-8 py-5 sm:py-6 overflow-y-auto custom-scrollbar flex-1 flex flex-col md:flex-row gap-6 sm:gap-8">
 
                     {/* Left Column: Group Details */}
                     <div className="flex-1 space-y-6">
@@ -270,13 +270,13 @@ export default function GroupFormModal({ initialData, onClose, onSuccess }: Grou
                         {/* Schedule */}
                         <div className="space-y-4 pt-4 border-t border-white/5">
                             <label className="text-[9px] font-black uppercase tracking-[0.3em] text-white/20 ml-1">{t('common.trainingDays')}</label>
-                            <div className="flex flex-wrap gap-2">
+                            <div className="flex flex-wrap gap-1.5 sm:gap-2">
                                 {DAYS.map(day => (
                                     <button
                                         key={day}
                                         type="button"
                                         onClick={() => toggleDay(day)}
-                                        className={`px-3 py-2 rounded-xl border text-[8px] font-black uppercase tracking-[0.2em] transition-all duration-300 ${formData.days.includes(day)
+                                        className={`px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-lg sm:rounded-xl border text-[7.5px] sm:text-[8px] font-black uppercase tracking-[0.2em] transition-all duration-300 ${formData.days.includes(day)
                                             ? 'bg-primary/20 border-primary/40 text-primary shadow-lg shadow-primary/5'
                                             : 'bg-white/[0.02] border-white/5 text-white/20 hover:bg-white/[0.05] hover:border-white/10'
                                             }`}
@@ -320,7 +320,7 @@ export default function GroupFormModal({ initialData, onClose, onSuccess }: Grou
                     </div>
 
                     {/* Right Column: Student Selection */}
-                    <div className="flex-1 flex flex-col h-[500px] bg-white/[0.01] border border-white/5 rounded-3xl overflow-hidden">
+                    <div className="flex-1 flex flex-col min-h-[300px] h-fit md:h-[500px] bg-white/[0.01] border border-white/5 rounded-2xl sm:rounded-3xl overflow-hidden">
                         <div className="p-4 border-b border-white/5">
                             <label className="text-[9px] font-black uppercase tracking-[0.3em] text-white/20 ml-1 mb-3 block">
                                 {t('dashboard.addStudent')} <span className="text-primary ml-1">({selectedStudents.length})</span>
@@ -384,7 +384,7 @@ export default function GroupFormModal({ initialData, onClose, onSuccess }: Grou
                 </form>
 
                 {/* Footer Section */}
-                <div className="relative z-10 px-8 py-6 border-t border-white/5 flex-shrink-0 flex items-center justify-between gap-6">
+                <div className="relative z-10 px-5 sm:px-8 py-5 sm:py-6 border-t border-white/5 flex-shrink-0 flex items-center justify-between gap-4 sm:gap-6">
                     <button
                         type="button"
                         onClick={onClose}

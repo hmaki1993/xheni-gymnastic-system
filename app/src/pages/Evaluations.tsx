@@ -270,58 +270,60 @@ export default function Evaluations() {
     return (
         <div className="space-y-8 animate-in fade-in duration-700">
             {/* Header */}
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-                <div>
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 items-center text-center md:text-left">
+                <div className="flex flex-col items-center md:items-start">
                     <div className="flex items-center gap-3 mb-2">
-                        <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center border border-primary/20">
-                            <ClipboardCheck className="w-6 h-6 text-primary" />
+                        <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-primary/10 flex items-center justify-center border border-primary/20">
+                            <ClipboardCheck className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
                         </div>
-                        <h1 className="text-4xl font-black text-white uppercase tracking-tighter italic">
+                        <h1 className="text-2xl sm:text-4xl font-black text-white uppercase tracking-tighter italic">
                             {t('evaluations.title', 'Evaluation Hub')}
                         </h1>
                     </div>
-                    <p className="text-white/40 font-bold uppercase tracking-[0.2em] text-[10px] ml-15">
+                    <p className="text-white/40 font-bold uppercase tracking-[0.1em] sm:tracking-[0.2em] text-[9px] sm:text-[10px]">
                         {t('evaluations.subtitle', 'Master Control for Assessments & Reports')}
                     </p>
                 </div>
 
                 {/* Quick Stats */}
-                <div className="flex gap-4">
-                    <div className="px-6 py-4 glass-card rounded-[2rem] border border-white/5 flex flex-col items-center min-w-[120px]">
-                        <span className="text-2xl font-black text-white">{stats.totalThisMonth}</span>
+                <div className="grid grid-cols-2 sm:flex gap-3 sm:gap-4 w-full sm:w-auto">
+                    <div className="px-4 sm:px-6 py-3 sm:py-4 glass-card rounded-[1.5rem] sm:rounded-[2rem] border border-white/5 flex flex-col items-center min-w-[100px] sm:min-w-[120px]">
+                        <span className="text-xl sm:text-2xl font-black text-white">{stats.totalThisMonth}</span>
                         <span className="text-[8px] font-black text-white/20 uppercase tracking-widest mt-1">Evaluations</span>
                     </div>
-                    <div className="px-6 py-4 glass-card rounded-[2rem] border border-white/5 flex flex-col items-center min-w-[120px]">
-                        <span className="text-2xl font-black text-emerald-400">{stats.completionRate}%</span>
+                    <div className="px-4 sm:px-6 py-3 sm:py-4 glass-card rounded-[1.5rem] sm:rounded-[2rem] border border-white/5 flex flex-col items-center min-w-[100px] sm:min-w-[120px]">
+                        <span className="text-xl sm:text-2xl font-black text-emerald-400">{stats.completionRate}%</span>
                         <span className="text-[8px] font-black text-white/20 uppercase tracking-widest mt-1">Success</span>
                     </div>
                 </div>
             </div>
 
             {/* Tab Navigation */}
-            <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
-                <div className="flex gap-2 p-1.5 bg-white/[0.03] border border-white/5 rounded-[2rem] w-fit">
-                    <button
-                        onClick={() => setActiveTab('live')}
-                        className={`flex items-center gap-2 px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === 'live' ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'text-white/40 hover:text-white hover:bg-white/5'}`}
-                    >
-                        <LayoutDashboard className="w-4 h-4" />
-                        Assessment Desk
-                    </button>
-                    <button
-                        onClick={() => setActiveTab('history')}
-                        className={`flex items-center gap-2 px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === 'history' ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'text-white/40 hover:text-white hover:bg-white/5'}`}
-                    >
-                        <History className="w-4 h-4" />
-                        Test History
-                    </button>
-                    <button
-                        onClick={() => setActiveTab('reports')}
-                        className={`flex items-center gap-2 px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === 'reports' ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'text-white/40 hover:text-white hover:bg-white/5'}`}
-                    >
-                        <FileText className="w-4 h-4" />
-                        Reporting Desk
-                    </button>
+            <div className="flex flex-col md:flex-row gap-4 items-center md:items-center justify-between">
+                <div className="w-full md:w-auto overflow-x-auto pb-2 scrollbar-hide">
+                    <div className="flex gap-2 p-1.5 bg-white/[0.03] border border-white/5 rounded-[2rem] w-fit min-w-max mx-auto md:mx-0">
+                        <button
+                            onClick={() => setActiveTab('live')}
+                            className={`flex items-center gap-2 px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all min-w-max ${activeTab === 'live' ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'text-white/40 hover:text-white hover:bg-white/5'}`}
+                        >
+                            <LayoutDashboard className="w-4 h-4" />
+                            Assessment Desk
+                        </button>
+                        <button
+                            onClick={() => setActiveTab('history')}
+                            className={`flex items-center gap-2 px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all min-w-max ${activeTab === 'history' ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'text-white/40 hover:text-white hover:bg-white/5'}`}
+                        >
+                            <History className="w-4 h-4" />
+                            Test History
+                        </button>
+                        <button
+                            onClick={() => setActiveTab('reports')}
+                            className={`flex items-center gap-2 px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all min-w-max ${activeTab === 'reports' ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'text-white/40 hover:text-white hover:bg-white/5'}`}
+                        >
+                            <FileText className="w-4 h-4" />
+                            Reporting Desk
+                        </button>
+                    </div>
                 </div>
 
                 {activeTab === 'history' && history.length > 0 && (
@@ -347,7 +349,7 @@ export default function Evaluations() {
                         {/* New Assessment Card */}
                         <div
                             onClick={() => setShowBatchModal(true)}
-                            className="group relative overflow-hidden rounded-[3rem] aspect-square lg:aspect-video bg-gradient-to-br from-primary/10 to-accent/10 border border-white/10 hover:border-primary/40 transition-all duration-500 cursor-pointer flex flex-col items-center justify-center text-center p-8"
+                            className="group relative overflow-hidden rounded-[3rem] aspect-[2/1] sm:aspect-square lg:aspect-video bg-gradient-to-br from-primary/10 to-accent/10 border border-white/10 hover:border-primary/40 transition-all duration-500 cursor-pointer flex flex-col items-center justify-center text-center p-6 sm:p-8"
                         >
                             <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-3xl"></div>
                             <div className="relative z-10 space-y-4">
@@ -431,7 +433,7 @@ export default function Evaluations() {
                                             )}
                                         </div>
 
-                                        <div className="grid grid-cols-3 gap-4 pt-4 border-t border-white/5 relative z-10">
+                                        <div className="grid grid-cols-2 xs:grid-cols-3 gap-3 xs:gap-4 pt-4 border-t border-white/5 relative z-10">
                                             <div className="flex flex-col">
                                                 <span className="text-[8px] font-black text-white/20 uppercase tracking-widest mb-1">Athletes</span>
                                                 <span className="text-sm font-black text-white/80">{batch.student_count}</span>
@@ -440,7 +442,7 @@ export default function Evaluations() {
                                                 <span className="text-[8px] font-black text-white/20 uppercase tracking-widest mb-1">Avg Score</span>
                                                 <span className="text-sm font-black text-primary">{batch.avg_score}</span>
                                             </div>
-                                            <div className="flex flex-col">
+                                            <div className="flex flex-col col-span-2 xs:col-span-1 border-t xs:border-t-0 border-white/5 pt-2 xs:pt-0">
                                                 <span className="text-[8px] font-black text-white/20 uppercase tracking-widest mb-1">By</span>
                                                 <span className="text-sm font-black text-white/80 truncate">{batch.coach_name.split(' ')[0]}</span>
                                             </div>

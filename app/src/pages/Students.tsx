@@ -61,7 +61,7 @@ const StudentRow = memo(({
 }: any) => {
     return (
         <tr className={`group border-b border-white/[0.02] last:border-0 transition-all duration-300 ${isSelected ? 'bg-primary/10' : 'hover:bg-gradient-to-r hover:from-white/5 hover:to-transparent'}`}>
-            <td className="px-5 py-8">
+            <td className="px-3 sm:px-5 py-4 sm:py-8">
                 <div className="flex items-center justify-center">
                     <PremiumCheckbox
                         checked={isSelected}
@@ -69,10 +69,10 @@ const StudentRow = memo(({
                     />
                 </div>
             </td>
-            <td className="px-5 py-8 text-center">
+            <td className="px-3 sm:px-5 py-4 sm:py-8 text-center">
                 <span className="text-white/30 font-black text-sm">{index + 1}</span>
             </td>
-            <td className="px-5 py-8">
+            <td className="px-3 sm:px-5 py-4 sm:py-8">
                 <div className="flex items-center gap-5">
                     <div
                         className="relative cursor-pointer"
@@ -97,14 +97,14 @@ const StudentRow = memo(({
                                 </span>
                             )}
                         </div>
-                        <div className={`text-[10px] font-black text-white/30 uppercase tracking-[0.2em] mt-1 flex items-center gap-2 ${!student.is_active && 'opacity-40'}`}>
+                        <div className={`text-[8px] sm:text-[10px] font-black text-white/30 uppercase tracking-[0.2em] mt-1 flex items-center gap-2 ${!student.is_active && 'opacity-40'}`}>
                             <span className="w-1.5 h-1.5 rounded-full bg-primary/30"></span>
                             ID: {String(student.id).slice(0, 8)}
                         </div>
                     </div>
                 </div>
             </td>
-            <td className="px-5 py-8">
+            <td className="px-3 sm:px-5 py-4 sm:py-8">
                 <button
                     onClick={() => onToggleStatus(student.id, student.is_active)}
                     className={`inline-flex items-center px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-[0.2em] border transition-all duration-300 ${!student.is_active ? 'bg-red-500/10 border-red-500/20 text-red-500 hover:bg-red-500/20' : `${subscriptionStatus.color} hover:shadow-[0_0_15px_-3px_currentColor]`} hover:scale-105 cursor-pointer relative overflow-hidden group/status`}
@@ -114,7 +114,7 @@ const StudentRow = memo(({
                     {!student.is_active ? t('common.inactive') : subscriptionStatus.label}
                 </button>
             </td>
-            <td className="px-5 py-8">
+            <td className="px-3 sm:px-5 py-4 sm:py-8">
                 <div className="flex items-center gap-3">
                     <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center border border-white/10 group-hover:border-primary/30 transition-colors">
                         <span className="text-[10px] font-black text-primary">
@@ -133,7 +133,7 @@ const StudentRow = memo(({
                     </div>
                 </div>
             </td>
-            <td className="px-5 py-8">
+            <td className="px-3 sm:px-5 py-4 sm:py-8">
                 <div className="flex flex-col gap-2">
                     <span className="text-white font-black text-sm tracking-wide">
                         {student.subscription_plans?.name || <span className="text-white/20 italic font-medium">No Plan Assigned</span>}
@@ -158,7 +158,7 @@ const StudentRow = memo(({
                     </div>
                 </div>
             </td>
-            <td className="px-5 py-8">
+            <td className="px-3 sm:px-5 py-4 sm:py-8">
                 <div className="flex flex-col">
                     <span className="text-white font-mono text-sm tracking-widest font-bold">
                         {format(new Date(student.created_at), 'dd MMM yyyy')}
@@ -171,7 +171,7 @@ const StudentRow = memo(({
                     </div>
                 </div>
             </td>
-            <td className="px-5 py-8 text-right">
+            <td className="px-3 sm:px-5 py-4 sm:py-8 text-right">
                 <div className="flex items-center justify-end gap-3">
                     {(() => {
                         const isExpired = subscriptionStatus.label !== t('students.active');
@@ -466,8 +466,8 @@ export default function Students() {
     };
 
     return (
-        <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 border-b border-white/5 pb-8">
+        <div className="space-y-6 sm:space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 sm:gap-6 border-b border-white/5 pb-4 sm:pb-8">
                 <div className="text-center sm:text-left">
                     <h1 className="text-3xl sm:text-4xl font-extrabold premium-gradient-text tracking-tight uppercase">Gymnasts</h1>
                     <p className="text-white/60 mt-2 text-sm sm:text-base font-bold tracking-wide uppercase opacity-100">{t('students.subtitle')}</p>
@@ -723,10 +723,10 @@ export default function Students() {
             </div>
 
             {/* Students Table */}
-            <div className="glass-card rounded-[2.5rem] overflow-hidden border border-white/10 shadow-premium">
-                <div className="flex flex-col md:flex-row p-6 md:p-8 border-b border-white/5 gap-6 bg-white/[0.02] items-center">
-                    <div className="flex items-center gap-4 w-full md:w-auto justify-center md:justify-start">
-                        <div className="p-3 text-white/50">
+            <div className="glass-card rounded-[2rem] sm:rounded-[2.5rem] overflow-hidden border border-white/10 shadow-premium">
+                <div className="flex flex-col md:flex-row p-4 sm:p-6 md:p-8 border-b border-white/5 gap-4 sm:gap-6 bg-white/[0.02] items-center">
+                    <div className="flex items-center gap-3 sm:gap-4 w-full md:w-auto justify-center md:justify-start">
+                        <div className="p-2 sm:p-3 text-white/50">
                             <Users className="w-6 h-6" />
                         </div>
                         <div>
@@ -764,26 +764,26 @@ export default function Students() {
                     </div>
 
                     {/* Actions Group - Grid on Mobile */}
-                    <div className="grid grid-cols-2 sm:flex sm:items-center gap-3 w-full md:w-auto order-3 md:order-none">
+                    <div className="grid grid-cols-2 sm:flex sm:items-center gap-2 sm:gap-3 w-full md:w-auto order-3 md:order-none">
                         {selectedStudentIds.length > 0 && (
                             <button
                                 onClick={handleBulkDelete}
-                                className="col-span-2 px-4 py-3 bg-rose-500/10 hover:bg-rose-500/20 text-rose-500 rounded-xl border border-rose-500/20 flex items-center justify-center gap-2 transition-all animate-in fade-in slide-in-from-left-4"
+                                className="col-span-2 px-3 py-2.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-500 rounded-xl border border-rose-500/20 flex items-center justify-center gap-2 transition-all animate-in fade-in slide-in-from-left-4"
                             >
                                 <Trash2 className="w-4 h-4" />
-                                <span className="text-xs font-black uppercase tracking-wider">{t('finance.bulkDelete')}</span>
+                                <span className="text-[10px] font-black uppercase tracking-wider">{t('finance.bulkDelete')}</span>
                             </button>
                         )}
 
                         {/* Filter Toggle Button */}
                         <button
                             onClick={() => setShowFilters(!showFilters)}
-                            className={`p-3 rounded-xl border transition-all duration-300 flex items-center justify-center gap-2 group/filter ${showFilters ? 'bg-primary/20 border-primary/50 text-primary shadow-[0_0_15px_rgba(var(--primary-rgb),0.3)]' : 'bg-white/[0.03] border-white/5 text-white/40 hover:text-white hover:border-white/20'}`}
+                            className={`p-2.5 sm:p-3 rounded-xl border transition-all duration-300 flex items-center justify-center gap-1.5 sm:gap-2 group/filter ${showFilters ? 'bg-primary/20 border-primary/50 text-primary shadow-[0_0_15px_rgba(var(--primary-rgb),0.3)]' : 'bg-white/[0.03] border-white/5 text-white/40 hover:text-white hover:border-white/20'}`}
                         >
-                            <Filter className={`w-4 h-4 ${showFilters ? 'animate-pulse' : 'group-hover/filter:rotate-12 transition-transform'}`} />
-                            <span className="text-[10px] font-black uppercase tracking-widest">{t('students.filter')}</span>
+                            <Filter className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${showFilters ? 'animate-pulse' : 'group-hover/filter:rotate-12 transition-transform'}`} />
+                            <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-widest">{t('students.filter')}</span>
                             {activeFilterCount > 0 && (
-                                <span className="w-5 h-5 rounded-full bg-primary text-white text-[10px] flex items-center justify-center font-black animate-in zoom-in duration-300">
+                                <span className="w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-primary text-white text-[9px] flex items-center justify-center font-black animate-in zoom-in duration-300">
                                     {activeFilterCount}
                                 </span>
                             )}
@@ -791,9 +791,9 @@ export default function Students() {
 
                         <button
                             onClick={() => setShowImportModal(true)}
-                            className="bg-gradient-to-r from-[#622347] to-[#8B3A62] hover:from-[#622347]/90 hover:to-[#8B3A62]/90 text-white px-4 py-3 rounded-xl shadow-lg shadow-[#622347]/20 transition-all active:scale-95 whitespace-nowrap flex items-center justify-center gap-2 font-black uppercase tracking-widest text-[10px]"
+                            className="bg-gradient-to-r from-[#622347] to-[#8B3A62] hover:from-[#622347]/90 hover:to-[#8B3A62]/90 text-white px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl shadow-lg shadow-[#622347]/20 transition-all active:scale-95 whitespace-nowrap flex items-center justify-center gap-1.5 sm:gap-2 font-black uppercase tracking-widest text-[9px]"
                         >
-                            <FileSpreadsheet className="w-4 h-4" />
+                            <FileSpreadsheet className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                             Import
                         </button>
 
@@ -802,9 +802,9 @@ export default function Students() {
                                 setEditingStudent(null);
                                 setShowAddModal(true);
                             }}
-                            className="col-span-2 sm:col-span-1 bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-xl shadow-lg shadow-primary/20 transition-all active:scale-95 whitespace-nowrap flex items-center justify-center gap-2 font-black uppercase tracking-widest text-xs"
+                            className="col-span-2 sm:col-span-1 bg-primary hover:bg-primary/90 text-white px-5 sm:px-6 py-2.5 sm:py-3 rounded-xl shadow-lg shadow-primary/20 transition-all active:scale-95 whitespace-nowrap flex items-center justify-center gap-1.5 sm:gap-2 font-black uppercase tracking-widest text-[10px] sm:text-xs"
                         >
-                            <Plus className="w-4 h-4" />
+                            <Plus className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                             Add Gymnast
                         </button>
                     </div>
@@ -888,8 +888,8 @@ export default function Students() {
                 <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse">
                         <thead>
-                            <tr className="bg-[#0a0c10] text-white/40 font-black text-[9px] uppercase tracking-[0.2em] border-b border-white/5 sticky top-0 z-10 backdrop-blur-xl">
-                                <th className="px-6 py-6 w-16">
+                            <tr className="bg-[#0a0c10] text-white/40 font-black text-[8px] sm:text-[9px] uppercase tracking-[0.2em] border-b border-white/5 sticky top-0 z-10 backdrop-blur-xl">
+                                <th className="px-3 sm:px-6 py-4 sm:py-6 w-12 sm:w-16">
                                     <div className="flex items-center justify-center">
                                         <PremiumCheckbox
                                             checked={filteredStudents.length > 0 && selectedStudentIds.length === filteredStudents.length}
@@ -897,13 +897,13 @@ export default function Students() {
                                         />
                                     </div>
                                 </th>
-                                <th className="px-6 py-6 text-center w-16">#</th>
-                                <th className="px-6 py-6">{t('common.name')}</th>
-                                <th className="px-6 py-6">{t('students.status')}</th>
-                                <th className="px-6 py-6">{t('students.assignedCoach')}</th>
-                                <th className="px-6 py-6">{t('students.plan')}</th>
-                                <th className="px-6 py-6">{t('students.joinDate')}</th>
-                                <th className="px-6 py-6 text-right">{t('common.actions')}</th>
+                                <th className="px-3 sm:px-6 py-4 sm:py-6 text-center w-12 sm:w-16">#</th>
+                                <th className="px-3 sm:px-6 py-4 sm:py-6">{t('common.name')}</th>
+                                <th className="px-3 sm:px-6 py-4 sm:py-6">{t('students.status')}</th>
+                                <th className="px-3 sm:px-6 py-4 sm:py-6">{t('students.assignedCoach')}</th>
+                                <th className="px-3 sm:px-6 py-4 sm:py-6">{t('students.plan')}</th>
+                                <th className="px-3 sm:px-6 py-4 sm:py-6">{t('students.joinDate')}</th>
+                                <th className="px-3 sm:px-6 py-4 sm:py-6 text-right">{t('common.actions')}</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-white/[0.02]">

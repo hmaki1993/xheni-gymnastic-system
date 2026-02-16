@@ -203,14 +203,14 @@ export default function HeadCoachDashboard() {
                 <div className="absolute top-0 right-0 w-64 h-64 bg-accent/10 blur-[100px] rounded-full -mr-32 -mt-32"></div>
 
                 <div className="flex flex-col sm:flex-row items-center justify-between gap-6 relative z-10 animate-in fade-in slide-in-from-left duration-700">
-                    <div className="flex flex-col items-start gap-1">
-                        <div className="flex flex-wrap items-center gap-3">
+                    <div className="flex flex-col items-center sm:items-start gap-1 text-center sm:text-left w-full">
+                        <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3">
                             <p className="text-[10px] font-black text-white/30 uppercase tracking-[0.4em]">{format(new Date(), 'EEEE, dd MMMM yyyy')}</p>
                             <span className="px-3 py-1 rounded-full bg-amber-500/20 text-amber-500 text-[8px] font-black uppercase tracking-[0.2em] border border-amber-500/30 shadow-[0_0_15px_rgba(245,158,11,0.1)]">
                                 LEADER
                             </span>
                         </div>
-                        <h1 className="text-3xl sm:text-4xl font-black text-white uppercase tracking-tighter flex items-center gap-4">
+                        <h1 className="text-3xl sm:text-4xl font-black text-white uppercase tracking-tighter flex flex-wrap items-center justify-center sm:justify-start gap-2 sm:gap-4">
                             <span className="text-white/40 font-medium lowercase italic">{t('dashboard.welcome')},</span>
                             <span className="premium-gradient-text">{fullName || t('roles.head_coach')}</span>
                         </h1>
@@ -298,7 +298,7 @@ export default function HeadCoachDashboard() {
                         </button>
                         <button
                             onClick={() => setShowGroupModal(true)}
-                            className="p-8 rounded-[2rem] bg-indigo-500/5 hover:bg-indigo-500/20 border border-indigo-500/10 hover:border-indigo-500/40 transition-all flex flex-col items-center justify-center gap-4 group/action"
+                            className="p-6 sm:p-8 rounded-[1.5rem] sm:rounded-[2rem] bg-indigo-500/5 hover:bg-indigo-500/20 border border-indigo-500/10 hover:border-indigo-500/40 transition-all flex flex-col items-center justify-center gap-4 group/action"
                         >
                             <div className="w-12 h-12 rounded-2xl bg-indigo-500/20 flex items-center justify-center text-indigo-400 group-hover/action:scale-110 transition-transform shadow-lg shadow-indigo-500/20">
                                 <Users className="w-6 h-6" />
@@ -315,7 +315,7 @@ export default function HeadCoachDashboard() {
             </div>
 
             {/* All Groups Management */}
-            <div className="glass-card p-12 rounded-[3.5rem] border border-white/10 shadow-premium bg-white/[0.01]">
+            <div className="glass-card p-6 sm:p-12 rounded-[2rem] sm:rounded-[3.5rem] border border-white/10 shadow-premium bg-white/[0.01]">
                 <h2 className="text-2xl font-black text-white uppercase tracking-tight mb-8 flex items-center gap-4">
                     <div className="p-3 bg-accent/20 rounded-2xl text-accent border border-accent/20 shadow-lg shadow-accent/5"><Users className="w-6 h-6" /></div>
                     Academy Structure

@@ -109,9 +109,9 @@ export default function Dashboard() {
                 <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 blur-[100px] rounded-full -mr-32 -mt-32"></div>
 
                 <div className="flex flex-col sm:flex-row items-center justify-between gap-6 relative z-10 animate-in fade-in slide-in-from-left duration-700">
-                    <div>
+                    <div className="text-center sm:text-left">
                         <p className="text-[10px] font-black text-white/30 uppercase tracking-[0.4em] mb-2">{t('common.today') || 'Today'}</p>
-                        <h1 className="text-xl sm:text-4xl font-black text-white uppercase tracking-tighter flex flex-col sm:flex-row items-start sm:items-center gap-1 sm:gap-4 mt-1 sm:mt-0">
+                        <h1 className="text-2xl sm:text-4xl font-black text-white uppercase tracking-tighter flex flex-col sm:flex-row items-center sm:items-start gap-1 sm:gap-4 mt-1 sm:mt-0">
                             <span className="text-white/40 font-medium lowercase italic">welcome,</span>
                             <span className="premium-gradient-text">{fullName || (role ? t(`roles.${role}`) : 'Admin')}</span>
                         </h1>

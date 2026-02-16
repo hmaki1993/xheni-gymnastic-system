@@ -873,16 +873,16 @@ export default function ReceptionDashboard({ role }: { role?: string }) {
                 {/* Background Accent Glow - Hidden on mobile for performance */}
                 <div className="absolute -top-24 -left-24 w-64 h-64 bg-primary/10 blur-[80px] rounded-full pointer-events-none group-hover:bg-primary/20 transition-all duration-1000 hidden md:block"></div>
 
-                <div className="glass-card rounded-[2rem] border border-white/10 p-5 sm:p-6 flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
-                    <div className="space-y-4 flex-1">
-                        <div>
-                            <div className="flex items-center gap-3 mb-1.5">
+                <div className="glass-card rounded-[2rem] border border-white/10 p-5 sm:p-6 flex flex-col lg:flex-row items-center lg:items-center justify-between gap-6 relative z-10">
+                    <div className="space-y-4 flex-1 w-full">
+                        <div className="text-center lg:text-left">
+                            <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3 mb-1.5">
                                 <div className="w-1.5 h-6 bg-primary rounded-full shadow-[0_0_15px_rgba(var(--primary-rgb),0.5)]"></div>
-                                <h1 className="text-2xl sm:text-3xl font-black premium-gradient-text uppercase tracking-tighter leading-none">
+                                <h1 className="text-2xl sm:text-3xl font-black premium-gradient-text uppercase tracking-tighter leading-tight">
                                     {t('dashboard.welcome') || 'WELCOME BACK'}, {userProfile?.full_name || contextRole?.replace('_', ' ') || 'Staff Member'}
                                 </h1>
                             </div>
-                            <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+                            <div className="flex flex-wrap items-center justify-center lg:justify-start gap-x-4 gap-y-2">
                                 <p className="text-white/40 text-[9px] sm:text-[10px] font-black uppercase tracking-[0.3em] flex items-center gap-1.5">
                                     <Calendar className="w-3 h-3 text-primary" />
                                     {format(new Date(), 'EEEE, dd MMMM yyyy')}

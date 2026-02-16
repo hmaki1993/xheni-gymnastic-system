@@ -352,7 +352,7 @@ export default function AddStudentForm({ onClose, onSuccess, initialData }: AddS
                 <div className="absolute inset-0 bg-gradient-to-br from-white/[0.03] via-transparent to-transparent pointer-events-none"></div>
 
                 {/* Header Section */}
-                <div className="relative z-10 px-8 pt-10 pb-6 border-b border-white/5 flex-shrink-0">
+                <div className="relative z-10 px-5 sm:px-8 pt-8 sm:pt-10 pb-5 sm:pb-6 border-b border-white/5 flex-shrink-0">
                     <div className="flex items-start justify-between">
                         <div className="flex-1">
                             <h2 className="text-xl font-black text-white tracking-widest uppercase mb-1 drop-shadow-lg leading-tight">
@@ -369,7 +369,7 @@ export default function AddStudentForm({ onClose, onSuccess, initialData }: AddS
                 </div>
 
                 {/* Scrollable Form Body */}
-                <form onSubmit={handleSubmit} className="relative z-10 px-8 py-6 overflow-y-auto custom-scrollbar flex-1 space-y-6">
+                <form onSubmit={handleSubmit} className="relative z-10 px-5 sm:px-8 py-6 overflow-y-auto custom-scrollbar flex-1 space-y-6">
 
                     {/* Name Field */}
                     <div className="space-y-2 group/field">
@@ -567,24 +567,24 @@ export default function AddStudentForm({ onClose, onSuccess, initialData }: AddS
                                 {formData.training_schedule.map((schedule: any) => (
                                     <div
                                         key={schedule.day}
-                                        className="p-4 bg-white/[0.02] border border-white/5 rounded-3xl flex items-center justify-between gap-4 animate-in zoom-in-95 duration-500"
+                                        className="px-4 py-3 bg-white/[0.02] border border-white/5 rounded-2xl flex flex-row items-center justify-between gap-3 animate-in zoom-in-95 duration-500"
                                     >
-                                        <span className="text-[9px] font-black uppercase text-primary tracking-[0.3em] min-w-[60px]">
+                                        <span className="text-[10px] font-black uppercase text-accent tracking-[0.3em] min-w-[50px]">
                                             {t(`students.days.${schedule.day}`)}
                                         </span>
-                                        <div className="flex items-center gap-2">
+                                        <div className="flex items-center gap-2 flex-1 justify-end">
                                             <input
                                                 type="time"
                                                 value={schedule.start}
                                                 onChange={(e) => updateTime(schedule.day, 'start', e.target.value)}
-                                                className="bg-white/[0.03] border border-white/5 rounded-xl px-3 py-1.5 text-[9px] text-white focus:border-primary/40 transition-all outline-none [color-scheme:dark]"
+                                                className="w-full max-w-[100px] bg-white/[0.03] border border-white/5 rounded-xl px-3 py-2 text-[10px] text-white focus:border-primary/40 transition-all outline-none [color-scheme:dark]"
                                             />
                                             <span className="text-white/10 text-[8px] font-black">-</span>
                                             <input
                                                 type="time"
                                                 value={schedule.end}
                                                 onChange={(e) => updateTime(schedule.day, 'end', e.target.value)}
-                                                className="bg-white/[0.03] border border-white/5 rounded-xl px-3 py-1.5 text-[9px] text-white focus:border-primary/40 transition-all outline-none [color-scheme:dark]"
+                                                className="w-full max-w-[100px] bg-white/[0.03] border border-white/5 rounded-xl px-3 py-2 text-[10px] text-white focus:border-primary/40 transition-all outline-none [color-scheme:dark]"
                                             />
                                         </div>
                                     </div>
@@ -686,11 +686,11 @@ export default function AddStudentForm({ onClose, onSuccess, initialData }: AddS
                 </form>
 
                 {/* Footer Section - Single Premium Button */}
-                <div className="relative z-10 px-8 py-8 border-t border-white/5 flex-shrink-0 flex items-center justify-between gap-6">
+                <div className="relative z-10 px-5 sm:px-8 py-6 sm:py-8 border-t border-white/5 flex-shrink-0 flex items-center justify-between gap-6">
                     <button
                         type="button"
                         onClick={onClose}
-                        className="px-6 py-4 text-[9px] font-black uppercase tracking-[0.3em] text-white/20 hover:text-white transition-all duration-500 whitespace-nowrap"
+                        className="px-4 sm:px-6 py-4 text-[9px] font-black uppercase tracking-[0.3em] text-white/20 hover:text-white transition-all duration-500 whitespace-nowrap"
                     >
                         {t('common.cancel', 'Cancel')}
                     </button>

@@ -597,9 +597,9 @@ export default function CoachDashboard() {
                 <div className="absolute top-0 right-0 w-64 h-64 bg-accent/10 blur-[100px] rounded-full -mr-32 -mt-32"></div>
 
                 <div className="flex flex-col sm:flex-row items-center justify-between gap-6 relative z-10 animate-in fade-in slide-in-from-left duration-700">
-                    <div>
+                    <div className="text-center sm:text-left w-full">
                         <p className="text-[10px] font-black text-white/30 uppercase tracking-[0.4em] mb-2">{format(new Date(), 'EEEE, dd MMMM yyyy')}</p>
-                        <h1 className="text-3xl sm:text-4xl font-black text-white uppercase tracking-tighter flex items-center gap-4">
+                        <h1 className="text-3xl sm:text-4xl font-black text-white uppercase tracking-tighter flex flex-wrap items-center justify-center sm:justify-start gap-2 sm:gap-4">
                             <span className="text-white/40 font-medium lowercase italic">{t('dashboard.welcome')},</span>
                             <span className="premium-gradient-text">{fullName || 'COACH'}! 👋</span>
                         </h1>

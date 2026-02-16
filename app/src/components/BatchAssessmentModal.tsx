@@ -268,7 +268,7 @@ id,
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
             <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={onClose} />
-            <div className="relative w-full max-w-4xl bg-[#0E1D21] border border-white/10 rounded-3xl shadow-2xl overflow-hidden flex flex-col h-[70vh] max-h-[90vh]">
+            <div className="relative w-[95vw] sm:w-full max-w-4xl bg-[#0E1D21] border border-white/10 rounded-3xl shadow-2xl overflow-hidden flex flex-col h-[85vh] sm:h-[70vh] max-h-[90vh]">
 
                 {/* Header */}
                 <div className="p-6 border-b border-white/10 flex justify-between items-center bg-black/20">
@@ -438,12 +438,12 @@ id,
 
                             <div className="space-y-3 flex-1 overflow-y-auto pr-2 pb-4">
                                 {selectedSkills.map((row, index) => (
-                                    <div key={index} className="flex gap-3 items-start animate-in fade-in slide-in-from-left-4 duration-300">
-                                        <div className="flex-1">
+                                    <div key={index} className="flex gap-2 sm:gap-3 items-start animate-in fade-in slide-in-from-left-4 duration-300">
+                                        <div className="flex-1 min-w-0">
                                             <select
                                                 value={row.skill_id}
                                                 onChange={(e) => updateSkillRow(index, 'skill_id', e.target.value)}
-                                                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-primary/50 outline-none appearance-none"
+                                                className="w-full bg-white/5 border border-white/10 rounded-xl px-2 sm:px-4 py-3 text-[11px] sm:text-sm text-white focus:border-primary/50 outline-none appearance-none truncate"
                                             >
                                                 <option value="" className="bg-slate-900"></option>
                                                 {availableSkills.map(s => {
@@ -455,31 +455,31 @@ id,
                                                 })}
                                             </select>
                                         </div>
-                                        <div className="w-24 relative">
-                                            <div className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white/50 text-center">
+                                        <div className="w-16 sm:w-24 shrink-0 relative">
+                                            <div className="w-full bg-white/5 border border-white/10 rounded-xl px-2 sm:px-4 py-3 text-[10px] sm:text-sm text-white/50 text-center">
                                                 Max: {row.max_score}
                                             </div>
                                         </div>
                                         <button
                                             onClick={() => removeSkillRow(index)}
-                                            className="p-3 hover:bg-rose-500/20 text-white/20 hover:text-rose-500 rounded-xl transition-colors"
+                                            className="p-3 hover:bg-rose-500/20 text-white/20 hover:text-rose-500 rounded-xl transition-colors shrink-0"
                                         >
                                             <Trash2 className="w-4 h-4" />
                                         </button>
                                     </div>
                                 ))}
 
-                                <div className="grid grid-cols-2 gap-3">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                     <button
                                         onClick={() => setIsBulkSelecting(true)}
-                                        className="w-full py-3 bg-primary/10 border border-primary/20 rounded-xl text-primary hover:bg-primary/20 hover:text-white transition-all text-xs font-black uppercase tracking-widest flex items-center justify-center gap-2"
+                                        className="w-full py-3 sm:py-3 bg-primary/10 border border-primary/20 rounded-xl text-primary hover:bg-primary/20 hover:text-white transition-all text-[10px] sm:text-xs font-black uppercase tracking-widest flex items-center justify-center gap-2"
                                     >
                                         <CheckSquare className="w-4 h-4" />
                                         Select Multiple
                                     </button>
                                     <button
                                         onClick={addSkillRow}
-                                        className="w-full py-3 border border-dashed border-white/10 rounded-xl text-white/40 hover:text-white hover:border-white/30 hover:bg-white/5 transition-all text-xs font-black uppercase tracking-widest flex items-center justify-center gap-2"
+                                        className="w-full py-3 sm:py-3 border border-dashed border-white/10 rounded-xl text-white/40 hover:text-white hover:border-white/30 hover:bg-white/5 transition-all text-[10px] sm:text-xs font-black uppercase tracking-widest flex items-center justify-center gap-2"
                                     >
                                         <Plus className="w-4 h-4" />
                                         Add Single Row
@@ -581,7 +581,7 @@ id,
                             <table className="w-full text-left border-collapse">
                                 <thead className="bg-white/5 text-white/50 text-[10px] uppercase font-black tracking-widest sticky top-0 z-10 backdrop-blur-md">
                                     <tr>
-                                        <th className="p-4 border-b border-white/10 min-w-[200px] sticky left-0 bg-[#0E1D21] z-20">Gymnast</th>
+                                        <th className="p-3 sm:p-4 border-b border-white/10 min-w-[120px] sm:min-w-[200px] sticky left-0 bg-[#0E1D21] z-20">Gymnast</th>
                                         {selectedSkills.map((skill, i) => (
                                             <th key={i} className="p-4 border-b border-white/10 text-center min-w-[120px]">
                                                 {skill.name} <span className="opacity-50 text-[9px]">({skill.max_score})</span>
@@ -598,40 +598,44 @@ id,
 
                                         return (
                                             <tr key={student.id} className={`hover:bg-white/[0.02] transition-colors ${isAbsent ? 'opacity-50 grayscale' : ''}`}>
-                                                <td className="p-4 sticky left-0 bg-[#0E1D21] z-10 flex items-center gap-3">
-                                                    <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${isAbsent ? 'from-red-500/20 to-red-900/20 border-red-500/30' : 'from-white/10 to-white/5 border-white/10'} border flex items-center justify-center`}>
-                                                        <Users className="w-4 h-4 text-white/60" />
+                                                <td className="p-2 sm:p-4 sticky left-0 bg-[#0E1D21] z-10 flex items-center gap-1.5 sm:gap-3 shadow-[10px_0_15px_-5px_rgba(0,0,0,0.3)] min-w-[120px] sm:min-w-0">
+                                                    <div className={`hidden xs:flex w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-gradient-to-br ${isAbsent ? 'from-red-500/20 to-red-900/20 border-red-500/30' : 'from-white/10 to-white/5 border-white/10'} border items-center justify-center shrink-0`}>
+                                                        <Users className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white/60" />
                                                     </div>
                                                     <div className="flex-1 min-w-0">
-                                                        <div className="flex items-center gap-2 min-w-0">
-                                                            <span className="font-bold text-sm text-white truncate">
+                                                        <div className="flex flex-col xs:flex-row xs:items-center gap-0.5 xs:gap-2 min-w-0">
+                                                            <span className="font-bold text-[11px] sm:text-sm text-white truncate">
                                                                 {student.full_name}
                                                             </span>
                                                             {(student as any).coach_name && (
-                                                                <span className="text-[10px] text-white/30 font-medium whitespace-nowrap bg-white/5 px-1.5 py-0.5 rounded">
-                                                                    @{(student as any).coach_name.split(' ')[0].toLowerCase()}
+                                                                <span className="text-[8px] sm:text-[10px] text-white/30 font-medium whitespace-nowrap bg-white/5 px-1 sm:px-1.5 py-0.5 rounded w-fit capitalize">
+                                                                    @{((student as any).coach_name.split(' ')[0] || '').toLowerCase()}
                                                                 </span>
                                                             )}
                                                         </div>
                                                         <div
-                                                            onClick={() => toggleStudentStatus(student.id)}
-                                                            className={`text-[9px] uppercase tracking-widest font-black cursor-pointer transition-colors mt-0.5 inline-block px-1.5 py-0.5 rounded border ${isAbsent ? 'text-red-400 border-red-500/30 bg-red-500/10' : 'text-emerald-400 border-emerald-500/30 bg-emerald-500/10'}`}
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                toggleStudentStatus(student.id);
+                                                            }}
+                                                            className={`text-[7px] sm:text-[9px] uppercase tracking-widest font-black cursor-pointer transition-colors mt-1 inline-block px-1 sm:px-1.5 py-0.5 rounded border ${isAbsent ? 'text-red-400 border-red-500/30 bg-red-500/10' : 'text-emerald-400 border-emerald-500/30 bg-emerald-500/10'}`}
                                                         >
                                                             {isAbsent ? 'ABSENT' : 'PRESENT'}
                                                         </div>
                                                     </div>
                                                 </td>
                                                 {selectedSkills.map((skill, i) => (
-                                                    <td key={i} className="p-4 text-center">
+                                                    <td key={i} className="p-2 sm:p-4 text-center">
                                                         <input
                                                             type="number"
                                                             disabled={isAbsent}
                                                             value={studentScores[skill.skill_id] || ''}
                                                             onChange={(e) => handleScoreChange(student.id, skill.skill_id, e.target.value, skill.max_score)}
-                                                            className="w-16 bg-white/5 border border-white/10 rounded-lg px-2 py-2 text-sm text-white focus:border-primary/50 outline-none text-center disabled:opacity-20 disabled:cursor-not-allowed"
+                                                            className="w-12 sm:w-16 bg-white/5 border border-white/20 rounded-lg px-1 sm:px-2 py-2 sm:py-2 text-[12px] sm:text-sm text-white focus:border-primary/50 outline-none text-center disabled:opacity-20 disabled:cursor-not-allowed placeholder-white/5"
                                                             max={skill.max_score}
                                                             min="0"
-                                                            placeholder={isAbsent ? '-' : ''}
+                                                            inputMode="numeric"
+                                                            placeholder={isAbsent ? '-' : '0'}
                                                         />
                                                     </td>
                                                 ))}
@@ -648,35 +652,30 @@ id,
                 )}
 
                 {/* Footer Actions */}
-                <div className="p-6 border-t border-white/10 bg-black/20 flex justify-between shrink-0">
-                    {step > 1 ? (
-                        <button
-                            onClick={() => setStep(step - 1)}
-                            className="px-6 py-3 rounded-xl hover:bg-white/5 text-white/60 hover:text-white transition-colors font-black uppercase tracking-widest text-[10px] flex items-center gap-2"
-                        >
-                            <ArrowLeft className="w-4 h-4" />
-                            Back
-                        </button>
-                    ) : <div></div>}
+                <div className="p-4 sm:p-6 border-t border-white/10 bg-black/20 flex flex-col sm:flex-row justify-between gap-4 shrink-0">
+                    <div className="flex justify-between items-center sm:block">
+                        {step > 1 ? (
+                            <button
+                                onClick={() => setStep(step - 1)}
+                                className="px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl hover:bg-white/5 text-white/60 hover:text-white transition-colors font-black uppercase tracking-widest text-[9px] sm:text-[10px] flex items-center gap-2 active:scale-95"
+                            >
+                                <ArrowLeft className="w-4 h-4" />
+                                Back
+                            </button>
+                        ) : <div />}
 
-                    <div className="flex gap-3">
+                        <div className="sm:hidden text-[9px] font-black text-white/30 uppercase tracking-[0.2em]">
+                            Step {step} / 3
+                        </div>
+                    </div>
+
+                    <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
                         {step === 2 && !initialAssignment && (
                             <button
-                                onClick={() => {
-                                    console.log('🚀 Send to Coach clicked!');
-                                    console.log('📋 Validation check:', {
-                                        loading,
-                                        title,
-                                        studentsCount: students.length,
-                                        skillsCount: selectedSkills.length,
-                                        assessorId,
-                                        currentCoachId
-                                    });
-                                    handleSave('assigned');
-                                }}
+                                onClick={() => handleSave('assigned')}
                                 disabled={loading || !title || students.length === 0 || selectedSkills.length === 0}
-                                className={`px-6 py-3 rounded-xl transition-all font-black uppercase tracking-widest text-[10px] flex items-center gap-2 border ${assessorId && assessorId !== currentCoachId
-                                    ? 'bg-emerald-500 text-white shadow-[0_0_20px_rgba(16,185,129,0.3)] border-emerald-400 scale-105'
+                                className={`w-full sm:w-auto px-6 py-3 rounded-xl transition-all font-black uppercase tracking-widest text-[9px] sm:text-[10px] flex items-center justify-center gap-2 border ${assessorId && assessorId !== currentCoachId
+                                    ? 'bg-emerald-500 text-white shadow-[0_0_20px_rgba(16,185,129,0.3)] border-emerald-400'
                                     : 'bg-amber-500/10 text-amber-500 border-amber-500/20 hover:bg-amber-500/20'
                                     }`}
                             >
@@ -709,17 +708,16 @@ id,
                                     if (step === 2 && selectedSkills.length === 0) return toast.error('Please add at least one skill');
                                     if (step === 2 && selectedSkills.some(s => !s.skill_id)) return toast.error('Select a skill for all rows');
 
-                                    // If manually grading, ensure the current user is recorded as the assessor
                                     if (step === 2 && assessorId !== currentCoachId && currentCoachId) {
                                         setAssessorId(currentCoachId);
                                     }
 
                                     setStep(step + 1);
                                 }}
-                                className={`${assessorId && assessorId !== currentCoachId
+                                className={`w-full sm:w-auto ${assessorId && assessorId !== currentCoachId
                                     ? 'bg-white/5 text-white/40 border border-white/10'
-                                    : 'bg-white text-black hover:bg-white/90 shadow-lg shadow-white/10'
-                                    } px-8 py-3 rounded-xl font-black uppercase tracking-widest text-[10px] flex items-center gap-2 transition-all`}
+                                    : 'bg-white text-black hover:bg-white/90'
+                                    } px-6 sm:px-8 py-3 rounded-xl font-black uppercase tracking-widest text-[9px] sm:text-[10px] flex items-center justify-center gap-2 transition-all`}
                             >
                                 {step === 2 ? (assessorId && assessorId !== currentCoachId ? 'Grade Myself Instead' : 'Proceed to Grading') : 'Next Step'}
                                 <ChevronRight className="w-4 h-4" />
@@ -728,7 +726,7 @@ id,
                             <button
                                 onClick={() => handleSave()}
                                 disabled={loading}
-                                className="bg-primary hover:bg-primary/90 text-white px-8 py-3 rounded-xl font-black uppercase tracking-widest text-[10px] shadow-lg shadow-primary/20 flex items-center gap-2 transition-all hover:scale-105 active:scale-95"
+                                className="w-full sm:w-auto bg-primary hover:bg-primary/90 text-white px-8 py-3 rounded-xl font-black uppercase tracking-widest text-[10px] shadow-lg shadow-primary/20 flex items-center justify-center gap-2 transition-all"
                             >
                                 <Save className="w-4 h-4" />
                                 {loading ? 'Saving...' : 'Finish & Save'}
