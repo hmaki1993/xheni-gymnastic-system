@@ -375,10 +375,10 @@ ${evaluations.behavior || 'Great attitude and focus!'}
                 </div>
 
                 {/* Footer Section - Single Mega Action */}
-                <div className="relative z-10 p-10 border-t border-white/5 flex items-center justify-between gap-8 bg-[#0E1D21]/50">
+                <div className="relative z-10 p-5 sm:p-10 border-t border-white/5 flex items-center justify-between gap-4 sm:gap-8 bg-[#0E1D21]/50">
                     <button
                         onClick={onClose}
-                        className="px-8 py-4 text-[9px] font-black uppercase tracking-[0.3em] text-white/20 hover:text-white transition-all duration-500"
+                        className="px-4 sm:px-8 py-4 text-[9px] font-black uppercase tracking-[0.2em] sm:tracking-[0.3em] text-white/20 hover:text-white transition-all duration-500"
                     >
                         Cancel
                     </button>
@@ -386,14 +386,14 @@ ${evaluations.behavior || 'Great attitude and focus!'}
                     <button
                         onClick={handleSendReport}
                         disabled={loading || calculating}
-                        className="flex-1 py-5 rounded-3xl bg-emerald-500 text-white hover:bg-emerald-600 transition-all duration-500 shadow-[0_20px_40px_rgba(16,185,129,0.2)] active:scale-95 flex items-center justify-center gap-4 group/btn overflow-hidden disabled:opacity-50 disabled:pointer-events-none"
+                        className="flex-1 py-4 sm:py-5 rounded-2xl sm:rounded-3xl bg-emerald-500 text-white hover:bg-emerald-600 transition-all duration-500 shadow-[0_20px_40px_rgba(16,185,129,0.2)] active:scale-95 flex items-center justify-center gap-2 sm:gap-4 group/btn overflow-hidden disabled:opacity-50 disabled:pointer-events-none"
                     >
                         {loading ? (
                             <Loader2 className="w-5 h-5 animate-spin" />
                         ) : (
                             <Send className="w-4 h-4 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform duration-500" />
                         )}
-                        <span className="font-black uppercase tracking-[0.4em] text-[10px] group-hover:tracking-[0.6em] transition-all duration-500">
+                        <span className="font-black uppercase tracking-[0.15em] sm:tracking-[0.4em] text-[9px] sm:text-[10px] group-hover:tracking-[0.3em] sm:group-hover:tracking-[0.6em] transition-all duration-500 whitespace-nowrap">
                             Send Report
                         </span>
                     </button>

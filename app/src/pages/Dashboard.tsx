@@ -179,21 +179,23 @@ export default function Dashboard() {
             </div>
 
             {/* Groups Section */}
-            <div className="glass-card p-12 rounded-[3.5rem] border border-white/10 shadow-premium relative">
-                <h2 className="text-2xl font-black text-white uppercase tracking-tight mb-8 flex items-center gap-4">
-                    <div className="p-3 bg-white/5 backdrop-blur-md rounded-2xl text-accent border border-white/10 shadow-lg">
-                        <Users className="w-6 h-6 drop-shadow-[0_0_8px_currentColor]" strokeWidth={1.5} />
+            <div className="glass-card p-8 sm:p-12 rounded-[2.5rem] sm:rounded-[3.5rem] border border-white/10 shadow-premium relative">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-8">
+                    <h2 className="text-2xl font-black text-white uppercase tracking-tight flex items-center gap-4">
+                        <div className="p-3 bg-white/5 backdrop-blur-md rounded-2xl text-accent border border-white/10 shadow-lg">
+                            <Users className="w-6 h-6 drop-shadow-[0_0_8px_currentColor]" strokeWidth={1.5} />
+                        </div>
+                        {t('dashboard.trainingGroups', 'Training Groups')}
+                    </h2>
+                    <div className="flex gap-3">
+                        <button
+                            onClick={() => setShowHistory(true)}
+                            className="bg-white/5 hover:bg-white/10 text-white/60 hover:text-white border border-white/5 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all hover:scale-105 active:scale-95 flex items-center gap-2"
+                        >
+                            <Clock className="w-4 h-4" />
+                            History
+                        </button>
                     </div>
-                    {t('dashboard.trainingGroups', 'Training Groups')}
-                </h2>
-                <div className="absolute top-8 right-8 flex gap-3">
-                    <button
-                        onClick={() => setShowHistory(true)}
-                        className="bg-white/5 hover:bg-white/10 text-white/60 hover:text-white border border-white/5 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all hover:scale-105 active:scale-95 flex items-center gap-2"
-                    >
-                        <Clock className="w-4 h-4" />
-                        History
-                    </button>
                 </div>
                 <GroupsList showAll={true} />
             </div>

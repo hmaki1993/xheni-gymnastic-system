@@ -14,20 +14,129 @@ export default function WalkieTalkie({ role, userId }: { role: string; userId: s
     const holdTimer = useRef<any>(null);
     const mouseDownTime = useRef<number>(0);
     const isHolding = useRef(false);
+    const recordButtonRef = useRef<HTMLButtonElement>(null);
+    const wakeLock = useRef<any>(null);
+    const gainNode = useRef<GainNode | null>(null);
 
-    // Recording Start Beep
+    // ELITE: Authentic Motorola MDC-1200 Style Chirp Synthesis
     const playBeep = (type: 'start' | 'end') => {
-        if (!audioContext.current) audioContext.current = new (window.AudioContext || (window as any).webkitAudioContext)();
-        const osc = audioContext.current.createOscillator();
-        const gain = audioContext.current.createGain();
-        osc.connect(gain);
-        gain.connect(audioContext.current.destination);
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(type === 'start' ? 880 : 440, audioContext.current.currentTime);
-        gain.gain.setValueAtTime(0.1, audioContext.current.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, audioContext.current.currentTime + 0.1);
-        osc.start();
-        osc.stop(audioContext.current.currentTime + 0.1);
+        try {
+            if (!audioContext.current) {
+                audioContext.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+            }
+            if (audioContext.current.state === 'suspended') audioContext.current.resume();
+
+            const now = audioContext.current.currentTime;
+
+            if (type === 'start') {
+                // Motorola MDC-1200 Approximation (3 quick tones)
+                const tones = [1562, 1041, 1562];
+                const duration = 0.03; // 30ms per tone
+
+                tones.forEach((freq, i) => {
+                    const osc = audioContext.current!.createOscillator();
+                    const gain = audioContext.current!.createGain();
+
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(freq, now + (i * duration));
+
+                    gain.gain.setValueAtTime(0.3, now + (i * duration));
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + (i * duration) + duration);
+
+                    osc.connect(gain);
+                    gain.connect(audioContext.current!.destination);
+
+                    osc.start(now + (i * duration));
+                    osc.stop(now + (i * duration) + duration);
+                });
+
+                // Add a quick noise burst at the very start for that "click"
+                const buffer = audioContext.current.createBuffer(1, audioContext.current.sampleRate * 0.05, audioContext.current.sampleRate);
+                const data = buffer.getChannelData(0);
+                for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
+
+                const noise = audioContext.current.createBufferSource();
+                noise.buffer = buffer;
+                const noiseGain = audioContext.current.createGain();
+                noiseGain.gain.setValueAtTime(0.1, now);
+                noiseGain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
+                noise.connect(noiseGain);
+                noiseGain.connect(audioContext.current.destination);
+                noise.start(now);
+            } else {
+                // End Squelch (kshhh effect)
+                const osc = audioContext.current.createOscillator();
+                const gain = audioContext.current.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(1000, now);
+                osc.frequency.exponentialRampToValueAtTime(400, now + 0.1);
+                gain.gain.setValueAtTime(0.1, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+                osc.connect(gain);
+                gain.connect(audioContext.current.destination);
+                osc.start(now);
+                osc.stop(now + 0.1);
+
+                // Longer noise tail for squelch
+                const buffer = audioContext.current.createBuffer(1, audioContext.current.sampleRate * 0.15, audioContext.current.sampleRate);
+                const data = buffer.getChannelData(0);
+                for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
+
+                const noise = audioContext.current.createBufferSource();
+                noise.buffer = buffer;
+                const noiseGain = audioContext.current.createGain();
+                const filter = audioContext.current.createBiquadFilter();
+                filter.type = 'bandpass';
+                filter.frequency.value = 2000;
+
+                noiseGain.gain.setValueAtTime(0.05, now);
+                noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+
+                noise.connect(filter);
+                filter.connect(noiseGain);
+                noiseGain.connect(audioContext.current.destination);
+                noise.start(now);
+            }
+
+        } catch (err) {
+            console.warn('Police chirp failed:', err);
+        }
+    };
+
+    // ELITE: Professional Notification Chime Synthesis
+    const playNotificationSound = () => {
+        try {
+            if (!audioContext.current) {
+                audioContext.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+            }
+            if (audioContext.current.state === 'suspended') audioContext.current.resume();
+
+            const now = audioContext.current.currentTime;
+
+            // Dual-tone harmonic chime (A5 + C#6)
+            const freq1 = 880;
+            const freq2 = 1100;
+
+            [freq1, freq2].forEach((freq, i) => {
+                const osc = audioContext.current!.createOscillator();
+                const gain = audioContext.current!.createGain();
+
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(freq, now);
+
+                gain.gain.setValueAtTime(0, now);
+                gain.gain.linearRampToValueAtTime(0.15, now + 0.05); // Rapid fade in
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 1.2); // Long fade out
+
+                osc.connect(gain);
+                gain.connect(audioContext.current!.destination);
+
+                osc.start(now);
+                osc.stop(now + 1.5);
+            });
+        } catch (err) {
+            console.warn('Notification sound failed:', err);
+        }
     };
 
     const startRecording = async () => {
@@ -68,12 +177,16 @@ export default function WalkieTalkie({ role, userId }: { role: string; userId: s
         }
     };
 
-    const handlePressStart = (e: React.MouseEvent | React.TouchEvent) => {
+    const handlePressStart = (e: React.MouseEvent | React.TouchEvent | MouseEvent | TouchEvent) => {
         if (role !== 'admin') return;
 
         // Prevent synthetic mouse events on touch devices
         if (e.type === 'touchstart') {
-            e.preventDefault();
+            try {
+                if (typeof e.preventDefault === 'function') e.preventDefault();
+            } catch (err) {
+                console.warn('Could not preventDefault on touchstart:', err);
+            }
         }
 
         mouseDownTime.current = Date.now();
@@ -88,7 +201,7 @@ export default function WalkieTalkie({ role, userId }: { role: string; userId: s
         }, 250);
     };
 
-    const handlePressEnd = (e: React.MouseEvent | React.TouchEvent) => {
+    const handlePressEnd = (e: React.MouseEvent | React.TouchEvent | MouseEvent | TouchEvent) => {
         if (!isHolding.current) return;
         isHolding.current = false;
 
@@ -110,7 +223,7 @@ export default function WalkieTalkie({ role, userId }: { role: string; userId: s
         }
     };
 
-    const handleToggle = (e: React.MouseEvent | React.TouchEvent) => {
+    const handleToggle = (e: React.MouseEvent | React.TouchEvent | MouseEvent | TouchEvent) => {
         // This is only for the "Stop" action in toggle mode 
         // OR if the user just taps the button.
         if (role !== 'admin') return;
@@ -208,6 +321,32 @@ export default function WalkieTalkie({ role, userId }: { role: string; userId: s
         }
     };
 
+    // Native touch handling to bypass passive listener restrictions
+    useEffect(() => {
+        const btn = recordButtonRef.current;
+        if (!btn || role !== 'admin') return;
+
+        const onTouchStart = (e: TouchEvent) => {
+            handlePressStart(e);
+        };
+
+        const onTouchEnd = (e: TouchEvent) => {
+            // Prevent scrolling/zooming while talking
+            if (typeof e.preventDefault === 'function') e.preventDefault();
+            handlePressEnd(e);
+            handleToggle(e);
+        };
+
+        // Explicitly set passive: false to allow preventDefault()
+        btn.addEventListener('touchstart', onTouchStart, { passive: false });
+        btn.addEventListener('touchend', onTouchEnd, { passive: false });
+
+        return () => {
+            btn.removeEventListener('touchstart', onTouchStart);
+            btn.removeEventListener('touchend', onTouchEnd);
+        };
+    }, [role, isRecording]); // Re-attach if state changes to ensure fresh closures
+
     // Global Listener for Coaches
     useEffect(() => {
         const channel = supabase
@@ -227,15 +366,51 @@ export default function WalkieTalkie({ role, userId }: { role: string; userId: s
                             }
                         }
                         setIsIncoming(true);
+                        playNotificationSound(); // Play Elite Chime first
+                        setTimeout(() => playBeep('start'), 500); // Wait for chime to resonate before radio chirp
 
-                        // Play Beep first
-                        playBeep('start');
+                        try {
+                            // ELITE: Use Web Audio API for Volume Boosting
+                            if (!audioContext.current) {
+                                audioContext.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+                            }
+                            if (audioContext.current.state === 'suspended') {
+                                await audioContext.current.resume();
+                            }
 
-                        const audio = new Audio(newBroadcast.audio_url);
-                        audio.crossOrigin = "anonymous";
+                            const response = await fetch(newBroadcast.audio_url);
+                            const arrayBuffer = await response.arrayBuffer();
+                            const audioBuffer = await audioContext.current.decodeAudioData(arrayBuffer);
 
-                        audio.play().catch(e => {
-                            console.error('🚫 WalkieTalkie: Auto-play blocked:', e);
+                            const source = audioContext.current.createBufferSource();
+                            source.buffer = audioBuffer;
+
+                            // Create Gain Node for Volume Boost
+                            const boost = audioContext.current.createGain();
+                            // ELITE BOOST: Set digital gain to 3x (Careful with clipping)
+                            boost.gain.value = 3.0;
+
+                            source.connect(boost);
+                            boost.connect(audioContext.current.destination);
+
+                            source.start(0);
+                            source.onended = () => {
+                                setIsIncoming(false);
+                                playBeep('end');
+                            };
+
+                        } catch (e: any) {
+                            console.error('🚫 WalkieTalkie: Elite Playback failed:', e);
+
+                            // Fallback to standard audio if Web Audio fails
+                            const audio = new Audio(newBroadcast.audio_url);
+                            audio.crossOrigin = "anonymous";
+                            audio.play().catch(err => console.error('Fallback blocked:', err));
+                            audio.onended = () => {
+                                setIsIncoming(false);
+                                playBeep('end');
+                            };
+
                             toast((t) => (
                                 <span className="flex items-center gap-2">
                                     🎙️ Walkie Talkie
@@ -250,18 +425,33 @@ export default function WalkieTalkie({ role, userId }: { role: string; userId: s
                                     </button>
                                 </span>
                             ), { duration: 10000, className: 'premium-toast-vibrant' });
-                        });
-
-                        audio.onended = () => {
-                            setIsIncoming(false);
-                            playBeep('end');
-                        };
+                        }
                     }
                 }
             )
             .subscribe();
 
-        return () => { supabase.removeChannel(channel); };
+        // ELITE: WakeLock Implementation to stay alive in background
+        const requestWakeLock = async () => {
+            if ('wakeLock' in navigator) {
+                try {
+                    wakeLock.current = await (navigator as any).wakeLock.request('screen');
+                    console.log('🛡️ WalkieTalkie: WakeLock active');
+                } catch (err: any) {
+                    console.warn('WakeLock failed:', err.message);
+                }
+            }
+        };
+
+        requestWakeLock();
+
+        return () => {
+            supabase.removeChannel(channel);
+            if (wakeLock.current) {
+                wakeLock.current.release();
+                wakeLock.current = null;
+            }
+        };
     }, [isMuted, userId]);
 
     return (
@@ -353,15 +543,10 @@ export default function WalkieTalkie({ role, userId }: { role: string; userId: s
             {/* Broadcast Button - ADMIN ONLY */}
             {role === 'admin' && (
                 <button
+                    ref={recordButtonRef}
                     onMouseDown={handlePressStart}
                     onMouseUp={handlePressEnd}
                     onMouseLeave={handlePressEnd}
-                    onTouchStart={handlePressStart}
-                    onTouchEnd={(e) => {
-                        e.preventDefault();
-                        handlePressEnd(e);
-                        handleToggle(e as any);
-                    }}
                     onClick={(e) => {
                         if ((Date.now() - mouseDownTime.current) < 50) return;
                         handleToggle(e);

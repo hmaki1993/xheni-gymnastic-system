@@ -1,5 +1,5 @@
 @echo off
 echo Starting Healy Academy App...
-cd /d C:\MyRestoredProjects\healy-system\app
+cd /d "%~dp0app"
 npm run dev
 pause
