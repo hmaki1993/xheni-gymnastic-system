@@ -79,7 +79,7 @@ export default function StudentAttendance() {
                         const scheduleKey = group.schedule_key?.toLowerCase() || '';
 
                         // Rigorous day matching
-                        const scheduleParts = scheduleKey.split('|').map(p => p.trim());
+                        const scheduleParts = scheduleKey.split('|').map((p: string) => p.trim());
                         const todayPart = scheduleParts.find((p: string) => {
                             const dayTag = p.split(':')[0];
                             return dayTag === todayDay || dayTag === (dayMap[todayIdx] === 'sun' ? 'sunday' :
