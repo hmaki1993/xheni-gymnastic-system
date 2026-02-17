@@ -358,13 +358,23 @@ export default function WalkieTalkie({ role, userId }: { role: string; userId: s
                     const newBroadcast = payload.new as any;
                     console.log('📡 WalkieTalkie: Received broadcast:', newBroadcast);
 
-                    if (newBroadcast.sender_id !== userId && !isMuted) {
-                        // Check if this broadcast is targeted to specific users
-                        if (newBroadcast.target_users && Array.isArray(newBroadcast.target_users) && newBroadcast.target_users.length > 0) {
-                            if (!newBroadcast.target_users.includes(userId)) {
-                                return; // Skip if not in target list
-                            }
+                    if (newBroadcast.sender_id !== userId) {
+                        // 1. Critical Targeting Check
+                        const isTargeted = newBroadcast.target_users && Array.isArray(newBroadcast.target_users) && newBroadcast.target_users.length > 0;
+                        const includesMe = isTargeted && newBroadcast.target_users.includes(userId);
+
+                        // 🛑 Logic: 
+                        // - If it's targeted specifically to me -> ALWAYS play (override mute).
+                        // - If it's a "Broadcast to All" -> Only play if NOT muted.
+                        // - If it's targeted to OTHERS -> Ignore.
+
+                        const shouldPlay = includesMe || (!isTargeted && !isMuted);
+
+                        if (!shouldPlay) {
+                            console.log('📡 WalkieTalkie: Broadcast ignored (muted or not targeted)', { isTargeted, includesMe, isMuted });
+                            return;
                         }
+
                         setIsIncoming(true);
                         playNotificationSound(); // Play Elite Chime first
                         setTimeout(() => playBeep('start'), 500); // Wait for chime to resonate before radio chirp
@@ -387,8 +397,13 @@ export default function WalkieTalkie({ role, userId }: { role: string; userId: s
 
                             // Create Gain Node for Volume Boost
                             const boost = audioContext.current.createGain();
-                            // ELITE BOOST: Set digital gain to 3x (Careful with clipping)
-                            boost.gain.value = 3.0;
+
+                            // ELITE BOOST: Handle "Forced" Volume for targeted messages
+                            // Targeted messages get a massive digital gain (8x) vs standard (3x)
+                            const gainFactor = includesMe ? 8.0 : 3.0;
+                            boost.gain.value = gainFactor;
+
+                            console.log(`📡 WalkieTalkie: Playing with gain factor: ${gainFactor}`);
 
                             source.connect(boost);
                             boost.connect(audioContext.current.destination);
