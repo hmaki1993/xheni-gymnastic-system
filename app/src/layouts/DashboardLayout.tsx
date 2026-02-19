@@ -491,7 +491,7 @@ export default function DashboardLayout() {
                                         {fullName || t('common.adminRole')}
                                     </h3>
                                     <div className="flex items-center gap-2 mt-0.5">
-                                        <span className="text-[9px] text-primary font-black uppercase tracking-wider">{t(`roles.${role}`)}</span>
+                                        <span className="text-[9px] text-primary font-black uppercase tracking-wider">{t(`roles.${role || 'admin'}`)}</span>
                                     </div>
                                 </div>
                             </div>
@@ -704,7 +704,7 @@ export default function DashboardLayout() {
 
                                     <div className="flex items-center gap-1.5 mt-0.5">
                                         <span className={`w-1.5 h-1.5 rounded-full ${userStatus === 'online' ? 'bg-emerald-400' : 'bg-orange-400'} animate-pulse shadow-[0_0_8px_currentColor]`}></span>
-                                        <span className="text-[8px] font-black text-white/30 uppercase tracking-[0.2em]">{role || 'Admin'}</span>
+                                        <span className="text-[8px] font-black text-white/30 uppercase tracking-[0.2em]">{role ? t(`roles.${role}`) : t('common.adminRole')}</span>
                                     </div>
                                 </div>
 

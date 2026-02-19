@@ -120,7 +120,10 @@ export default function Payroll({ onViewAttendance }: PayrollProps) {
                                         <span className="text-white/40 font-black text-lg group-hover:text-white transition-colors">{row.total_pt_sessions}</span>
                                     </td>
                                     <td className="px-10 py-8 text-center">
-                                        <span className="text-white/40 font-bold text-sm">{row.pt_rate}</span>
+                                        <div className="flex flex-col items-center">
+                                            <span className="text-white/40 font-bold text-sm">{row.pt_rate}</span>
+                                            <span className="text-[7px] font-black text-white/20 uppercase tracking-widest">Base Rate</span>
+                                        </div>
                                     </td>
                                     <td className="px-10 py-8 text-center">
                                         <span className="text-white/40 font-bold text-sm tracking-tight">{row.salary?.toLocaleString()}</span>

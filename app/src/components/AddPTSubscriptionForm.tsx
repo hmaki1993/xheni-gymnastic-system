@@ -44,6 +44,7 @@ export default function AddPTSubscriptionForm({ onClose, onSuccess, editData, ro
         start_date: editData?.start_date || format(new Date(), 'yyyy-MM-dd'),
         expiry_date: editData?.expiry_date || format(addMonths(new Date(), 12), 'yyyy-MM-dd'),
         price: editData?.total_price || '',
+        coach_share: editData?.coach_share || '',
         student_phone: editData?.student_phone || ''
     });
 
@@ -54,6 +55,13 @@ export default function AddPTSubscriptionForm({ onClose, onSuccess, editData, ro
         fetchCoaches();
         fetchStudents();
     }, []);
+
+    // Sync coach_share with coach selection if not editing and not manually changed
+    useEffect(() => {
+        if (selectedCoach && !editData && !formData.coach_share) {
+            setFormData(prev => ({ ...prev, coach_share: selectedCoach.pt_rate }));
+        }
+    }, [selectedCoach, editData]);
 
     const fetchCoaches = async () => {
         const { data, error } = await supabase
@@ -132,6 +140,7 @@ export default function AddPTSubscriptionForm({ onClose, onSuccess, editData, ro
                 expiry_date: formData.expiry_date,
                 total_price: totalPrice,
                 price_per_session: totalPrice / totalSessions,
+                coach_share: Number(formData.coach_share) || 0,
                 student_phone: formData.student_phone,
                 status: 'active'
             };
@@ -336,24 +345,45 @@ export default function AddPTSubscriptionForm({ onClose, onSuccess, editData, ro
 
                     {/* Investment / Price - Compact & No Overlap */}
                     {role !== 'head_coach' && (
-                        <div className="space-y-2 group/field">
-                            <label className="text-[9px] font-black uppercase tracking-[0.3em] text-white/20 ml-1 group-focus-within/field:text-primary transition-colors">{t('pt.totalPrice')}</label>
-                            <div className="relative p-3 bg-white/[0.01] border border-white/5 rounded-2xl flex items-center justify-between group-focus-within/field:bg-white/[0.03] transition-all">
-                                <input
-                                    type="number"
-                                    min="0"
-                                    value={formData.price}
-                                    onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                                    className="bg-transparent border-none outline-none text-2xl font-black text-white flex-1 min-w-0 tracking-tighter focus:ring-0"
-                                    required
-                                />
-                                <div className="flex flex-col items-end flex-shrink-0 ml-4">
-                                    <span className="text-[9px] font-black text-white/20 uppercase tracking-widest">{currency.code}</span>
-                                    {selectedCoach && (
-                                        <span className="text-[7px] font-black text-primary/40 uppercase tracking-widest whitespace-nowrap">
-                                            {selectedCoach.pt_rate} / Sess
-                                        </span>
-                                    )}
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-2 group/field">
+                                <label className="text-[9px] font-black uppercase tracking-[0.3em] text-white/20 ml-1 group-focus-within/field:text-primary transition-colors">{t('pt.totalPrice')}</label>
+                                <div className="relative p-3 bg-white/[0.01] border border-white/5 rounded-2xl flex items-center justify-between group-focus-within/field:bg-white/[0.03] transition-all">
+                                    <input
+                                        type="number"
+                                        min="0"
+                                        value={formData.price}
+                                        onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+                                        className="bg-transparent border-none outline-none text-2xl font-black text-white flex-1 min-w-0 tracking-tighter focus:ring-0"
+                                        required
+                                    />
+                                    <div className="flex flex-col items-end flex-shrink-0 ml-4">
+                                        <span className="text-[9px] font-black text-white/20 uppercase tracking-widest">{currency.code}</span>
+                                        {selectedCoach && (
+                                            <span className="text-[7px] font-black text-primary/40 uppercase tracking-widest whitespace-nowrap">
+                                                {selectedCoach.pt_rate} / Sess
+                                            </span>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="space-y-2 group/field">
+                                <label className="text-[9px] font-black uppercase tracking-[0.3em] text-white/20 ml-1 group-focus-within/field:text-primary transition-colors">Coach Share (per session)</label>
+                                <div className="relative p-3 bg-white/[0.01] border border-white/5 rounded-2xl flex items-center justify-between group-focus-within/field:bg-white/[0.03] transition-all">
+                                    <input
+                                        type="number"
+                                        min="0"
+                                        step="0.1"
+                                        value={formData.coach_share}
+                                        onChange={(e) => setFormData({ ...formData, coach_share: e.target.value })}
+                                        className="bg-transparent border-none outline-none text-2xl font-black text-primary flex-1 min-w-0 tracking-tighter focus:ring-0"
+                                        required
+                                    />
+                                    <div className="flex flex-col items-end flex-shrink-0 ml-4">
+                                        <span className="text-[9px] font-black text-white/20 uppercase tracking-widest">{currency.code}</span>
+                                        <span className="text-[7px] font-black text-primary/40 uppercase tracking-widest whitespace-nowrap">Payout</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>

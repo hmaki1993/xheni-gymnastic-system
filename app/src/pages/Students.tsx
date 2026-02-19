@@ -17,6 +17,7 @@ import { useOutletContext } from 'react-router-dom';
 import GymnastProfileModal from '../components/GymnastProfileModal';
 import PremiumCheckbox from '../components/PremiumCheckbox';
 import MonthlyReportModal from '../components/MonthlyReportModal';
+import PremiumCalendarModal from '../components/PremiumCalendarModal';
 
 interface Student {
     id: number;
@@ -230,6 +231,11 @@ export default function Students() {
     const [ptToEdit, setPtToEdit] = useState<any>(null);
     const [ptToRenew, setPtToRenew] = useState<any>(null);
     const [selectedStudentIds, setSelectedStudentIds] = useState<number[]>([]);
+
+    // Premium History Modal State
+    const [showHistoryModal, setShowHistoryModal] = useState(false);
+    const [selectedSub, setSelectedSub] = useState<any>(null);
+
     const [showBulkDeleteModal, setShowBulkDeleteModal] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const [editingStudent, setEditingStudent] = useState<Student | null>(null);
@@ -529,12 +535,16 @@ export default function Students() {
                             {ptSubscriptions.map((subscription) => (
                                 <div
                                     key={subscription.id}
-                                    className="glass-card p-5 rounded-[2.25rem] border border-white/10 hover:border-primary/40 transition-all duration-700 group hover:scale-[1.01] relative overflow-hidden flex flex-col h-full bg-[#0a0c10]/40"
+                                    onClick={() => {
+                                        setSelectedSub(subscription);
+                                        setShowHistoryModal(true);
+                                    }}
+                                    className="glass-card p-5 rounded-[2.25rem] border border-white/10 hover:border-primary/40 transition-all duration-700 group hover:scale-[1.01] relative overflow-hidden flex flex-col h-full bg-[#0a0c10]/40 cursor-pointer"
                                 >
                                     <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700 rounded-[2.25rem]"></div>
                                     <div className="absolute -top-24 -right-24 w-48 h-48 bg-primary/10 rounded-full blur-[100px] opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
 
-                                    <div className="absolute top-2 right-4 flex gap-1.5 z-20">
+                                    <div className="absolute top-2 right-4 flex gap-1.5 z-20" onClick={(e) => e.stopPropagation()}>
                                         {/* Renew: Admin only */}
                                         {role === 'admin' && (
                                             <button
@@ -1086,6 +1096,16 @@ export default function Students() {
                     }}
                     student={studentForReport}
                     currentUserRole={role}
+                />
+            )}
+            {showHistoryModal && selectedSub && (
+                <PremiumCalendarModal
+                    subscriptionId={selectedSub.id}
+                    studentName={selectedSub.students?.full_name || selectedSub.student_name || 'Student'}
+                    onClose={() => {
+                        setShowHistoryModal(false);
+                        setSelectedSub(null);
+                    }}
                 />
             )}
         </div >

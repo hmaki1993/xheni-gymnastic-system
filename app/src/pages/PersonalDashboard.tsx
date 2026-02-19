@@ -11,6 +11,7 @@ import { useTheme } from '../context/ThemeContext';
 import GroupsList from '../components/GroupsList';
 import ConfirmModal from '../components/ConfirmModal';
 import GroupFormModal from '../components/GroupFormModal';
+import PremiumCalendarModal from '../components/PremiumCalendarModal';
 
 export default function PersonalDashboard() {
     const { t } = useTranslation();
@@ -40,6 +41,10 @@ export default function PersonalDashboard() {
     // Groups State
     const [showGroupForm, setShowGroupForm] = useState(false);
     const [editingGroup, setEditingGroup] = useState<any>(null);
+
+    // Premium History Modal State
+    const [showHistoryModal, setShowHistoryModal] = useState(false);
+    const [selectedSub, setSelectedSub] = useState<any>(null);
 
     const [isLoading, setIsLoading] = useState(true);
 
@@ -364,7 +369,14 @@ export default function PersonalDashboard() {
                         {ptSubscriptions.length > 0 ? (
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                                 {ptSubscriptions.map((subscription) => (
-                                    <div key={subscription.id} className="glass-card p-4.5 rounded-[1.8rem] border border-white/10 hover:border-accent/40 transition-all duration-700 group hover:scale-[1.01] relative overflow-hidden flex flex-col h-full bg-[#0a0c10]/40">
+                                    <div
+                                        key={subscription.id}
+                                        onClick={() => {
+                                            setSelectedSub(subscription);
+                                            setShowHistoryModal(true);
+                                        }}
+                                        className="glass-card p-4.5 rounded-[1.8rem] border border-white/10 hover:border-accent/40 transition-all duration-700 group hover:scale-[1.01] relative overflow-hidden flex flex-col h-full bg-[#0a0c10]/40 cursor-pointer"
+                                    >
                                         {/* Premium Card Hover Glow */}
                                         <div className="absolute inset-0 bg-gradient-to-br from-accent/10 via-transparent to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700 rounded-[2rem]"></div>
                                         <div className="absolute -top-24 -right-24 w-48 h-48 bg-accent/10 rounded-full blur-[100px] opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
@@ -413,7 +425,7 @@ export default function PersonalDashboard() {
                                                     const isLoading = recordingId === subscription.id;
 
                                                     return (
-                                                        <div className="flex items-center gap-2">
+                                                        <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
                                                             <button
                                                                 onClick={() => isRecentlyRecorded ? handleResetSession(subscription) : handleRecordSession(subscription)}
                                                                 disabled={isLoading || (subscription.sessions_remaining <= 0 && !isRecentlyRecorded)}
@@ -605,6 +617,17 @@ export default function PersonalDashboard() {
                         setShowGroupForm(false);
                         setEditingGroup(null);
                         // Refresh logic if GroupsList doesn't auto-refresh (it uses realtime subs usually)
+                    }}
+                />
+            )}
+
+            {showHistoryModal && selectedSub && (
+                <PremiumCalendarModal
+                    subscriptionId={selectedSub.id}
+                    studentName={selectedSub.students?.full_name || selectedSub.student_name || 'Student'}
+                    onClose={() => {
+                        setShowHistoryModal(false);
+                        setSelectedSub(null);
                     }}
                 />
             )}

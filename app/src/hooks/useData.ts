@@ -9,7 +9,7 @@ export function useStudents() {
         queryFn: async () => {
             const { data, error } = await supabase
                 .from('students')
-                .select('*, coaches ( full_name ), subscription_plans ( name, price ), training_groups ( name )')
+                .select('*, coaches ( full_name ), subscription_plans ( name, price, sessions_limit ), training_groups ( name )')
                 .order('created_at', { ascending: false });
             if (error) {
                 console.error('Error fetching students:', error);
@@ -283,7 +283,7 @@ export function useMonthlyPayroll(month: string) {
                     .lte('date', endOfMonth),
                 supabase
                     .from('pt_sessions')
-                    .select('coach_id, sessions_count')
+                    .select('coach_id, sessions_count, coach_share')
                     .gte('date', startOfMonth)
                     .lte('date', endOfMonth)
             ]);
@@ -308,17 +308,16 @@ export function useMonthlyPayroll(month: string) {
                 });
                 const totalHours = Number((totalSeconds / 3600).toFixed(1));
 
-                // Calculate total PT sessions (Accurate counting from pt_sessions table)
-                const tableSessions = coachSessions.reduce((sum, s) => sum + (Number(s.sessions_count ?? 1)), 0);
+                // Calculate total PT sessions and earnings (using individual session shares)
+                const totalSessions = coachSessions.reduce((sum, s) => sum + (Number(s.sessions_count ?? 1)), 0);
 
-                // For legacy or fallback, we might still have sessions logged in attendancept_sessions_count
-                // but we should avoid double counting if the same session is in both.
-                // In the current implementation, CoachDashboard adds to both or just table.
-                // Let's stick to the sessions table as the primary source of truth for modern records.
-                const totalSessions = tableSessions;
+                const ptEarnings = coachSessions.reduce((sum, s) => {
+                    const sessionCount = Number(s.sessions_count ?? 1);
+                    const sessionShare = s.coach_share ?? coach.pt_rate ?? 0;
+                    return sum + (sessionCount * sessionShare);
+                }, 0);
 
                 const salary = coach.salary || 0;
-                const ptEarnings = totalSessions * (coach.pt_rate || 0);
                 const totalEarnings = ptEarnings + salary;
 
                 totalPayroll += totalEarnings;

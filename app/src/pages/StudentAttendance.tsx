@@ -214,11 +214,23 @@ export default function StudentAttendance() {
         // Toggle logic: If clicking the same status, go back to pending (unless it's 'completed')
         const finalStatus = (currentStatus === newStatus && newStatus !== 'completed') ? 'pending' : newStatus;
 
-        // Optimistic Update
+        // Optimistic Update including session count
         const previousClasses = [...todaysClasses];
-        setTodaysClasses(prev => prev.map(s =>
-            s.id === studentId ? { ...s, status: finalStatus } : s
-        ));
+        setTodaysClasses(prev => prev.map(s => {
+            if (s.id !== studentId) return s;
+
+            let sessions_remaining = s.sessions_remaining;
+            const isBecomingPresent = (finalStatus === 'present' || finalStatus === 'completed') && (s.status !== 'present' && s.status !== 'completed');
+            const isRevertingFromPresent = (finalStatus === 'pending' || finalStatus === 'absent') && (s.status === 'present' || s.status === 'completed');
+
+            if (isBecomingPresent && sessions_remaining != null && sessions_remaining > 0) {
+                sessions_remaining -= 1;
+            } else if (isRevertingFromPresent && sessions_remaining != null) {
+                sessions_remaining += 1;
+            }
+
+            return { ...s, status: finalStatus, sessions_remaining };
+        }));
 
         try {
             // Guard: If it's a mock student, skip the database call (Optimistic UI only)
@@ -272,11 +284,15 @@ export default function StudentAttendance() {
 
 
             // --- Session Counting Logic ---
-            if (targetStatus === 'present' && (!existing || existing.status !== 'present')) {
-                // Fetch the student's current sessions_remaining
+            const willBePresent = (targetStatus === 'present' || targetStatus === 'completed');
+            const wasPresent = (existing?.status === 'present' || (existing?.status === 'absent' && existing?.check_out_time)); // Legacy check
+
+            // Refined Check: If we are moving to a present/completed state from anything else
+            if (willBePresent && (!existing || existing.status === 'absent' || (!existing.status && !existing.check_in_time))) {
+                // Fetch the student's current sessions_remaining to ensure accuracy
                 const { data: studentData } = await supabase
                     .from('students')
-                    .select('*')
+                    .select('sessions_remaining')
                     .eq('id', studentId)
                     .single();
 
@@ -286,11 +302,11 @@ export default function StudentAttendance() {
                         .update({ sessions_remaining: studentData.sessions_remaining - 1 })
                         .eq('id', studentId);
                 }
-            } else if ((targetStatus === 'pending' || targetStatus === 'absent') && (existing?.status === 'present')) {
-                // UNDO logic: If we are going from present back to pending/absent, increment sessions
+            } else if ((targetStatus === 'pending' || targetStatus === 'absent') && (existing?.status === 'present' || existing?.check_in_time)) {
+                // UNDO logic: If we are going from present/completed back to pending/absent, increment sessions
                 const { data: studentData } = await supabase
                     .from('students')
-                    .select('*')
+                    .select('sessions_remaining')
                     .eq('id', studentId)
                     .single();
 

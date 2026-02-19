@@ -317,6 +317,17 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
                         email: user.email || '',
                         ...profileRes.data
                     });
+                } else if (isAdminEmail) {
+                    // 🛡️ ADMIN FALLBACK: If they have an admin email but no profile record, 
+                    // allow them to stay logged in as an admin to fix the issue.
+                    console.warn('🛡️ ThemeContext: Admin profile missing in DB, using fallback.');
+                    setUserProfile({
+                        id: user.id,
+                        email: user.email || '',
+                        full_name: user.user_metadata?.full_name || 'Administrator',
+                        role: 'admin',
+                        avatar_url: null
+                    });
                 } else {
                     // 🛡️ SECURITY LOCK: Either profile is missing, or it's a "Ghost" coach profile without a record.
                     const reason = isUnauthorizedGhost ? 'Ghost Profile detected' : 'Profile missing';
@@ -324,10 +335,13 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
                     // Delay sign out slightly to prevent infinite loops during transition
                     setTimeout(async () => {
-                        await supabase.auth.signOut();
-                        toast.error(isUnauthorizedGhost ? 'Account inactive or deleted.' : 'Session expired or deleted.');
-                        window.location.href = '/login';
-                    }, 1000);
+                        const { data: { session } } = await supabase.auth.getSession();
+                        if (session) {
+                            await supabase.auth.signOut();
+                            toast.error(isUnauthorizedGhost ? 'Account inactive or deleted.' : 'Session expired or deleted.');
+                            window.location.href = '/login';
+                        }
+                    }, 1500);
 
                     setUserProfile(null);
                 }
