@@ -211,54 +211,28 @@ export default function Settings() {
             const { data: { user }, error: userError } = await supabase.auth.getUser();
             if (userError || !user) throw new Error('Session expired or security token invalid. Please log in again.');
 
-            const { error: profileError } = await supabase
-                .from('profiles')
-                .upsert({
-                    id: user.id,
-                    full_name: userData.full_name
-                });
-
-            if (profileError) throw profileError;
-
             const inputEmail = userData.email.trim().toLowerCase();
             const currentAuthEmail = user.email?.trim().toLowerCase();
 
-            // Only allow admin users to update email
-            if (role === 'admin' && inputEmail && currentAuthEmail && inputEmail !== currentAuthEmail) {
-                // Validate email format
-                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                if (!emailRegex.test(inputEmail)) {
-                    throw new Error('Invalid email format');
-                }
+            // 2. Update Profile & Sync Email (Trigger-based)
+            const isEmailChange = inputEmail && currentAuthEmail && inputEmail !== currentAuthEmail;
 
-                console.log('🔄 Attempting to update Admin email to:', inputEmail);
-                const { error: authError } = await supabase.auth.updateUser({
-                    email: inputEmail
-                });
+            const { error: profileSyncError } = await supabase
+                .from('profiles')
+                .update({
+                    full_name: userData.full_name,
+                    ...(isEmailChange ? { email: inputEmail } : {})
+                })
+                .eq('id', user.id);
 
-                if (authError) {
-                    console.error('❌ Supabase Auth Update Error:', authError);
-                    if (authError.message.includes('rate limit')) {
-                        throw new Error('Too many update attempts. Please try again in 24 hours or check your email settings.');
-                    }
-                    if (authError.message.includes('already registered') || authError.status === 422) {
-                        throw new Error('This email is already associated with another account.');
-                    }
-                    throw authError;
-                }
+            if (profileSyncError) throw profileSyncError;
 
-                // Sync with profiles table as well to maintain consistency
-                const { error: syncError } = await supabase
-                    .from('profiles')
-                    .update({ email: inputEmail })
-                    .eq('id', user.id);
-
-                if (syncError) {
-                    console.error('❌ Syncing email to profiles failed:', syncError);
-                    // We don't throw here because Auth update already succeeded/started
-                }
-
-                toast.success('Email update started! Follow the link sent to your new email.');
+            if (isEmailChange && role === 'admin') {
+                // For admin users, we rely on the database trigger 'on_profile_email_update' 
+                // to sync the email to auth.users and auth.identities securely.
+                // This bypasses GoTrue's SMTP/domain validation which often fails on custom domains.
+                console.log('✅ Email sync triggered via database for admin:', inputEmail);
+                toast.success(t('common.saveSuccess', 'Profile and login email updated successfully'));
             } else {
                 toast.success(t('common.saveSuccess'));
             }

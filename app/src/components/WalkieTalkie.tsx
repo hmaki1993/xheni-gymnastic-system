@@ -485,15 +485,15 @@ export default function WalkieTalkie({ role, userId }: { role: string; userId: s
                 <>
                     <button
                         onClick={handleOpenRecipients}
-                        className={`relative w-10 h-10 flex items-center justify-center rounded-full border transition-all ${showRecipients || selectedUserIds.length > 0
-                            ? 'bg-amber-500/10 border-amber-500/50 text-amber-500'
+                        className={`relative w-10 h-10 flex items-center justify-center rounded-full border transition-all sidebar-3d-item ${showRecipients || selectedUserIds.length > 0
+                            ? 'bg-amber-500/10 border-amber-500/50 text-amber-500 sidebar-3d-item-active'
                             : 'bg-white/5 border-white/10 text-white/40 hover:text-white hover:bg-white/10'
                             }`}
                         title="Select who receives this message"
                     >
                         <Users className="w-4 h-4" />
                         {selectedUserIds.length > 0 && (
-                            <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-amber-500 text-[9px] font-bold text-black">
+                            <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-amber-500 text-[9px] font-bold text-black border-2 border-[#122E34] shadow-lg">
                                 {selectedUserIds.length}
                             </span>
                         )}
@@ -575,9 +575,9 @@ export default function WalkieTalkie({ role, userId }: { role: string; userId: s
                         if ((Date.now() - mouseDownTime.current) < 50) return;
                         handleToggle(e);
                     }}
-                    className={`relative w-10 h-10 flex items-center justify-center rounded-full transition-all duration-300 border ${isRecording
-                        ? 'bg-red-500/20 border-red-500 shadow-[0_0_20px_rgba(239,68,68,0.4)] scale-110'
-                        : 'bg-white/5 border-white/10 hover:border-primary/50 text-white/70 hover:bg-white/10'
+                    className={`relative w-10 h-10 flex items-center justify-center rounded-full transition-all duration-300 border sidebar-3d-item ${isRecording
+                        ? 'bg-red-500/20 border-red-500 shadow-[0_0_20px_rgba(239,68,68,0.4)] scale-110 sidebar-3d-item-active'
+                        : 'bg-white/5 border-white/10 hover:border-primary/50 text-white/70 hover:bg-white/10 shadow-sm'
                         }`}
                     title={isRecording ? "Click to Stop" : "Broadcasting Mic (Hold to Talk)"}
                 >
@@ -600,10 +600,10 @@ export default function WalkieTalkie({ role, userId }: { role: string; userId: s
                             audioContext.current.resume();
                         }
                     }}
-                    className={`relative w-10 h-10 flex items-center justify-center rounded-full border transition-all duration-500 ${isMuted
-                        ? 'bg-rose-500/10 border-rose-500/20 text-rose-500'
+                    className={`relative w-10 h-10 flex items-center justify-center rounded-full border transition-all duration-500 sidebar-3d-item ${isMuted
+                        ? 'bg-rose-500/10 border-rose-500/20 text-rose-500 sidebar-3d-item-active'
                         : isIncoming
-                            ? 'bg-primary border-primary text-white animate-pulse shadow-[0_0_25px_rgba(var(--primary-rgb),0.6)] scale-110'
+                            ? 'bg-primary border-primary text-white animate-pulse shadow-[0_0_25px_rgba(var(--primary-rgb),0.6)] scale-110 sidebar-3d-item-active'
                             : 'bg-white/5 border-white/10 text-white/40 hover:text-white hover:bg-white/10'
                         }`}
                     title={isIncoming ? "Admin is Speaking... (Click to Stop)" : "Hoki Toki Speaker (Mute/Unmute)"}

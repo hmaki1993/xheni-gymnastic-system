@@ -97,30 +97,37 @@ export default function LandingPage() {
             </div>
 
             {/* Navigation - Ultra-Refined Floating Glass */}
-            <nav className="sticky top-6 z-[100] px-6">
-                <div className="max-w-5xl mx-auto flex items-center justify-between px-10 py-4 bg-black/40 backdrop-blur-3xl border border-white/[0.05] rounded-full shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
-                    <div className="flex items-center gap-5 group cursor-pointer">
-                        <div className="relative w-11 h-11 flex items-center justify-center p-1 overflow-hidden transition-all duration-700 group-hover:scale-105 rounded-full bg-white/5 border border-white/10 group-hover:border-[#D4AF37]/50">
-                            <div className="absolute inset-0 bg-[#D4AF37]/10 opacity-0 group-hover:opacity-100 transition-opacity blur-md"></div>
+            <nav className="sticky top-6 z-[100] px-6" style={{ perspective: '1200px' }}>
+                <div className="max-w-5xl mx-auto flex items-center justify-between px-10 py-5 bg-black/40 backdrop-blur-3xl border border-white/[0.08] rounded-full shadow-[0_30px_60px_rgba(0,0,0,0.6)] sidebar-3d-item translate-z-[40px]">
+                    <div className="flex items-center gap-6 group cursor-pointer sidebar-3d-item hover:translate-x-1 transition-all duration-500">
+                        <div className="relative w-12 h-12 flex items-center justify-center p-1.5 overflow-hidden transition-all duration-700 group-hover:scale-110 group-hover:rotate-3 rounded-full bg-white/5 border border-white/10 group-hover:border-[#D4AF37]/50 shadow-2xl">
+                            <div className="absolute inset-0 bg-[#D4AF37]/20 opacity-0 group-hover:opacity-100 transition-opacity blur-md"></div>
                             <img src="/logo.png" alt="Healy Logo" className="relative z-10 w-full h-full object-contain mix-blend-screen" style={{ clipPath: 'circle(50%)' }} />
                         </div>
                         <div className="flex flex-col">
-                            <span className="text-[12px] font-black tracking-[0.3em] leading-tight">HEALY <span className="text-[#D4AF37] italic">GYMNASTICS</span></span>
-                            <span className="text-[7px] font-bold text-white/20 uppercase tracking-[0.5em]">Institutional Infrastructure</span>
+                            <span className="text-[13px] font-black tracking-[0.35em] leading-tight text-white/90 group-hover:text-white transition-colors">HEALY <span className="text-[#D4AF37] italic">GYMNASTICS</span></span>
+                            <span className="text-[8px] font-extrabold text-[#D4AF37]/40 uppercase tracking-[0.6em] mt-0.5">Established 1886</span>
                         </div>
                     </div>
 
-                    <div className="hidden md:flex items-center gap-12 text-[9px] font-black uppercase tracking-[0.4em] text-white/30">
+                    <div className="hidden md:flex items-center gap-12 text-[10px] font-black uppercase tracking-[0.45em] text-white/30">
                         {["Infrastructure", "Royal Solutions", "Our Legacy"].map((item, i) => (
-                            <a key={i} href={`#${item.toLowerCase().split(' ')[item.toLowerCase().split(' ').length - 1]}`} className="hover:text-[#D4AF37] transition-all relative group py-2">
+                            <a
+                                key={i}
+                                href={`#${item.toLowerCase().split(' ')[item.toLowerCase().split(' ').length - 1]}`}
+                                className="hover:text-[#D4AF37] transition-all relative group py-2 sidebar-3d-item hover:translate-z-[10px]"
+                            >
                                 {item}
-                                <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-[1.5px] bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent transition-all group-hover:w-full"></span>
+                                <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-0 h-[2px] bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent transition-all group-hover:w-full shadow-[0_0_10px_#D4AF37]"></span>
                             </a>
                         ))}
                     </div>
 
                     <div className="w-[100px] flex justify-end">
-                        <div className="h-1 w-1 rounded-full bg-[#D4AF37]/50 animate-pulse"></div>
+                        <div className="relative group/access" onClick={() => navigate('/login')}>
+                            <div className="absolute -inset-2 bg-[#D4AF37]/20 blur-lg rounded-full opacity-0 group-hover/access:opacity-100 transition-opacity duration-700"></div>
+                            <div className="h-2 w-2 rounded-full bg-[#D4AF37] animate-pulse shadow-[0_0_15px_#D4AF37] cursor-pointer"></div>
+                        </div>
                     </div>
                 </div>
             </nav>

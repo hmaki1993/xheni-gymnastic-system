@@ -320,35 +320,25 @@ export default function Coaches() {
         if (!coachToDelete) return;
 
         const coach = coaches.find(c => c.id === coachToDelete);
-
-        // Robust ID resolution:
-        // Prioritize profile_id as it's the direct link to auth.users
         const profileId = coach?.profile_id || (coach as any).profiles?.id || coach?.id;
 
         const deleteToast = toast.loading(t('common.deleting', 'Processing deletion...'));
-        console.log('🛡️ Protection: Starting deletion for coach:', { coachId: coachToDelete, profileId });
+        console.log('🛡️ Protection: Starting full deletion for coach:', { coachId: coachToDelete, profileId });
 
         try {
-            // 1. Delete from Database (coaches table)
-            console.log('🛡️ Protection: Deleting coach record:', coachToDelete);
-            const { error: coachDeleteError } = await supabase.from('coaches').delete().eq('id', coachToDelete);
-            if (coachDeleteError) throw coachDeleteError;
-
-            // 2. Delete from profiles table
-            // Note: We cannot delete the Auth User from the client side without an Edge Function.
-            // By deleting the profile, we effectively lock the user out (as most RLS policies depend on profile).
-            if (profileId) {
-                console.log('🛡️ Protection: Deleting profile record to lock out user:', profileId);
-                const { error: profileDeleteError } = await supabase.from('profiles').delete().eq('id', profileId);
-
-                if (profileDeleteError) {
-                    console.warn('🛡️ Protection: Profile delete error:', profileDeleteError);
-                } else {
-                    console.log('🛡️ Protection: Profile deleted successfully.');
-                }
+            if (!profileId) {
+                // Fallback for coaches without profile_id (shouldn't happen with new logic)
+                const { error: coachDeleteError } = await supabase.from('coaches').delete().eq('id', coachToDelete);
+                if (coachDeleteError) throw coachDeleteError;
+            } else {
+                // Use RPC for full cleanup (Auth + Profile + Coach)
+                const { error: rpcError } = await supabase.rpc('delete_user_by_id', {
+                    target_user_id: profileId
+                });
+                if (rpcError) throw rpcError;
             }
 
-            toast.success(t('common.deleteSuccess', 'Staff member deleted and locked out successfully'), { id: deleteToast });
+            toast.success(t('common.deleteSuccess', 'Staff member deleted completely'), { id: deleteToast });
             refetch();
         } catch (error: any) {
             console.error('🛡️ Protection: Deletion sequence failed:', error);

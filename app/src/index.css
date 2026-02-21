@@ -260,6 +260,25 @@ input[type=number] {
   scrollbar-width: none;
 }
 
+/* Sidebar 3D Effects */
+.sidebar-3d-item {
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transform-style: preserve-3d;
+  will-change: transform, box-shadow;
+}
+
+.sidebar-3d-item:hover {
+  transform: translateY(-2px) translateZ(10px);
+  filter: brightness(1.1);
+}
+
+.sidebar-3d-item-active {
+  transform: translateZ(20px) scale(1.02);
+  box-shadow:
+    0 15px 30px -10px rgba(var(--color-primary), 0.5),
+    inset 0 1px 1px rgba(255, 255, 255, 0.2);
+}
+
 .custom-scrollbar::-webkit-scrollbar {
   width: 4px;
 }
@@ -295,6 +314,17 @@ input[type=number] {
     transform: none !important;
     /* Prevent layout shift on touch */
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
+  }
+
+  /* Stabilize 3D effects on mobile */
+  .sidebar-3d-item:hover {
+    transform: none !important;
+    filter: none !important;
+  }
+
+  .sidebar-3d-item-active {
+    transform: none !important;
+    box-shadow: none !important;
   }
 
   :root {

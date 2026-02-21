@@ -426,88 +426,64 @@ export default function DashboardLayout() {
 
             {/* Sidebar */}
             <aside className={`fixed inset-y-0 ${isRtl ? 'right-0' : 'left-0'} z-50 w-72 transition-transform duration-300 transform lg:translate-x-0 ${sidebarOpen ? 'translate-x-0' : isRtl ? 'translate-x-[110%]' : '-translate-x-full'}`}>
-                <div className="h-full glass-card flex flex-col m-4 rounded-[2.5rem] overflow-hidden border border-surface-border shadow-premium">
+                <div className="h-full glass-card flex flex-col m-2.5 rounded-[2.25rem] overflow-hidden border border-surface-border shadow-premium relative">
                     {/* Sidebar Header - Academy Branding */}
-                    <div className="p-6 pb-2 text-center">
+                    <div className="pt-3 pb-1 text-center">
                         <button
-                            onClick={() => {
-                                console.log('Logo clicked');
-                                setIsLogoModalOpen(true);
-                            }}
+                            onClick={() => setIsLogoModalOpen(true)}
                             className="relative group inline-block focus:outline-none z-10"
                         >
-                            <div className="absolute -inset-2 bg-gradient-to-r from-primary/40 to-accent/40 rounded-full blur-md opacity-0 group-hover:opacity-100 transition duration-700 pointer-events-none"></div>
+                            <div className="absolute -inset-2 bg-gradient-to-r from-primary/30 to-accent/30 rounded-full blur-md opacity-0 group-hover:opacity-100 transition duration-700 pointer-events-none"></div>
                             <img
                                 src={settings.logo_url || "/logo.png"}
                                 alt="Logo"
-                                className="relative z-10 h-28 w-28 object-contain rounded-full shadow-2xl transition-all hover:scale-105 duration-500 mx-auto cursor-pointer mix-blend-screen"
+                                className="relative z-10 h-18 w-18 object-contain rounded-full shadow-2xl transition-all hover:scale-105 duration-500 mx-auto cursor-pointer mix-blend-screen"
                                 style={{ clipPath: 'circle(50%)' }}
                             />
                         </button>
                     </div>
 
-                    <div className="space-y-1 text-center">
-                        <h2 className="text-[13px] font-black tracking-[0.25em] uppercase text-white leading-tight">
+                    <div className="space-y-0 text-center px-4">
+                        <h2 className="text-[12px] font-black tracking-[0.15em] uppercase text-white leading-tight">
                             {settings.academy_name}
                         </h2>
-                        <div className="flex flex-col items-center gap-1 opacity-40">
-                            {settings.gym_address && (
-                                <p className="flex items-center gap-1 text-[9px] font-bold uppercase tracking-widest justify-center">
-                                    <Building2 className="w-2.5 h-2.5" />
-                                    {settings.gym_address}
-                                </p>
-                            )}
-                            {settings.gym_phone && (
-                                <p dir="ltr" className="text-[9px] font-black flex items-center gap-1 tracking-widest justify-center">
-                                    {settings.gym_phone}
-                                </p>
-                            )}
-                        </div>
                     </div>
 
-                    <div className="mt-4 w-1/2 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent mx-auto"></div>
+                    <div className="mt-1.5 w-1/4 h-px bg-gradient-to-r from-transparent via-white/5 to-transparent mx-auto"></div>
 
                     {/* User Profile Card - Premium Glassmorphism */}
-                    <div className="px-5 mt-2 mb-4">
-                        <div className="p-4 rounded-3xl bg-white/[0.03] border border-white/10 shadow-2xl backdrop-blur-md relative overflow-hidden group/profile">
-                            {/* Decorative Glow */}
-                            <div className="absolute top-0 right-0 w-16 h-16 bg-primary/10 blur-2xl rounded-full -mr-8 -mt-8 group-hover/profile:bg-primary/20 transition-all duration-700"></div>
+                    <div className="px-4 mt-1.5 mb-1.5">
+                        <div className="p-3 rounded-[1.75rem] bg-white/[0.02] border border-white/5 shadow-xl backdrop-blur-md relative overflow-hidden group/profile sidebar-3d-item">
+                            <div className="absolute top-0 right-0 w-12 h-12 bg-primary/5 blur-xl rounded-full -mr-6 -mt-6 group-hover/profile:bg-primary/10 transition-all duration-700"></div>
 
-                            <div className="flex items-center gap-4 relative z-10">
+                            <div className="flex items-center gap-3 relative z-10">
                                 <div className="relative flex-shrink-0">
                                     <button
                                         onClick={() => setIsAvatarModalOpen(true)}
-                                        className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary to-accent p-[1px] shadow-2xl hover:scale-110 transition-all duration-500 group/avatar relative"
+                                        className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-accent p-[1px] shadow-xl hover:scale-105 transition-all duration-500 group/avatar relative"
                                     >
-                                        <div className="absolute inset-0 bg-primary/20 blur-xl opacity-0 group-hover/avatar:opacity-100 transition-opacity duration-700"></div>
-                                        <div className="w-full h-full rounded-2xl bg-[#0E1D21] flex items-center justify-center overflow-hidden relative z-10 border border-white/5">
+                                        <div className="w-full h-full rounded-xl bg-[#0E1D21] flex items-center justify-center overflow-hidden relative z-10 border border-white/5 text-[11px] font-black text-white">
                                             {avatarUrl ? (
                                                 <img src={avatarUrl} alt="" className="w-full h-full object-cover" />
-                                            ) : (
-                                                <span className="text-white font-black text-sm">
-                                                    {(fullName || role || 'E')[0]}
-                                                </span>
-                                            )}
+                                            ) : (fullName || role || 'E')[0]}
                                         </div>
                                     </button>
-                                    <div className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-[#122E34] shadow-lg ${userStatus === 'online' ? 'bg-emerald-400' : 'bg-orange-400'} animate-pulse z-20`}></div>
+                                    <div className={`absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border border-[#122E34] ${userStatus === 'online' ? 'bg-emerald-400' : 'bg-orange-400'} animate-pulse z-20`}></div>
                                 </div>
 
                                 <div className="flex-1 min-w-0">
-                                    <h3 className="font-extrabold text-white tracking-tight text-xs truncate">
+                                    <h3 className="font-extrabold text-white tracking-tight text-[11px] truncate leading-tight">
                                         {fullName || t('common.adminRole')}
                                     </h3>
-                                    <div className="flex items-center gap-2 mt-0.5">
-                                        <span className="text-[9px] text-primary font-black uppercase tracking-wider">{t(`roles.${role || 'admin'}`)}</span>
-                                    </div>
+                                    <p className="text-[8px] text-primary/70 font-black uppercase tracking-widest mt-0.5">{t(`roles.${role || 'admin'}`)}</p>
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     {/* Navigation */}
-                    <div className="flex-1 px-4 space-y-1 py-4 overflow-y-auto custom-scrollbar">
-                        <div className="text-[8px] font-black text-white/20 uppercase tracking-[0.3em] px-4 mb-2">Main Menu</div>
+                    <div className="flex-1 px-3 space-y-1 py-1 overflow-hidden scroll-smooth" style={{ perspective: '800px' }}>
+                        <div className="text-[7px] font-black text-white/20 uppercase tracking-[0.4em] px-4 mb-2">Navigation</div>
                         {navItems.map((item) => {
                             const Icon = item.icon;
                             const isActive = location.pathname === item.to;
@@ -516,15 +492,15 @@ export default function DashboardLayout() {
                                     key={item.to}
                                     to={item.to}
                                     onClick={() => setSidebarOpen(false)}
-                                    className={`flex items-center px-4 py-2.5 text-xs font-bold rounded-2xl transition-all duration-300 group relative ${isActive
-                                        ? 'bg-gradient-to-r from-primary to-primary/80 text-white shadow-xl shadow-primary/20 scale-[1.02]'
-                                        : 'text-white/50 hover:bg-white/[0.04] hover:text-white hover:translate-x-1'
+                                    className={`flex items-center px-4 py-2 text-[12px] font-black rounded-xl transition-all duration-500 group relative sidebar-3d-item ${isActive
+                                        ? 'bg-gradient-to-r from-primary via-primary/90 to-accent text-white shadow-lg sidebar-3d-item-active'
+                                        : 'text-white/40 hover:bg-white/[0.04] hover:text-white hover:translate-x-1 border border-transparent hover:border-white/5'
                                         }`}
                                 >
-                                    <Icon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-current'} transition-transform group-hover:scale-110 ${isRtl ? 'ml-3' : 'mr-3'}`} />
-                                    <span className="relative z-10">{t(item.label)}</span>
+                                    <Icon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-current'} transition-transform group-hover:scale-110 group-hover:rotate-3 ${isRtl ? 'ml-3' : 'mr-3'}`} />
+                                    <span className="relative z-10 uppercase tracking-widest leading-none mt-0.5">{t(item.label)}</span>
                                     {isActive && (
-                                        <div className="absolute inset-y-2 right-2 w-1.5 bg-white/20 rounded-full blur-[2px]" />
+                                        <div className="absolute inset-y-1.5 right-1.5 w-1 bg-white/30 rounded-full blur-[2px] animate-pulse" />
                                     )}
                                 </Link>
                             );
@@ -533,7 +509,7 @@ export default function DashboardLayout() {
 
 
                     {/* Sidebar Footer - Actions Tray */}
-                    <div className="p-3 mx-2 mb-4 rounded-3xl bg-black/20 border border-white/5 flex items-center gap-2 flex-shrink-0">
+                    <div className="p-1.5 mx-3 mb-2 rounded-[1.75rem] bg-black/40 border border-white/5 flex items-center gap-1.5 flex-shrink-0 relative overflow-hidden sidebar-3d-item">
                         <button
                             onClick={() => {
                                 const newLang = i18n.language === 'en' ? 'ar' : 'en';
@@ -541,26 +517,25 @@ export default function DashboardLayout() {
                                 document.dir = newLang === 'ar' ? 'rtl' : 'ltr';
                                 updateSettings({ language: newLang });
                             }}
-                            className="w-10 h-10 flex items-center justify-center text-white/40 hover:text-white hover:bg-white/5 rounded-2xl transition-all duration-300 flex-shrink-0 group"
-                            title={i18n.language === 'en' ? 'Arabic' : 'English'}
+                            className="w-9 h-9 flex items-center justify-center text-white/30 hover:text-white hover:bg-white/5 rounded-xl transition-all duration-300 flex-shrink-0 group relative z-10"
                         >
-                            <Globe className="w-4 h-4 transition-transform group-hover:rotate-45 duration-700" />
+                            <Globe className="w-4 h-4 transition-transform group-hover:rotate-[360deg] duration-1000" />
                         </button>
 
-                        <div className="h-6 w-px bg-white/5"></div>
+                        <div className="h-5 w-px bg-white/5"></div>
 
                         <button
                             onClick={handleLogout}
-                            className="flex-1 h-10 flex items-center justify-center px-3 text-[10px] font-black text-rose-500 hover:text-rose-400 hover:bg-rose-500/10 rounded-2xl transition-all duration-300 group border border-transparent hover:border-rose-500/20 uppercase tracking-[0.15em] whitespace-nowrap"
+                            className="flex-1 h-9 flex items-center justify-center px-2 text-[10px] font-black text-rose-500/80 hover:text-rose-400 hover:bg-rose-500/10 rounded-xl transition-all duration-500 group border border-transparent hover:border-rose-500/10 uppercase tracking-[0.2em] whitespace-nowrap relative z-10"
                         >
-                            <LogOut className={`w-4 h-4 transition-transform group-hover:-translate-x-1 ${isRtl ? 'ml-2' : 'mr-2'}`} />
+                            <LogOut className={`w-3.5 h-3.5 transition-transform group-hover:-translate-x-1 ${isRtl ? 'ml-1.5' : 'mr-1.5'}`} />
                             <span>{t('common.logout')}</span>
                         </button>
                     </div>
                 </div>
-                <div className="px-8 pb-10 text-center">
-                    <span className="text-[7px] font-black text-[#D4AF37]/60 uppercase tracking-[0.5em] block drop-shadow-[0_0_5px_rgba(212,175,55,0.3)] cursor-default">
-                        System built by Ahmed Hmaki
+                <div className="px-8 pb-3 text-center">
+                    <span className="text-[6px] font-black text-[#D4AF37]/30 uppercase tracking-[0.5em] block cursor-default">
+                        Elite Reborn • {new Date().getFullYear()}
                     </span>
                 </div>
             </aside>
@@ -614,12 +589,12 @@ export default function DashboardLayout() {
                             <div className="hidden md:block h-8 w-px bg-surface-border mx-2"></div>
 
                             {/* Notifications Center */}
-                            <div className="relative">
+                            <div className="relative" style={{ perspective: '1000px' }}>
                                 <button
                                     onClick={(e) => { e.stopPropagation(); setNotificationsOpen(!notificationsOpen); setProfileOpen(false); }}
-                                    className={`w-10 h-10 flex items-center justify-center rounded-full transition-all relative ${notificationsOpen ? 'bg-primary/20 text-primary shadow-[inset_0_0_15px_rgba(var(--primary-rgb),0.3)] border border-primary/20' : 'text-white/70 bg-white/5 hover:bg-white/10 border border-white/5 shadow-sm hover:shadow-premium'}`}
+                                    className={`w-10 h-10 flex items-center justify-center rounded-full transition-all relative sidebar-3d-item ${notificationsOpen ? 'bg-primary/20 text-primary shadow-[inset_0_0_15px_rgba(var(--primary-rgb),0.3)] border border-primary/20 sidebar-3d-item-active' : 'text-white/70 bg-white/5 hover:bg-white/10 border border-white/5 shadow-sm hover:shadow-premium'}`}
                                 >
-                                    <Bell className="w-5 h-5" />
+                                    <Bell className="w-5 h-5 group-hover:rotate-12 transition-transform" />
                                     {unreadCount > 0 && (
                                         <span className="absolute -top-1 -right-1 min-w-[20px] h-[20px] px-1 bg-gradient-to-br from-red-500 to-rose-600 text-white text-[10px] font-black rounded-full flex items-center justify-center shadow-lg shadow-red-500/40 border-2 border-background">
                                             {unreadCount > 9 ? '9+' : unreadCount}
@@ -627,77 +602,6 @@ export default function DashboardLayout() {
                                     )}
                                 </button>
 
-                                {notificationsOpen && (
-                                    <div className={`fixed sm:absolute top-16 sm:top-full left-1/2 sm:left-auto -translate-x-1/2 sm:translate-x-0 right-auto sm:right-[-1rem] sm:mt-6 w-[94vw] sm:w-96 bg-[#0E1D21]/98 backdrop-blur-3xl rounded-[3rem] border border-white/20 shadow-2xl overflow-hidden z-[70] animate-in fade-in slide-in-from-top-4 duration-500 flex flex-col max-h-[80vh] sm:max-h-auto`}>
-                                        <div className="p-6 sm:p-10 border-b border-white/10 bg-white/[0.05] flex-shrink-0">
-                                            <h3 className="font-black text-white uppercase tracking-tighter text-xl sm:text-2xl">{t('common.notifications') || t('common.recentActivity')}</h3>
-                                        </div>
-                                        <div className="flex-1 overflow-y-auto custom-scrollbar min-h-0">
-                                            {filteredNotifications.length === 0 ? (
-                                                <div className="p-12 text-center text-white/10 font-black uppercase tracking-[0.3em] text-[10px]">
-                                                    {t('common.noNotifications')}
-                                                </div>
-                                            ) : (
-                                                filteredNotifications.map(note => {
-                                                    let Icon = Bell;
-                                                    let color = 'text-white';
-
-                                                    if (note.type === 'student') { Icon = Users; color = 'text-primary'; }
-                                                    else if (note.type === 'payment') { Icon = Wallet; color = 'text-emerald-400'; }
-                                                    else if (note.type === 'schedule') { Icon = Calendar; color = 'text-accent'; }
-                                                    else if (note.type === 'coach') { Icon = UserCircle; color = 'text-purple-400'; }
-                                                    else if (note.type === 'check_in') { Icon = Calendar; color = 'text-green-400'; }
-                                                    else if (note.type === 'check_out') { Icon = Calendar; color = 'text-rose-500'; }
-                                                    else if (note.type === 'attendance_absence') { Icon = Calendar; color = 'text-red-400'; }
-                                                    else if (note.type === 'pt_subscription') { Icon = Wallet; color = 'text-amber-400'; }
-
-                                                    const timeAgo = (dateStr: string) => {
-                                                        const diff = (new Date().getTime() - new Date(dateStr).getTime()) / 1000 / 60;
-                                                        if (diff < 60) return `${Math.floor(diff)}${t('common.minutesAgoShort')}`;
-                                                        if (diff < 1440) return `${Math.floor(diff / 60)}${t('common.hoursAgoShort')}`;
-                                                        return `${Math.floor(diff / 1440)}${t('common.daysAgoShort')}`;
-                                                    };
-
-                                                    return (
-                                                        <div
-                                                            key={note.id}
-                                                            onClick={() => handleMarkAsRead(note.id)}
-                                                            className={`p-6 border-b border-white/[0.05] hover:bg-white/[0.08] transition-all group cursor-pointer relative ${!note.is_read ? 'bg-primary/5' : ''}`}
-                                                        >
-                                                            {!note.is_read && (
-                                                                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-12 bg-primary rounded-r-full shadow-[0_0_15px_rgba(var(--primary-rgb),0.5)]"></div>
-                                                            )}
-                                                            <div className="flex gap-4">
-                                                                <div className={`w-12 h-12 flex items-center justify-center rounded-2xl bg-white/5 shadow-inner ${color} group-hover:scale-105 transition-transform border border-white/5`}>
-                                                                    <Icon className="w-5 h-5" />
-                                                                </div>
-                                                                <div className="flex-1">
-                                                                    <div className="flex justify-between items-start mb-1">
-                                                                        <h4 className={`font-black tracking-tight text-sm ${!note.is_read ? 'text-white' : 'text-white/60'}`}>{note.title}</h4>
-                                                                        <span className="text-[10px] font-black text-white/20 uppercase tracking-widest bg-white/5 px-2 py-0.5 rounded-full">{timeAgo(note.created_at)}</span>
-                                                                    </div>
-                                                                    <p className={`text-xs leading-relaxed line-clamp-2 font-medium transition-colors ${!note.is_read ? 'text-white/80' : 'text-white/40'}`}>
-                                                                        {note.message}
-                                                                    </p>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    );
-                                                })
-                                            )}
-                                        </div>
-                                        <div className="p-4 bg-white/[0.03] border-t border-white/10 flex-shrink-0">
-                                            {filteredNotifications.length > 0 && (
-                                                <button
-                                                    onClick={handleClearAllNotifications}
-                                                    className="w-full py-4 rounded-[1.5rem] bg-red-500/10 text-red-400 hover:bg-red-500/20 text-[10px] font-black uppercase tracking-[0.4em] transition-all border border-red-500/10"
-                                                >
-                                                    {t('common.notificationsClearAll')}
-                                                </button>
-                                            )}
-                                        </div>
-                                    </div>
-                                )}
                             </div>
 
                             {/* Walkie Talkie (Hoki Toki) */}
@@ -705,29 +609,29 @@ export default function DashboardLayout() {
                         </div>
 
                         {/* Status & Profile Hub */}
-                        <div className="relative">
+                        <div className="relative" style={{ perspective: '1000px' }}>
                             <button
                                 onClick={(e) => { e.stopPropagation(); setProfileOpen(!profileOpen); setNotificationsOpen(false); }}
-                                className={`flex items-center justify-center sm:justify-start gap-0 sm:gap-3 p-0 sm:pl-4 sm:pr-1.5 sm:py-1.5 rounded-full transition-all group w-10 h-10 sm:w-auto sm:h-auto ${profileOpen ? 'bg-white/10 shadow-inner ring-1 ring-white/10' : 'bg-white/[0.02] border border-white/5 hover:border-white/20 hover:bg-white/5 shadow-sm hover:shadow-premium'}`}
+                                className={`flex items-center justify-center sm:justify-start gap-0 sm:gap-3 p-0 sm:pl-4 sm:pr-2 sm:py-2 rounded-full transition-all group w-10 h-10 sm:w-auto sm:h-auto sidebar-3d-item ${profileOpen ? 'bg-white/10 shadow-inner ring-1 ring-white/20 sidebar-3d-item-active' : 'bg-white/[0.02] border border-white/5 hover:border-white/20 hover:bg-white/5 shadow-sm hover:shadow-premium'}`}
                             >
-                                <div className="hidden sm:flex flex-col items-end leading-none gap-1">
-                                    <p className="text-xs font-black text-white tracking-tight">
+                                <div className="hidden sm:flex flex-col items-end leading-none gap-1 mr-1">
+                                    <p className="text-[13px] font-black text-white tracking-tight">
                                         {fullName || 'Elite User'}
                                     </p>
 
-                                    <div className="flex items-center gap-1.5 mt-0.5">
-                                        <span className={`w-1.5 h-1.5 rounded-full ${userStatus === 'online' ? 'bg-emerald-400' : 'bg-orange-400'} animate-pulse shadow-[0_0_8px_currentColor]`}></span>
-                                        <span className="text-[8px] font-black text-white/30 uppercase tracking-[0.2em]">{role ? t(`roles.${role}`) : t('common.adminRole')}</span>
+                                    <div className="flex items-center gap-2 mt-0.5">
+                                        <span className={`w-2 h-2 rounded-full ${userStatus === 'online' ? 'bg-emerald-400' : 'bg-orange-400'} animate-pulse shadow-[0_0_10px_currentColor]`}></span>
+                                        <span className="text-[9px] font-black text-white/30 uppercase tracking-widest">{role ? t(`roles.${role}`) : t('common.adminRole')}</span>
                                     </div>
                                 </div>
 
                                 <div className="relative">
-                                    <button
+                                    <div
                                         onClick={(e) => {
                                             e.stopPropagation();
                                             setIsAvatarModalOpen(true);
                                         }}
-                                        className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-accent p-[1px] group-hover:scale-105 transition-transform duration-500 relative"
+                                        className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-accent p-[1px] group-hover:scale-110 transition-transform duration-500 relative cursor-pointer"
                                     >
                                         <div className="w-full h-full rounded-full bg-background flex items-center justify-center overflow-hidden border border-white/5">
                                             {avatarUrl ? (
@@ -738,56 +642,13 @@ export default function DashboardLayout() {
                                                 </span>
                                             )}
                                         </div>
-                                    </button>
-                                    <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full bg-background border-2 border-white/10 flex items-center justify-center p-0.5">
-                                        <ChevronDown className={`w-full h-full text-white/40 transition-all duration-300 ${profileOpen ? 'rotate-180' : ''}`} />
+                                    </div>
+                                    <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-[#122E34] border-2 border-white/10 flex items-center justify-center p-0.5 shadow-lg group-hover:bg-primary transition-colors duration-500">
+                                        <ChevronDown className={`w-full h-full text-white/60 transition-all duration-500 ${profileOpen ? 'rotate-180' : ''}`} />
                                     </div>
                                 </div>
                             </button>
 
-                            {profileOpen && (
-                                <div className={`absolute top-full mt-4 ${isRtl ? 'left-[-1rem]' : 'right-[-1rem]'} w-72 bg-[#122E34] rounded-[2.5rem] border border-white/30 shadow-2xl overflow-hidden z-[70] animate-in fade-in slide-in-from-top-4 duration-300`}>
-                                    <div className="p-8 space-y-4 border-b border-white/10 bg-white/[0.05]">
-                                        <p className="text-[10px] font-black text-white/20 uppercase tracking-[0.3em] ml-2">{t('common.setStatus')}</p>
-                                        <div className="grid grid-cols-2 gap-3">
-                                            <button
-                                                onClick={() => handleStatusChange('online')}
-                                                className={`flex items-center justify-center gap-2.5 py-3.5 rounded-2xl text-[9px] font-black uppercase tracking-widest transition-all ${userStatus === 'online' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 shadow-lg shadow-emerald-500/10' : 'bg-white/5 text-white/40 border border-transparent hover:bg-white/10'}`}
-                                            >
-                                                <span className={`w-2 h-2 rounded-full ${userStatus === 'online' ? 'bg-emerald-400 animate-pulse' : 'bg-white/20'}`}></span>
-                                                {t('common.onlineLabel')}
-                                            </button>
-                                            <button
-                                                onClick={() => handleStatusChange('busy')}
-                                                className={`flex items-center justify-center gap-2.5 py-3.5 rounded-2xl text-[9px] font-black uppercase tracking-widest transition-all ${userStatus === 'busy' ? 'bg-orange-500/20 text-orange-400 border border-orange-500/30 shadow-lg shadow-orange-500/10' : 'bg-white/5 text-white/40 border border-transparent hover:bg-white/10'}`}
-                                            >
-                                                <span className={`w-2 h-2 rounded-full ${userStatus === 'busy' ? 'bg-orange-400 animate-pulse' : 'bg-white/20'}`}></span>
-                                                {t('common.busyLabel')}
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <div className="p-4 space-y-2">
-                                        <button
-                                            onClick={() => { navigate('/app/settings'); setProfileOpen(false); }}
-                                            className="flex items-center w-full px-6 py-4 text-xs font-black text-white/50 hover:text-white hover:bg-white/10 rounded-2xl transition-all group/item uppercase tracking-[0.2em] gap-5 border border-transparent hover:border-white/10"
-                                        >
-                                            <div className="w-10 h-10 flex items-center justify-center rounded-xl bg-white/5 group-hover/item:bg-primary/20 group-hover/item:text-primary transition-all border border-white/5 group-hover/item:border-primary/30">
-                                                <Settings className="w-5 h-5 group-hover/item:rotate-90 transition-transform duration-700" />
-                                            </div>
-                                            {t('common.settings')}
-                                        </button>
-                                        <button
-                                            onClick={handleLogout}
-                                            className="flex items-center w-full px-6 py-4 text-xs font-black text-rose-500/60 hover:text-rose-500 hover:bg-rose-500/10 rounded-2xl transition-all group/logout uppercase tracking-[0.2em] gap-5 border border-transparent hover:border-rose-500/20"
-                                        >
-                                            <div className="w-10 h-10 flex items-center justify-center rounded-xl bg-rose-500/10 group-hover/logout:bg-rose-500/20 transition-all border border-rose-500/10 group-hover/logout:border-rose-500/30 text-rose-500">
-                                                <LogOut className="w-5 h-5 group-hover/logout:-translate-x-1 transition-transform" />
-                                            </div>
-                                            {t('common.logout')}
-                                        </button>
-                                    </div>
-                                </div>
-                            )}
                         </div>
                     </div>
                 </header>
@@ -797,73 +658,206 @@ export default function DashboardLayout() {
                     <Outlet context={{ role, fullName, userId }} />
 
                 </main>
-            </div>
+            </div >
 
             {/* Avatar Lightbox Modal */}
-            {isAvatarModalOpen && (
-                <div
-                    className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/90 backdrop-blur-3xl animate-in fade-in duration-500"
-                    onClick={() => setIsAvatarModalOpen(false)}
-                >
-                    <div className="relative max-w-2xl max-h-[80vh] w-full flex items-center justify-center px-4">
-                        <div className="relative group/lightbox">
-                            {/* Premium Glow around image */}
-                            <div className="absolute -inset-4 bg-gradient-to-br from-primary/30 to-accent/30 rounded-[3rem] blur-3xl opacity-50 group-hover/lightbox:opacity-100 transition-opacity duration-1000"></div>
+            {
+                isAvatarModalOpen && (
+                    <div
+                        className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/90 backdrop-blur-3xl animate-in fade-in duration-500"
+                        onClick={() => setIsAvatarModalOpen(false)}
+                    >
+                        <div className="relative max-w-2xl max-h-[80vh] w-full flex items-center justify-center px-4">
+                            <div className="relative group/lightbox">
+                                {/* Premium Glow around image */}
+                                <div className="absolute -inset-4 bg-gradient-to-br from-primary/30 to-accent/30 rounded-[3rem] blur-3xl opacity-50 group-hover/lightbox:opacity-100 transition-opacity duration-1000"></div>
 
-                            {avatarUrl ? (
-                                <img
-                                    src={avatarUrl}
-                                    alt="Profile"
-                                    className="relative z-10 max-w-full max-h-[70vh] object-contain rounded-[3rem] shadow-2xl border-2 border-white/20 animate-in zoom-in-95 duration-500"
-                                    onClick={(e) => e.stopPropagation()}
-                                />
-                            ) : (
-                                <div className="relative z-10 w-64 h-64 bg-background rounded-[3rem] border-2 border-white/20 flex items-center justify-center shadow-2xl animate-in zoom-in-95 duration-500">
-                                    <span className="text-white font-black text-8xl uppercase">
-                                        {(fullName || role)?.[0] || 'A'}
-                                    </span>
+                                {avatarUrl ? (
+                                    <img
+                                        src={avatarUrl}
+                                        alt="Profile"
+                                        className="relative z-10 max-w-full max-h-[70vh] object-contain rounded-[3rem] shadow-2xl border-2 border-white/20 animate-in zoom-in-95 duration-500"
+                                        onClick={(e) => e.stopPropagation()}
+                                    />
+                                ) : (
+                                    <div className="relative z-10 w-64 h-64 bg-background rounded-[3rem] border-2 border-white/20 flex items-center justify-center shadow-2xl animate-in zoom-in-95 duration-500">
+                                        <span className="text-white font-black text-8xl uppercase">
+                                            {(fullName || role)?.[0] || 'A'}
+                                        </span>
+                                    </div>
+                                )}
+
+                                {/* Info card in lightbox */}
+                                <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 z-20 bg-white/10 backdrop-blur-3xl border border-white/20 px-8 py-4 rounded-[2rem] shadow-2xl text-center min-w-[240px] animate-in slide-in-from-bottom-4 duration-700 delay-200">
+                                    <h3 className="text-white font-black text-xl tracking-tight leading-none mb-1">{fullName}</h3>
+                                    <p className="text-primary text-[10px] font-black uppercase tracking-[0.3em]">{t(`roles.${role}`)}</p>
                                 </div>
-                            )}
 
-                            {/* Info card in lightbox */}
-                            <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 z-20 bg-white/10 backdrop-blur-3xl border border-white/20 px-8 py-4 rounded-[2rem] shadow-2xl text-center min-w-[240px] animate-in slide-in-from-bottom-4 duration-700 delay-200">
-                                <h3 className="text-white font-black text-xl tracking-tight leading-none mb-1">{fullName}</h3>
-                                <p className="text-primary text-[10px] font-black uppercase tracking-[0.3em]">{t(`roles.${role}`)}</p>
+                                <button
+                                    onClick={() => setIsAvatarModalOpen(false)}
+                                    className="absolute -top-12 right-0 w-12 h-12 flex items-center justify-center bg-white/10 hover:bg-white/20 rounded-2xl text-white transition-all backdrop-blur-sm border border-white/10 scale-90 hover:scale-100 active:scale-95 duration-300"
+                                >
+                                    <X className="w-6 h-6" />
+                                </button>
                             </div>
+                        </div>
+                    </div>
+                )
+            }
 
+            {/* Logo Lightbox Modal */}
+            {
+                isLogoModalOpen && (
+                    <div
+                        className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/90 backdrop-blur-xl animate-in fade-in duration-300"
+                        onClick={() => setIsLogoModalOpen(false)}
+                    >
+                        <div className="relative max-w-4xl max-h-[90vh] w-full flex items-center justify-center">
+                            <img
+                                src={settings.logo_url || "/logo.png"}
+                                alt="Academy Logo"
+                                className="max-w-full max-h-[85vh] object-contain rounded-3xl shadow-[0_0_50px_rgba(0,0,0,0.5)] animate-in zoom-in-95 duration-300"
+                                onClick={(e) => e.stopPropagation()}
+                            />
                             <button
-                                onClick={() => setIsAvatarModalOpen(false)}
-                                className="absolute -top-12 right-0 w-12 h-12 flex items-center justify-center bg-white/10 hover:bg-white/20 rounded-2xl text-white transition-all backdrop-blur-sm border border-white/10 scale-90 hover:scale-100 active:scale-95 duration-300"
+                                onClick={() => setIsLogoModalOpen(false)}
+                                className="absolute -top-12 right-0 w-10 h-10 flex items-center justify-center bg-white/10 hover:bg-white/20 rounded-full text-white transition-all backdrop-blur-sm"
                             >
-                                <X className="w-6 h-6" />
+                                <X className="w-5 h-5" />
                             </button>
                         </div>
                     </div>
-                </div>
-            )}
+                )
+            }
+            {/* UI Portals - Move outside of transform containers for fixed positioning stability */}
+            {
+                notificationsOpen && (
+                    <div
+                        className="fixed top-16 right-4 sm:right-6 md:right-10 w-[92vw] sm:w-[480px] md:w-96 bg-[#0E1D21]/95 backdrop-blur-3xl rounded-[2.5rem] md:rounded-[3rem] border border-white/20 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5)] overflow-hidden z-[100] animate-in fade-in zoom-in-95 slide-in-from-top-4 duration-500 flex flex-col max-h-[85vh] sidebar-3d-item"
+                        style={{ transform: 'translateZ(100px)' }}
+                    >
+                        <div className="p-6 md:p-10 border-b border-white/10 bg-gradient-to-br from-white/[0.08] to-transparent flex-shrink-0">
+                            <h3 className="font-black text-white uppercase tracking-tighter text-xl md:text-2xl flex items-center gap-3">
+                                <div className="w-2 h-8 bg-primary rounded-full blur-[2px] animate-pulse"></div>
+                                {t('common.notifications') || t('common.recentActivity')}
+                            </h3>
+                        </div>
+                        <div className="flex-1 overflow-y-auto custom-scrollbar min-h-0">
+                            {filteredNotifications.length === 0 ? (
+                                <div className="p-10 md:p-12 text-center text-white/10 font-black uppercase tracking-[0.3em] text-[10px]">
+                                    {t('common.noNotifications')}
+                                </div>
+                            ) : (
+                                filteredNotifications.map(note => {
+                                    let Icon = Bell;
+                                    let color = 'text-white';
 
-            {/* Logo Lightbox Modal */}
-            {isLogoModalOpen && (
-                <div
-                    className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/90 backdrop-blur-xl animate-in fade-in duration-300"
-                    onClick={() => setIsLogoModalOpen(false)}
-                >
-                    <div className="relative max-w-4xl max-h-[90vh] w-full flex items-center justify-center">
-                        <img
-                            src={settings.logo_url || "/logo.png"}
-                            alt="Academy Logo"
-                            className="max-w-full max-h-[85vh] object-contain rounded-3xl shadow-[0_0_50px_rgba(0,0,0,0.5)] animate-in zoom-in-95 duration-300"
-                            onClick={(e) => e.stopPropagation()}
-                        />
-                        <button
-                            onClick={() => setIsLogoModalOpen(false)}
-                            className="absolute -top-12 right-0 w-10 h-10 flex items-center justify-center bg-white/10 hover:bg-white/20 rounded-full text-white transition-all backdrop-blur-sm"
-                        >
-                            <X className="w-5 h-5" />
-                        </button>
+                                    if (note.type === 'student') { Icon = Users; color = 'text-primary'; }
+                                    else if (note.type === 'payment') { Icon = Wallet; color = 'text-emerald-400'; }
+                                    else if (note.type === 'schedule') { Icon = Calendar; color = 'text-accent'; }
+                                    else if (note.type === 'coach') { Icon = UserCircle; color = 'text-purple-400'; }
+                                    else if (note.type === 'check_in') { Icon = Calendar; color = 'text-green-400'; }
+                                    else if (note.type === 'check_out') { Icon = Calendar; color = 'text-rose-500'; }
+                                    else if (note.type === 'attendance_absence') { Icon = Calendar; color = 'text-red-400'; }
+                                    else if (note.type === 'pt_subscription') { Icon = Wallet; color = 'text-amber-400'; }
+
+                                    const timeAgo = (dateStr: string) => {
+                                        const diff = (new Date().getTime() - new Date(dateStr).getTime()) / 1000 / 60;
+                                        if (diff < 60) return `${Math.floor(diff)}${t('common.minutesAgoShort')}`;
+                                        if (diff < 1440) return `${Math.floor(diff / 60)}${t('common.hoursAgoShort')}`;
+                                        return `${Math.floor(diff / 1440)}${t('common.daysAgoShort')}`;
+                                    };
+
+                                    return (
+                                        <div
+                                            key={note.id}
+                                            onClick={() => handleMarkAsRead(note.id)}
+                                            className={`p-6 border-b border-white/[0.05] hover:bg-white/[0.08] transition-all group cursor-pointer relative ${!note.is_read ? 'bg-primary/5' : ''}`}
+                                        >
+                                            {!note.is_read && (
+                                                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-12 bg-primary rounded-r-full shadow-[0_0_20px_rgba(var(--primary-rgb),0.6)]"></div>
+                                            )}
+                                            <div className="flex gap-5">
+                                                <div className={`w-14 h-14 flex items-center justify-center rounded-2xl bg-white/5 shadow-inner ${color} group-hover:scale-110 transition-transform duration-500 border border-white/5`}>
+                                                    <Icon className="w-6 h-6" />
+                                                </div>
+                                                <div className="flex-1">
+                                                    <div className="flex justify-between items-start mb-1.5">
+                                                        <h4 className={`font-black tracking-tight text-[13px] ${!note.is_read ? 'text-white' : 'text-white/60'}`}>{note.title}</h4>
+                                                        <span className="text-[10px] font-black text-white/20 uppercase tracking-widest bg-white/5 px-2.5 py-1 rounded-full">{timeAgo(note.created_at)}</span>
+                                                    </div>
+                                                    <p className={`text-xs leading-relaxed line-clamp-2 font-medium transition-colors ${!note.is_read ? 'text-white/80' : 'text-white/40'}`}>
+                                                        {note.message}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    );
+                                })
+                            )}
+                        </div>
+                        <div className="p-5 bg-white/[0.03] border-t border-white/10 flex-shrink-0">
+                            {filteredNotifications.length > 0 && (
+                                <button
+                                    onClick={handleClearAllNotifications}
+                                    className="w-full py-4 rounded-[2rem] bg-red-500/10 text-red-400 hover:bg-red-500/20 text-[10px] font-black uppercase tracking-[0.4em] transition-all border border-red-500/10 group/btn"
+                                >
+                                    <span className="group-hover:scale-105 transition-transform inline-block">{t('common.notificationsClearAll')}</span>
+                                </button>
+                            )}
+                        </div>
                     </div>
-                </div>
-            )}
-        </div>
+                )
+            }
+
+            {
+                profileOpen && (
+                    <div
+                        className="fixed top-16 right-4 sm:right-6 md:right-10 w-[92vw] sm:w-80 bg-[#122E34]/95 backdrop-blur-3xl rounded-[2.5rem] md:rounded-[3rem] border border-white/30 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.6)] overflow-hidden z-[100] animate-in fade-in zoom-in-95 slide-in-from-top-4 duration-500 sidebar-3d-item max-h-[85vh] overflow-y-auto"
+                        style={{ transform: 'translateZ(110px)' }}
+                    >
+                        <div className="p-6 md:p-8 space-y-3 md:space-y-4 border-b border-white/10 bg-gradient-to-br from-white/[0.08] to-transparent">
+                            <p className="text-[9px] md:text-[10px] font-black text-white/20 uppercase tracking-[0.4em] ml-2">{t('common.setStatus')}</p>
+                            <div className="grid grid-cols-2 gap-2 md:gap-3">
+                                <button
+                                    onClick={() => handleStatusChange('online')}
+                                    className={`flex items-center justify-center gap-2 md:gap-3 py-3 md:py-4 rounded-xl md:rounded-2xl text-[9px] md:text-[10px] font-black uppercase tracking-widest transition-all ${userStatus === 'online' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 shadow-lg shadow-emerald-500/10 scale-105' : 'bg-white/5 text-white/40 border border-transparent hover:bg-white/10'}`}
+                                >
+                                    <span className={`w-1.5 md:w-2 h-1.5 md:h-2 rounded-full ${userStatus === 'online' ? 'bg-emerald-400 animate-pulse' : 'bg-white/20'}`}></span>
+                                    {t('common.onlineLabel')}
+                                </button>
+                                <button
+                                    onClick={() => handleStatusChange('busy')}
+                                    className={`flex items-center justify-center gap-2 md:gap-3 py-3 md:py-4 rounded-xl md:rounded-2xl text-[9px] md:text-[10px] font-black uppercase tracking-widest transition-all ${userStatus === 'busy' ? 'bg-orange-500/20 text-orange-400 border border-orange-500/30 shadow-lg shadow-orange-500/10 scale-105' : 'bg-white/5 text-white/40 border border-transparent hover:bg-white/10'}`}
+                                >
+                                    <span className={`w-1.5 md:w-2 h-1.5 md:h-2 rounded-full ${userStatus === 'busy' ? 'bg-orange-400 animate-pulse' : 'bg-white/20'}`}></span>
+                                    {t('common.busyLabel')}
+                                </button>
+                            </div>
+                        </div>
+                        <div className="p-4 md:p-5 space-y-1.5 md:space-y-2">
+                            <button
+                                onClick={() => { navigate('/app/settings'); setProfileOpen(false); }}
+                                className="flex items-center w-full px-4 md:px-6 py-4 md:py-5 text-[10px] md:text-[11px] font-black text-white/50 hover:text-white hover:bg-white/10 rounded-xl md:rounded-2xl transition-all group/item uppercase tracking-[0.15em] md:tracking-[0.2em] gap-4 md:gap-5 border border-transparent hover:border-white/10"
+                            >
+                                <div className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-lg md:rounded-xl bg-white/5 group-hover/item:bg-primary/20 group-hover/item:text-primary transition-all border border-white/5 group-hover/item:border-primary/30 shadow-lg">
+                                    <Settings className="w-4 h-4 md:w-5 md:h-5 group-hover/item:rotate-90 transition-transform duration-700" />
+                                </div>
+                                {t('common.settings')}
+                            </button>
+                            <button
+                                onClick={handleLogout}
+                                className="flex items-center w-full px-4 md:px-6 py-4 md:py-5 text-[10px] md:text-[11px] font-black text-rose-500/60 hover:text-rose-500 hover:bg-rose-500/10 rounded-xl md:rounded-2xl transition-all group/logout uppercase tracking-[0.15em] md:tracking-[0.2em] gap-4 md:gap-5 border border-transparent hover:border-rose-500/20"
+                            >
+                                <div className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-lg md:rounded-xl bg-rose-500/10 group-hover/logout:bg-rose-500/20 transition-all border border-rose-500/10 group-hover/logout:border-rose-500/30 text-rose-500 shadow-lg shadow-rose-500/5">
+                                    <LogOut className="w-4 h-4 md:w-5 md:h-5 group-hover/logout:-translate-x-1 transition-transform" />
+                                </div>
+                                {t('common.logout')}
+                            </button>
+                        </div>
+                    </div>
+                )
+            }
+        </div >
     );
 }

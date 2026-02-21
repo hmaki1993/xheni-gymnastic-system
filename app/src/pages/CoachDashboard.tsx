@@ -47,6 +47,7 @@ export default function CoachDashboard() {
     const [selectedAssignment, setSelectedAssignment] = useState<any>(null);
     const [showEarningsModal, setShowEarningsModal] = useState(false);
     const [monthSessions, setMonthSessions] = useState<any[]>([]);
+    const [showCalendarModal, setShowCalendarModal] = useState(false);
 
     // History Modal State
     // No longer need interval here as PremiumClock handles it
@@ -664,14 +665,20 @@ id,
     };
 
     // Helper to group sessions by date
-    const groupedSessions = savedSessions.reduce((acc: any, session) => {
-        const date = format(new Date(session.created_at), 'yyyy-MM-dd');
-        if (!acc[date]) {
-            acc[date] = [];
-        }
-        acc[date].push(session);
-        return acc;
-    }, {});
+    const groupedSessions = savedSessions
+        .filter(session => {
+            if (!selectedSubForHistory) return true;
+            const studentName = selectedSubForHistory.students?.full_name || selectedSubForHistory.student_name;
+            return session.student_name === studentName;
+        })
+        .reduce((acc: any, session) => {
+            const date = format(new Date(session.created_at), 'yyyy-MM-dd');
+            if (!acc[date]) {
+                acc[date] = [];
+            }
+            acc[date].push(session);
+            return acc;
+        }, {});
 
     const sortedDates = Object.keys(groupedSessions).sort((a, b) => new Date(b).getTime() - new Date(a).getTime());
 
@@ -990,7 +997,10 @@ id,
                                         {/* Status Badge */}
                                         <div className="flex-shrink-0 flex items-center gap-2">
                                             <button
-                                                onClick={() => setSelectedSubForHistory(subscription)}
+                                                onClick={() => {
+                                                    setSelectedSubForHistory(subscription);
+                                                    setShowCalendarModal(true);
+                                                }}
                                                 className="w-9 h-9 rounded-full bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20 text-emerald-500 hover:bg-emerald-500/20 transition-all active:scale-95"
                                                 title="PT History / Edit"
                                             >
@@ -1233,17 +1243,31 @@ id,
                                         <Clock className="w-5 h-5 sm:w-6 sm:h-6" />
                                     </div>
                                     <div className="min-w-0">
-                                        <h2 className="text-lg sm:text-xl font-black text-white uppercase tracking-tight leading-tight mb-1 truncate">PT Session History</h2>
-                                        <p className="text-[9px] sm:text-[10px] font-black text-white/20 uppercase tracking-[0.2em] sm:tracking-[0.3em] truncate">Full audit log of recorded sessions</p>
+                                        <h2 className="text-lg sm:text-xl font-black text-white uppercase tracking-tight leading-tight mb-1 truncate">
+                                            {selectedSubForHistory ? `PT History: ${selectedSubForHistory.students?.full_name || selectedSubForHistory.student_name}` : 'PT Session History'}
+                                        </h2>
+                                        <p className="text-[9px] sm:text-[10px] font-black text-white/20 uppercase tracking-[0.2em] sm:tracking-[0.3em] truncate">
+                                            {selectedSubForHistory ? 'Viewing individual student records' : 'Full audit log of recorded sessions'}
+                                        </p>
                                     </div>
                                 </div>
 
                                 <div className="flex items-center justify-end gap-2 sm:gap-3">
+                                    {selectedSubForHistory && (
+                                        <button
+                                            onClick={() => setSelectedSubForHistory(null)}
+                                            className="flex items-center gap-2 px-4 py-2.5 bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 rounded-xl transition-all font-black uppercase tracking-widest text-[9px] active:scale-95"
+                                        >
+                                            Show All
+                                        </button>
+                                    )}
                                     {savedSessions.length > 0 && (
                                         <button
                                             onClick={() => {
                                                 setShowFullHistoryModal(false);
+                                                setSelectedSubForHistory(null);
                                                 setShowClearHistoryModal(true);
+                                                setShowCalendarModal(false);
                                             }}
                                             className="flex items-center gap-2 px-4 sm:px-5 py-2.5 sm:py-3 bg-rose-500/10 hover:bg-rose-500/20 text-rose-500 border border-rose-500/20 rounded-xl sm:rounded-2xl transition-all font-black uppercase tracking-widest text-[9px] sm:text-[10px] group active:scale-95"
                                         >
@@ -1252,7 +1276,11 @@ id,
                                         </button>
                                     )}
                                     <button
-                                        onClick={() => setShowFullHistoryModal(false)}
+                                        onClick={() => {
+                                            setShowFullHistoryModal(false);
+                                            setSelectedSubForHistory(null);
+                                            setShowCalendarModal(false);
+                                        }}
                                         className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-white/5 flex items-center justify-center text-white/40 hover:bg-white/10 transition-all shrink-0"
                                     >
                                         <X className="w-5 h-5 sm:w-6 sm:h-6" />
@@ -1326,6 +1354,23 @@ id,
                     </div>
                 )
             }
+
+            {showCalendarModal && selectedSubForHistory && (
+                <PremiumCalendarModal
+                    subscriptionId={selectedSubForHistory.id}
+                    studentName={selectedSubForHistory.students?.full_name || selectedSubForHistory.student_name}
+                    onClose={() => {
+                        setShowCalendarModal(false);
+                        setSelectedSubForHistory(null);
+                    }}
+                    onRefresh={() => {
+                        if (coachId) {
+                            fetchTodaySessions(coachId);
+                            fetchPTSubscriptions(coachId, ptRate);
+                        }
+                    }}
+                />
+            )}
 
             {/* Earnings Breakdown Modal */}
             {showEarningsModal && (
