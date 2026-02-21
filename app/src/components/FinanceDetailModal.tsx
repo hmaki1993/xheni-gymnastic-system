@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { X, TrendingUp, Calendar, Wallet, AlertTriangle, DollarSign, Receipt, Dumbbell, Trash2, ArrowLeft, User } from 'lucide-react';
+import { X, TrendingUp, Calendar, Wallet, AlertTriangle, DollarSign, Receipt, Dumbbell, Trash2, ArrowLeft, User, RefreshCw } from 'lucide-react';
 import { format } from 'date-fns';
 import { useCurrency } from '../context/CurrencyContext';
 

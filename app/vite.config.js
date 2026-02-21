@@ -15,7 +15,10 @@ export default defineConfig({
     },
     server: {
         port: 3000,
+        strictPort: true, // Force port 3000, error if busy
         host: true, // Listen on all local IPs
+        cors: true,
+        allowedHosts: ['.loca.lt'],
         hmr: {
             overlay: false, // Disable the error overlay if it's annoying
         },
