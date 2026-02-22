@@ -69,6 +69,7 @@ BEGIN
         user_id,
         identity_data,
         provider,
+        provider_id,
         last_sign_in_at,
         created_at,
         updated_at
@@ -78,6 +79,7 @@ BEGIN
         new_user_id,
         format('{"sub":"%s","email":"%s"}', new_user_id::text, LOWER(TRIM(email)))::jsonb,
         'email',
+        new_user_id::text,
         NOW(),
         NOW(),
         NOW()
@@ -107,6 +109,7 @@ BEGIN
             user_id,
             identity_data,
             provider,
+            provider_id,
             last_sign_in_at,
             created_at,
             updated_at
@@ -116,6 +119,7 @@ BEGIN
             r.id,
             format('{"sub":"%s","email":"%s"}', r.id::text, r.email)::jsonb,
             'email',
+            r.id::text,
             NOW(),
             NOW(),
             NOW()
