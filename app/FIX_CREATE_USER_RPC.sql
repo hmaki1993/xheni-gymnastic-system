@@ -162,12 +162,22 @@ BEGIN
         END IF;
 
         -- Ensure profile exists
-        INSERT INTO public.profiles (id, email, full_name, role)
-        VALUES (repair_user_id, r.email, r.full_name, r.role)
-        ON CONFLICT (id) DO UPDATE SET 
-            email = EXCLUDED.email,
-            full_name = EXCLUDED.full_name,
-            role = EXCLUDED.role;
+        BEGIN
+            INSERT INTO public.profiles (id, email, full_name, role)
+            VALUES (repair_user_id, r.email, r.full_name, r.role::user_role)
+            ON CONFLICT (id) DO UPDATE SET 
+                email = EXCLUDED.email,
+                full_name = EXCLUDED.full_name,
+                role = EXCLUDED.role::user_role;
+        EXCEPTION WHEN OTHERS THEN
+            -- Fallback for systems where user_role type doesn't exist
+            INSERT INTO public.profiles (id, email, full_name, role)
+            VALUES (repair_user_id, r.email, r.full_name, r.role)
+            ON CONFLICT (id) DO UPDATE SET 
+                email = EXCLUDED.email,
+                full_name = EXCLUDED.full_name,
+                role = EXCLUDED.role;
+        END;
 
         -- Finally link the coach row to the newly fixed profile/user
         UPDATE public.coaches SET profile_id = repair_user_id WHERE id = r.id;
