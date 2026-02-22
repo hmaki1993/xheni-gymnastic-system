@@ -92,39 +92,85 @@ END;
 $$;
 
 -- ----------------------------------------------------------------
--- REPAIR SCRIPT: Fix existing users missing identities
--- This will allow users created before the fix to log in.
+-- REPAIR SCRIPT: Fix existing users missing identities OR headless coaches
+-- This will allow coaches created during the "400 error" period to finally log in.
 -- ----------------------------------------------------------------
 DO $$
 DECLARE
     r RECORD;
+    repair_user_id UUID;
+    default_pass TEXT := '123456'; -- Temporary password for repair
 BEGIN
+    -- 1. Fix users in auth.users that are missing identities
     FOR r IN 
         SELECT id, email 
         FROM auth.users 
         WHERE id NOT IN (SELECT user_id FROM auth.identities)
     LOOP
         INSERT INTO auth.identities (
-            id,
-            user_id,
-            identity_data,
-            provider,
-            provider_id,
-            last_sign_in_at,
-            created_at,
-            updated_at
+            id, user_id, identity_data, provider, provider_id,
+            last_sign_in_at, created_at, updated_at
         )
         VALUES (
-            r.id,
-            r.id,
+            r.id, r.id,
             format('{"sub":"%s","email":"%s"}', r.id::text, r.email)::jsonb,
-            'email',
-            r.id::text,
-            NOW(),
-            NOW(),
-            NOW()
+            'email', r.id::text,
+            NOW(), NOW(), NOW()
         );
-        RAISE NOTICE 'Fixed identity for user %', r.email;
+        RAISE NOTICE 'Fixed missing identity for existing user: %', r.email;
+    END LOOP;
+
+    -- 2. Fix "headless" coaches (coaches saved in public.coaches but failed during auth creation)
+    FOR r IN
+        SELECT id, email, full_name, role
+        FROM public.coaches
+        WHERE profile_id IS NULL AND email IS NOT NULL
+    LOOP
+        -- Check if user actually exists in auth.users (maybe they just missing profile link)
+        SELECT id INTO repair_user_id FROM auth.users WHERE email = LOWER(TRIM(r.email));
+
+        IF repair_user_id IS NULL THEN
+            -- Create fresh auth account
+            repair_user_id := gen_random_uuid();
+            INSERT INTO auth.users (
+                id, email, encrypted_password, email_confirmed_at,
+                raw_user_meta_data, raw_app_meta_data,
+                created_at, updated_at, role, aud, is_sso_user, is_anonymous
+            ) VALUES (
+                repair_user_id, LOWER(TRIM(r.email)),
+                extensions.crypt(default_pass, extensions.gen_salt('bf', 10)),
+                NOW(),
+                format('{"full_name":"%s","role":"%s"}', r.full_name, r.role)::jsonb,
+                '{"provider":"email","providers":["email"]}'::jsonb,
+                NOW(), NOW(), 'authenticated', 'authenticated', false, false
+            );
+
+            -- Add the identity
+            INSERT INTO auth.identities (
+                id, user_id, identity_data, provider, provider_id,
+                last_sign_in_at, created_at, updated_at
+            ) VALUES (
+                repair_user_id, repair_user_id,
+                format('{"sub":"%s","email":"%s"}', repair_user_id::text, LOWER(TRIM(r.email)))::jsonb,
+                'email', repair_user_id::text,
+                NOW(), NOW(), NOW()
+            );
+            
+            RAISE NOTICE 'Created missing auth account for coach: % (Password: 123456)', r.email;
+        ELSE
+            RAISE NOTICE 'Found orphaned auth account for coach: % (Linking now)', r.email;
+        END IF;
+
+        -- Ensure profile exists
+        INSERT INTO public.profiles (id, email, full_name, role)
+        VALUES (repair_user_id, r.email, r.full_name, r.role)
+        ON CONFLICT (id) DO UPDATE SET 
+            email = EXCLUDED.email,
+            full_name = EXCLUDED.full_name,
+            role = EXCLUDED.role;
+
+        -- Finally link the coach row to the newly fixed profile/user
+        UPDATE public.coaches SET profile_id = repair_user_id WHERE id = r.id;
     END LOOP;
 END $$;
 

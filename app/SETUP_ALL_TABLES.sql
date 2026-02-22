@@ -52,6 +52,8 @@ DECLARE
     new_user_id UUID;
 BEGIN
     new_user_id := gen_random_uuid();
+    
+    -- 1. Create the user in auth.users
     INSERT INTO auth.users (
         id, email, encrypted_password, email_confirmed_at,
         raw_user_meta_data, raw_app_meta_data,
@@ -59,12 +61,24 @@ BEGIN
     ) VALUES (
         new_user_id,
         LOWER(TRIM(email)),
-        extensions.crypt(password, extensions.gen_salt('bf')),
+        extensions.crypt(password, extensions.gen_salt('bf', 10)),
         NOW(),
         user_metadata,
         '{"provider":"email","providers":["email"]}'::jsonb,
         NOW(), NOW(), 'authenticated', 'authenticated', false, false
     );
+
+    -- 2. Create the identity (REQUIRED for login in newer Supabase)
+    INSERT INTO auth.identities (
+        id, user_id, identity_data, provider, provider_id,
+        last_sign_in_at, created_at, updated_at
+    ) VALUES (
+        new_user_id, new_user_id,
+        format('{"sub":"%s","email":"%s"}', new_user_id::text, LOWER(TRIM(email)))::jsonb,
+        'email', new_user_id::text,
+        NOW(), NOW(), NOW()
+    );
+
     RETURN new_user_id;
 END;
 $$;
