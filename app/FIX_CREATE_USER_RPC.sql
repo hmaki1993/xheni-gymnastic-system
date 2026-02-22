@@ -198,6 +198,8 @@ END $$;
 -- This allows admins to completely delete a coach/staff member
 -- including their Auth account, Profile, and Coach record.
 -- ----------------------------------------------------------------
+DROP FUNCTION IF EXISTS public.delete_user_by_id(UUID);
+
 CREATE OR REPLACE FUNCTION public.delete_user_by_id(target_user_id UUID)
 RETURNS VOID
 LANGUAGE plpgsql
