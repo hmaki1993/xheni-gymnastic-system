@@ -11,7 +11,7 @@
         -- Correct ID should be 36 chars: d5a7a9bc-98c5-4820-b6b8-098d2d8bde49
         UPDATE public.coaches
         SET id = 'd5a7a9bc-98c5-4820-b6b8-098d2d8bde49'::uuid
-        WHERE email = 'mosa@healy.com';
+        WHERE email = 'mosa@xheni.com';
 
         -- 3. Fix any existing attendance records to match
         UPDATE public.coach_attendance

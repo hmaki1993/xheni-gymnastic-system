@@ -1,4 +1,4 @@
--- GET CORRECT COACH ID FOR mosa@healy.com
+-- GET CORRECT COACH ID FOR mosa@xheni.com
 -- This will show you the exact coach_id that should be used
 
 SELECT 
@@ -12,7 +12,7 @@ SELECT
 FROM public.coaches c
 JOIN public.profiles p ON c.profile_id = p.id
 JOIN auth.users u ON p.id = u.id
-WHERE u.email = 'mosa@healy.com';
+WHERE u.email = 'mosa@xheni.com';
 
 -- Also check if there are any attendance records with wrong coach_id
 SELECT 

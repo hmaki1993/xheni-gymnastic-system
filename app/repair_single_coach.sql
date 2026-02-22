@@ -4,7 +4,7 @@
 
 DO $$
 DECLARE
-    target_email text := 'mosa@healy.com'; -- <--- CHANGE THIS
+    target_email text := 'mosa@xheni.com'; -- <--- CHANGE THIS
     target_pw text := '123456';
     target_id uuid;
     coach_name text;

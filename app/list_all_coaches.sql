@@ -28,7 +28,7 @@ SELECT
     c.full_name,
     c.profile_id
 FROM public.coaches c
-WHERE c.email = 'mosa@healy.com';
+WHERE c.email = 'mosa@xheni.com';
 
 -- 4. Check if the ID we're looking for exists anywhere
 SELECT 

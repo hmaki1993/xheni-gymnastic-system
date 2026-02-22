@@ -9,7 +9,7 @@ SELECT
     c.full_name,
     c.profile_id
 FROM public.coaches c
-WHERE c.email = 'mosa@healy.com';
+WHERE c.email = 'mosa@xheni.com';
 
 -- 2. Delete any old/invalid attendance records
 DELETE FROM public.coach_attendance

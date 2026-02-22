@@ -13,7 +13,7 @@ SELECT
     email, 
     profile_id
 FROM public.coaches
-WHERE email = 'mosa@healy.com';
+WHERE email = 'mosa@xheni.com';
 
 -- 3. Check attendance data seen by frontend
 -- Note: frontend uses: where date = 'YYYY-MM-DD'
@@ -34,5 +34,5 @@ SELECT
     extract(epoch from (NOW() - ca.check_in_time)) as duration_seconds
 FROM public.coaches c
 JOIN public.coach_attendance ca ON c.id = ca.coach_id
-WHERE c.email = 'mosa@healy.com'
+WHERE c.email = 'mosa@xheni.com'
 AND ca.date = CURRENT_DATE;

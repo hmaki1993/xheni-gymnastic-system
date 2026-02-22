@@ -194,9 +194,42 @@ EXCEPTION WHEN OTHERS THEN NULL;
 END $$;
 
 -- ----------------------------------------------------------------
+-- STEP 7: Create delete_user_by_id RPC
+-- This allows admins to completely delete a coach/staff member
+-- including their Auth account, Profile, and Coach record.
+-- ----------------------------------------------------------------
+CREATE OR REPLACE FUNCTION public.delete_user_by_id(target_user_id UUID)
+RETURNS VOID
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public, auth
+AS $$
+BEGIN
+    -- 1. Check if the current user is an admin or head_coach
+    IF NOT EXISTS (
+        SELECT 1 FROM public.profiles
+        WHERE id = auth.uid()
+        AND role IN ('admin', 'head_coach')
+    ) THEN
+        RAISE EXCEPTION 'Only admins or head coaches can delete users';
+    END IF;
+
+    -- 2. Delete from auth.users (This will cascade to profiles and coaches if FKs are set)
+    -- If not cascading, we manually cleanup
+    DELETE FROM public.coaches WHERE profile_id = target_user_id;
+    DELETE FROM public.profiles WHERE id = target_user_id;
+    DELETE FROM auth.users WHERE id = target_user_id;
+END;
+$$;
+
+-- Grant execution rights to authenticated users (admins)
+GRANT EXECUTE ON FUNCTION public.delete_user_by_id TO authenticated;
+
+-- ----------------------------------------------------------------
 -- DONE! All missing tables and functions are now in place.
 -- The app can now:
 --   ✅ Create new staff members (create_new_user RPC)
+--   ✅ Delete staff members completely (delete_user_by_id RPC)
 --   ✅ Save user theme settings (user_settings table)
 --   ✅ Store coach records (coaches table)
 -- ----------------------------------------------------------------

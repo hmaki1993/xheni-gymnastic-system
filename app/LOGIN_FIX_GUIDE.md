@@ -11,7 +11,7 @@ The app loads but login fails because no user accounts exist in the database yet
 2. **Click "Sign Up"** (at the bottom of the login page)
 3. **Create an Admin account:**
    - Full Name: `Admin User`
-   - Email: `admin@healy.com`
+   - Email: `admin@xheni.com`
    - Password: `admin123`
    - Account Type: **Admin**
    - Click "Sign Up"
@@ -22,7 +22,7 @@ The app loads but login fails because no user accounts exist in the database yet
    - Logout first
    - Go to Register again
    - Full Name: `Coach User`
-   - Email: `coach@healy.com`
+   - Email: `coach@xheni.com`
    - Password: `coach123`
    - Account Type: **Coach**
 
@@ -34,7 +34,7 @@ The app loads but login fails because no user accounts exist in the database yet
 2. Navigate to **Authentication > Users**
 3. Click **"Add user"**
 4. Enter:
-   - Email: `admin@healy.com`
+   - Email: `admin@xheni.com`
    - Password: `admin123`
    - Auto Confirm User: ✅ (check this!)
 5. After creating the user, go to **SQL Editor** and run:
@@ -45,7 +45,7 @@ The app loads but login fails because no user accounts exist in the database yet
        '{role}', 
        '"admin"'
    )
-   WHERE email = 'admin@healy.com';
+   WHERE email = 'admin@xheni.com';
    ```
 
 ---
@@ -53,7 +53,7 @@ The app loads but login fails because no user accounts exist in the database yet
 ## After Creating Account
 
 Now you can login with:
-- **Email:** `admin@healy.com`
+- **Email:** `admin@xheni.com`
 - **Password:** `admin123`
 
 ---

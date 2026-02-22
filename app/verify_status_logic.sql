@@ -13,5 +13,5 @@ SELECT
     to_char(justify_interval(NOW() - ca.check_in_time), 'HH24"h "MI"m"') as formatted_worked
 FROM public.coaches c
 JOIN public.coach_attendance ca ON c.id = ca.coach_id
-WHERE c.email = 'mosa@healy.com'
+WHERE c.email = 'mosa@xheni.com'
 AND ca.date = CURRENT_DATE;

@@ -1,4 +1,4 @@
--- FIX COACH LINKING FOR mosa@healy.com
+-- FIX COACH LINKING FOR mosa@xheni.com
 -- This script ensures the coach record is properly linked to the auth profile
 
 -- Step 1: Check current state
@@ -10,7 +10,7 @@ SELECT
     p.role
 FROM auth.users u
 LEFT JOIN public.profiles p ON u.id = p.id
-WHERE u.email = 'mosa@healy.com';
+WHERE u.email = 'mosa@xheni.com';
 
 SELECT 
     'BEFORE FIX - Coach Record' as step,
@@ -19,7 +19,7 @@ SELECT
     c.email,
     c.full_name
 FROM public.coaches c
-WHERE c.email = 'mosa@healy.com';
+WHERE c.email = 'mosa@xheni.com';
 
 -- Step 2: Fix the profile_id linkage
 UPDATE public.coaches c
@@ -27,15 +27,15 @@ SET profile_id = (
     SELECT p.id 
     FROM public.profiles p 
     JOIN auth.users u ON p.id = u.id
-    WHERE u.email = 'mosa@healy.com'
+    WHERE u.email = 'mosa@xheni.com'
     LIMIT 1
 )
-WHERE c.email = 'mosa@healy.com'
+WHERE c.email = 'mosa@xheni.com'
   AND c.profile_id IS NULL OR c.profile_id != (
     SELECT p.id 
     FROM public.profiles p 
     JOIN auth.users u ON p.id = u.id
-    WHERE u.email = 'mosa@healy.com'
+    WHERE u.email = 'mosa@xheni.com'
     LIMIT 1
 );
 
@@ -55,7 +55,7 @@ SELECT
 FROM auth.users u
 LEFT JOIN public.profiles p ON u.id = p.id
 LEFT JOIN public.coaches c ON c.profile_id = p.id
-WHERE u.email = 'mosa@healy.com';
+WHERE u.email = 'mosa@xheni.com';
 
 -- Step 5: Force cache refresh
 DO $$ 

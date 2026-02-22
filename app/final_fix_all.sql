@@ -7,7 +7,7 @@ ALTER TABLE public.coach_attendance DROP CONSTRAINT IF EXISTS coach_attendance_c
 -- Step 2: Update the invalid UUID in coaches table
 UPDATE public.coaches
 SET id = 'd5a7a9bc-98c5-4820-b6b8-098d2d8bde49'::uuid
-WHERE email = 'mosa@healy.com';
+WHERE email = 'mosa@xheni.com';
 
 -- Step 3: Update any existing attendance records with the old UUID
 UPDATE public.coach_attendance

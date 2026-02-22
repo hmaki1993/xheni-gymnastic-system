@@ -10,12 +10,12 @@ SELECT
     length(id::text) as uuid_length,
     profile_id
 FROM public.coaches
-WHERE email = 'mosa@healy.com';
+WHERE email = 'mosa@xheni.com';
 
 -- 2. Fix the UUID by removing the extra 'e'
 UPDATE public.coaches
 SET id = 'd5a7a9bc-98c5-4820-b6b8-098d2d8bde49'::uuid
-WHERE email = 'mosa@healy.com'
+WHERE email = 'mosa@xheni.com'
 AND id::text = 'd5a7a9bc-98c5-4820-b6b8-098d2d8bde49e';
 
 -- 3. Verify the fix
@@ -27,7 +27,7 @@ SELECT
     length(id::text) as uuid_length,
     profile_id
 FROM public.coaches
-WHERE email = 'mosa@healy.com';
+WHERE email = 'mosa@xheni.com';
 
 -- 4. Force cache refresh
 DO $$ 
