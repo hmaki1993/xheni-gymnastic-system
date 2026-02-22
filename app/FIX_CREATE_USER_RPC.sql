@@ -73,7 +73,7 @@ BEGIN
         created_at,
         updated_at
     )
-    VALUES (
+    SELECT 
         new_user_id,
         new_user_id,
         format('{"sub":"%s","email":"%s"}', new_user_id::text, LOWER(TRIM(email)))::jsonb,
@@ -81,11 +81,48 @@ BEGIN
         NOW(),
         NOW(),
         NOW()
+    WHERE NOT EXISTS (
+        SELECT 1 FROM auth.identities WHERE user_id = new_user_id
     );
 
     RETURN new_user_id;
 END;
 $$;
+
+-- ----------------------------------------------------------------
+-- REPAIR SCRIPT: Fix existing users missing identities
+-- This will allow users created before the fix to log in.
+-- ----------------------------------------------------------------
+DO $$
+DECLARE
+    r RECORD;
+BEGIN
+    FOR r IN 
+        SELECT id, email 
+        FROM auth.users 
+        WHERE id NOT IN (SELECT user_id FROM auth.identities)
+    LOOP
+        INSERT INTO auth.identities (
+            id,
+            user_id,
+            identity_data,
+            provider,
+            last_sign_in_at,
+            created_at,
+            updated_at
+        )
+        VALUES (
+            r.id,
+            r.id,
+            format('{"sub":"%s","email":"%s"}', r.id::text, r.email)::jsonb,
+            'email',
+            NOW(),
+            NOW(),
+            NOW()
+        );
+        RAISE NOTICE 'Fixed identity for user %', r.email;
+    END LOOP;
+END $$;
 
 -- Grant execution rights to authenticated users (admins)
 GRANT EXECUTE ON FUNCTION public.create_new_user TO authenticated;
