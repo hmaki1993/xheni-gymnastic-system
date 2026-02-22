@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS gym_settings (
     accent_color TEXT DEFAULT '#34d399', -- Emerald 400
     font_family TEXT DEFAULT 'Cairo',
     font_scale FLOAT DEFAULT 1.0,
-    academy_name TEXT DEFAULT 'Healy Academy',
+    academy_name TEXT DEFAULT 'Xheni Academy',
     logo_url TEXT,
     gym_address TEXT DEFAULT 'Cairo, Egypt',
     gym_phone TEXT DEFAULT '+20 123 456 7890',

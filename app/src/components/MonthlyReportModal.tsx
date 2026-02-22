@@ -113,7 +113,7 @@ export default function MonthlyReportModal({ isOpen, onClose, student, currentUs
             const monthName = format(new Date(selectedMonth), 'MMMM yyyy');
 
             const message = `
-*Healy Gymnastics Academy - Monthly Report* 🤸‍♂️
+*Xheni Gymnastics Academy - Monthly Report* 🤸‍♂️
 ----------------------------------
 📅 *Month:* ${monthName}
 👤 *Gymnast:* ${student.full_name}
@@ -129,6 +129,9 @@ ${attendanceRecords.filter(r => r.status === 'absent').length > 0 ? `📅 Dates:
 🏆 *Technical Evaluation:*
 ${evaluations.technical || 'Excellent progress this month.'}
 
+🌟 *Behavior & Discipline:*
+${evaluations.behavior || 'Great attitude in training!'}
+
 ${monthlyAssessments.length > 0 ? `📊 *Assessment Results:*
 ${monthlyAssessments.map(a => {
                 const skillList = Array.isArray(a.skills)
@@ -142,7 +145,7 @@ ${evaluations.behavior || 'Great attitude and focus!'}
 
 ----------------------------------
 *Best Regards,*
-*Healy Gymnastics Team* 🏅
+*Xheni Gymnastics Team* 🏅
             `.trim();
 
             // Prioritize the specific "WhatsApp for Reports" field (parent_contact)

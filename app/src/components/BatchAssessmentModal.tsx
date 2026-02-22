@@ -134,7 +134,7 @@ id,
         // Fetch students in this group
         const { data, error } = await supabase
             .from('students')
-            .select('id, full_name, coaches(full_name)')
+            .select('id, full_name, coaches!coach_id(full_name)')
             .eq('training_group_id', groupId);
 
         console.log('📊 Query result:', { data, error, count: data?.length });

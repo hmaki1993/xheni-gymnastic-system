@@ -310,7 +310,7 @@ export default function PublicRegistration() {
             <div className="relative z-10 mb-12 text-center scale-90 md:scale-100">
                 <div className="relative inline-block group mb-8">
                     <div className="absolute -inset-6 bg-gradient-to-r from-[#D4AF37]/20 to-transparent rounded-full blur-2xl opacity-40 group-hover:opacity-100 transition duration-1000"></div>
-                    <img src="/logo_recovered.png" alt="Healy Academy" className="relative h-32 w-auto object-contain drop-shadow-2xl brightness-110" />
+                    <img src="/logo.png" alt="Xheni Academy" className="relative h-32 w-auto object-contain drop-shadow-2xl brightness-110" />
                 </div>
                 <h2 className="text-5xl font-black text-white uppercase tracking-tight premium-gradient-text-mind leading-tight">
                     Join The Legacy
@@ -545,7 +545,7 @@ export default function PublicRegistration() {
             </div>
 
             <footer className="relative z-10 text-center pb-12">
-                <p className="text-[10px] font-black text-[#ABAFB5]/20 uppercase tracking-[0.5em]">Powered by Healy Academy Systems • Excellence since day one</p>
+                <p className="text-[10px] font-black text-[#ABAFB5]/20 uppercase tracking-[0.5em]">Powered by Xheni Academy Systems • Excellence since day one</p>
             </footer>
 
             <style>{`

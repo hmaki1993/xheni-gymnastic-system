@@ -13,7 +13,7 @@ UPDATE public.gym_settings
 SET 
   gym_address = COALESCE(gym_address, address, 'Cairo, Egypt'),
   gym_phone = COALESCE(gym_phone, phone, '+20 123 456 7890'),
-  academy_name = COALESCE(academy_name, gym_name, 'Healy Academy');
+  academy_name = COALESCE(academy_name, gym_name, 'Xheni Academy');
 
 -- 2. FIX USER SETTINGS (Missing Colors)
 ALTER TABLE public.user_settings 

@@ -14,8 +14,8 @@ export default defineConfig({
         },
     },
     server: {
-        port: 3000,
-        strictPort: true, // Force port 3000, error if busy
+        port: 3001,
+        strictPort: true, // Force port 3001, error if busy
         host: true, // Listen on all local IPs
         cors: true,
         allowedHosts: ['.loca.lt'],

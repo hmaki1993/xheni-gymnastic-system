@@ -785,19 +785,39 @@ export default function Settings() {
 
 // --- Helper Components & Functions ---
 
-function hexToRgba(hex: string) {
+function hexToRgba(color: string) {
     let r = 0, g = 0, b = 0, a = 1;
-    if (hex.match(/^#?[0-9a-f]{6}$/i)) {
-        r = parseInt(hex.slice(1, 3), 16);
-        g = parseInt(hex.slice(3, 5), 16);
-        b = parseInt(hex.slice(5, 7), 16);
-    } else if (hex.match(/^#?[0-9a-f]{8}$/i)) {
-        r = parseInt(hex.slice(1, 3), 16);
-        g = parseInt(hex.slice(3, 5), 16);
-        b = parseInt(hex.slice(5, 7), 16);
-        a = Math.round((parseInt(hex.slice(7, 9), 16) / 255) * 100) / 100;
+
+    // Handle rgba() format
+    if (color.startsWith('rgba')) {
+        const match = color.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/);
+        if (match) {
+            r = parseInt(match[1]);
+            g = parseInt(match[2]);
+            b = parseInt(match[3]);
+            a = match[4] ? parseFloat(match[4]) : 1;
+        }
+    }
+    // Handle hex formats
+    else if (color.match(/^#?[0-9a-f]{6}$/i)) {
+        r = parseInt(color.slice(1, 3), 16);
+        g = parseInt(color.slice(3, 5), 16);
+        b = parseInt(color.slice(5, 7), 16);
+    } else if (color.match(/^#?[0-9a-f]{8}$/i)) {
+        r = parseInt(color.slice(1, 3), 16);
+        g = parseInt(color.slice(3, 5), 16);
+        b = parseInt(color.slice(5, 7), 16);
+        a = Math.round((parseInt(color.slice(7, 9), 16) / 255) * 100) / 100;
     }
     return { r, g, b, a };
+}
+
+function colorToHexSafe(color: string) {
+    if (!color) return '#000000';
+    if (color.startsWith('#') && (color.length === 7 || color.length === 4)) return color;
+    const { r, g, b } = hexToRgba(color);
+    const toHex = (n: number) => n.toString(16).padStart(2, '0');
+    return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
 }
 
 function rgbaToHex8(r: number, g: number, b: number, a: number) {
@@ -812,13 +832,13 @@ function stripAlpha(hex: string) {
 
 function PremiumColorPicker({ label, value, onChange, description }: { label: string; value: string; onChange: (val: string) => void; description?: string }) {
     const [opacity, setOpacity] = useState(hexToRgba(value || '#000000ff').a);
-    const [baseColor, setBaseColor] = useState(stripAlpha(value || '#000000'));
+    const [baseColor, setBaseColor] = useState(colorToHexSafe(value || '#000000'));
 
     // Sync local state when value prop changes (e.g. via theme preset)
     useEffect(() => {
         const rgba = hexToRgba(value || '#000000ff');
         setOpacity(rgba.a);
-        setBaseColor(stripAlpha(value || '#000000'));
+        setBaseColor(colorToHexSafe(value || '#000000'));
     }, [value]);
 
     const handleBaseChange = (newHex: string) => {

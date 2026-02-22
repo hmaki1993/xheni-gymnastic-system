@@ -42,7 +42,13 @@ export default function ProtectedRoute() {
 
     const isInitialLoading = loading || themeLoading;
 
-    console.log('ProtectedRoute: Rendering...', { isInitialLoading, authenticated });
+    console.log('🛡️ ProtectedRoute: State Update', {
+        loading,
+        themeLoading,
+        isInitialLoading,
+        authenticated,
+        localStorageKeys: Object.keys(localStorage).filter(k => k.includes('auth-token'))
+    });
     if (isInitialLoading) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-background">

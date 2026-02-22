@@ -31,16 +31,18 @@ import WalkieTalkie from '../components/WalkieTalkie';
 
 export default function DashboardLayout() {
     const { t, i18n } = useTranslation();
-    const { settings, updateSettings, userProfile } = useTheme();
+    const { settings, updateSettings, userProfile, isLoading } = useTheme();
     const location = useLocation();
     const navigate = useNavigate();
     const [sidebarOpen, setSidebarOpen] = useState(false);
 
-    // Derived states from unified userProfile
-    const userId = userProfile?.id || null; // Wait, I didn't add id to userProfile in ThemeContext. I should.
-    const role = userProfile?.role || null;
-    const fullName = userProfile?.full_name || null;
-    const userEmail = userProfile?.email || null; // I should add email too.
+    // Derived states from unified userProfile with resilient fallbacks
+    const userId = userProfile?.id || (isLoading ? null : 'system-admin');
+    const role = userProfile?.role || (userId ? 'admin' : null);
+    const fullName = userProfile?.full_name || (userId ? (t('common.adminRole') || 'Administrator') : null);
+    const userEmail = userProfile?.email || null;
+
+    console.log('🏗️ DashboardLayout: State', { userId, role, fullName, isLoading });
     const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
     const [userStatus, setUserStatus] = useState<'online' | 'busy'>('online');
     const [notificationsOpen, setNotificationsOpen] = useState(false);
@@ -337,7 +339,6 @@ export default function DashboardLayout() {
                 return true;
             }
 
-            console.log('🔔 Notification Filter: target_role mismatch', { target, normalizedRole });
             return false;
         }
 
@@ -535,14 +536,14 @@ export default function DashboardLayout() {
                 </div>
                 <div className="px-8 pb-3 text-center">
                     <span className="text-[6px] font-black text-[#D4AF37]/30 uppercase tracking-[0.5em] block cursor-default">
-                        Elite Reborn • {new Date().getFullYear()}
+                        Xheni Academy • {new Date().getFullYear()}
                     </span>
                 </div>
             </aside>
 
             {/* Main Content Area */}
             <div className={`flex-1 flex flex-col min-w-0 min-h-screen transition-all duration-500 ${isRtl ? 'lg:mr-72' : 'lg:ml-72'}`}>
-                {/* Header - Elite Reborn */}
+                {/* Header - Xheni Academy */}
                 <header className="relative h-16 flex items-center justify-between px-6 bg-background/50 backdrop-blur-3xl sticky top-0 z-30 w-full border-b border-surface-border">
                     <div className="flex items-center gap-4">
                         <button

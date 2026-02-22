@@ -9,7 +9,7 @@ export function useStudents() {
         queryFn: async () => {
             const { data, error } = await supabase
                 .from('students')
-                .select('*, coaches ( full_name ), subscription_plans ( name, price, sessions_limit ), training_groups ( name )')
+                .select('*, coaches!coach_id ( full_name ), subscription_plans ( name, price, sessions_limit ), training_groups ( name )')
                 .order('created_at', { ascending: false });
             if (error) {
                 console.error('Error fetching students:', error);
@@ -146,7 +146,7 @@ export function usePayments() {
         queryFn: async () => {
             const { data, error } = await supabase
                 .from('payments')
-                .select('*, students(full_name)')
+                .select('*, students!student_id(full_name)')
                 .order('payment_date', { ascending: false });
             if (error) throw error;
             return data;
@@ -370,7 +370,7 @@ export function useRefunds() {
         queryFn: async () => {
             const { data, error } = await supabase
                 .from('refunds')
-                .select('*, students ( full_name )')
+                .select('*, students!student_id ( full_name )')
                 .order('refund_date', { ascending: false });
             if (error) throw error;
             return data;

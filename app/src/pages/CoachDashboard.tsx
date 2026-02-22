@@ -64,7 +64,7 @@ export default function CoachDashboard() {
         if (isCheckedIn) {
             interval = setInterval(() => {
                 const today = format(new Date(), 'yyyy-MM-dd');
-                const startTime = localStorage.getItem(`checkInStart_${today} `);
+                const startTime = localStorage.getItem(`checkInStart_${today}`);
                 if (startTime) {
                     const params = JSON.parse(startTime);
                     const now = new Date().getTime();
@@ -129,7 +129,7 @@ export default function CoachDashboard() {
                                 setElapsedTime(Math.floor((new Date().getTime() - start.getTime()) / 1000));
 
                                 // Ensure local storage is in sync for the timer
-                                localStorage.setItem(`checkInStart_${format(new Date(), 'yyyy-MM-dd')} `, JSON.stringify({
+                                localStorage.setItem(`checkInStart_${format(new Date(), 'yyyy-MM-dd')}`, JSON.stringify({
                                     timestamp: start.getTime(),
                                     recordId: attendance.id
                                 }));
@@ -412,7 +412,7 @@ id,
             if (error) throw error;
             setIsCheckedIn(true);
             setCheckInTime(format(now, 'HH:mm:ss'));
-            localStorage.setItem(`checkInStart_${todayStr} `, JSON.stringify({ timestamp: now.getTime(), recordId: data.id }));
+            localStorage.setItem(`checkInStart_${todayStr}`, JSON.stringify({ timestamp: now.getTime(), recordId: data.id }));
 
             // 🚀 Send Notification to Admin/Reception
             const { data: { user } } = await supabase.auth.getUser();
@@ -436,7 +436,7 @@ id,
     const handleCheckOut = async () => {
         const now = new Date();
         const today = format(now, 'yyyy-MM-dd');
-        const savedStart = localStorage.getItem(`checkInStart_${today} `);
+        const savedStart = localStorage.getItem(`checkInStart_${today}`);
         try {
             if (savedStart) {
                 const { recordId, timestamp } = JSON.parse(savedStart);

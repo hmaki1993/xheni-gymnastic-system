@@ -35,7 +35,7 @@ const PageLoader = () => (
       <div className="absolute inset-0 border-4 border-primary rounded-full border-t-transparent animate-spin"></div>
     </div>
     <div className="text-white/40 font-black tracking-[0.5em] text-xs uppercase animate-pulse">
-      Healy Academy
+      Xheni Academy
     </div>
   </div>
 );

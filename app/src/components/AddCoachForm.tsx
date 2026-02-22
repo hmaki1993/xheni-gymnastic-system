@@ -83,8 +83,10 @@ export default function AddCoachForm({ onClose, onSuccess, initialData }: AddCoa
         try {
             let profileId = initialData?.profile_id || null;
 
-            // 1. AUTOMATIC ACCOUNT CREATION
-            if (!initialData && formData.email && formData.password) {
+            // 1. AUTOMATIC ACCOUNT CREATION via server-side RPC (does NOT change admin session)
+            // Runs for: (a) new coaches, OR (b) existing coaches with no auth account yet (profile_id is null)
+            const needsAuthAccount = formData.email && formData.password && !profileId;
+            if (needsAuthAccount) {
                 try {
                     const { data: newUserId, error: createError } = await supabase.rpc('create_new_user', {
                         email: formData.email.toLowerCase().trim(),
@@ -96,40 +98,43 @@ export default function AddCoachForm({ onClose, onSuccess, initialData }: AddCoa
                     });
 
                     if (createError) {
-                        console.error('Account creation failed:', createError);
-                        throw new Error('Failed to create login account: ' + createError.message);
-                    }
-
-                    if (newUserId) {
+                        console.warn('⚠️ Auth account creation failed (non-fatal):', createError.message);
+                        toast(`Login not created: ${createError.message}. Coach data will still be saved.`, { icon: '⚠️' });
+                    } else if (newUserId) {
                         profileId = newUserId;
+                        console.log('✅ Auth account created:', profileId);
+                        if (initialData) toast.success('✅ Login account created successfully!');
                     }
                 } catch (err: any) {
-                    toast.error(err.message);
-                    setLoading(false);
-                    return; // Stop if we can't create the login
+                    console.warn('⚠️ Auth account creation error (non-fatal):', err.message);
+                    toast(`Login not created: ${err.message}. Coach data will still be saved.`, { icon: '⚠️' });
                 }
             }
 
-            // CRITICAL: Ensure we have a profileId.
-            // If editing, we use existing. If new, we MUST have one from the RPC above.
-            if (!profileId) {
-                toast.error('Could not determine Login ID. Please ensure the email is unique.');
-                setLoading(false);
-                return;
+            // If editing, we use existing profileId.
+            // If new and RPC succeeded, use its ID. If RPC failed, we still proceed (coach without auth account).
+            // This allows saving coach data even if auth creation fails.
+            // When editing without a profile_id, we still allow updating the coach record
+            // (coach may have been saved without an auth account)
+            if (!profileId && !initialData) {
+                // New coach with no auth account — fine, just save without profile link
+                console.log('⚠️ No profileId — saving coach without auth account link');
             }
 
-            // 2. Ensure Profile exists (Shadow Profile or Real Profile)
-            const { error: profileError } = await supabase
-                .from('profiles')
-                .upsert({
-                    id: profileId,
-                    email: formData.email,
-                    full_name: formData.full_name,
-                    role: formData.role
-                }, { onConflict: 'id' });
+            // 2. Update Profile if we have a profileId
+            if (profileId) {
+                const { error: profileError } = await supabase
+                    .from('profiles')
+                    .upsert({
+                        id: profileId,
+                        email: formData.email,
+                        full_name: formData.full_name,
+                        role: formData.role
+                    }, { onConflict: 'id' });
 
-            if (profileError) {
-                console.warn('Could not create/update profile:', profileError);
+                if (profileError) {
+                    console.warn('Could not create/update profile:', profileError);
+                }
             }
 
             const coachData: any = {
@@ -230,8 +235,8 @@ export default function AddCoachForm({ onClose, onSuccess, initialData }: AddCoa
                                 setFormData(prev => ({
                                     ...prev,
                                     full_name: newName,
-                                    email: prev.email === '' || prev.email.includes(`${prev.full_name.toLowerCase().replace(/\s+/g, '')}@healy.com`)
-                                        ? (emailName ? `${emailName}@healy.com` : '')
+                                    email: prev.email === '' || prev.email.includes(`${prev.full_name.toLowerCase().replace(/\s+/g, '')}@xheni.com`)
+                                        ? (emailName ? `${emailName}@xheni.com` : '')
                                         : prev.email
                                 }));
                             }}

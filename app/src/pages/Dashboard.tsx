@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Users, DollarSign, Medal, Calendar, TrendingUp, TrendingDown, Clock, Scale, ArrowUpRight, UserPlus, Sparkles, ClipboardCheck } from 'lucide-react';
 import { format } from 'date-fns';
-import { useOutletContext, Navigate, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useDashboardStats } from '../hooks/useData';
 
@@ -19,16 +19,24 @@ import { useTheme } from '../context/ThemeContext';
 export default function Dashboard() {
     const { t } = useTranslation();
     const navigate = useNavigate();
-    const { settings } = useTheme(); // Init hook
-    const { role, fullName, userId } = useOutletContext<{ role: string, fullName: string, userId: string | null }>() || { role: null, fullName: null, userId: null };
+    const { settings, userProfile, isLoading: themeLoading } = useTheme();
+    const { role: profileRole, fullName: profileName, id: profileId } = userProfile || {};
+
+    // Use theme data with fallbacks matching the layout
+    const userId = profileId || (themeLoading ? null : 'system-admin');
+    const role = profileRole || (userId ? 'admin' : null);
+    const fullName = profileName || (userId ? 'Administrator' : null);
+
     const { formatPrice } = useCurrency();
     const [showBatchTest, setShowBatchTest] = useState(false);
     const [showHistory, setShowHistory] = useState(false);
 
     const { data: stats, isLoading: loading } = useDashboardStats();
 
-    // Show loading while role is being determined
-    if (!role) {
+    console.log('🚀 Dashboard: Direct State', { role, fullName, userId, themeLoading });
+
+    // Show loading while role is being determined (if truly unknown)
+    if (!role && !userId && !fullName) {
         return (
             <div className="flex items-center justify-center min-h-screen">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
@@ -36,24 +44,12 @@ export default function Dashboard() {
         );
     }
 
-    // Show Head Coach Dashboard
-    if (role === 'head_coach') {
-        return <HeadCoachDashboard />;
-    }
+    // Role-based Dashboards
+    if (role === 'head_coach') return <HeadCoachDashboard />;
+    if (role === 'coach') return <CoachDashboard />;
+    if (role === 'reception' || role === 'receptionist') return <ReceptionDashboard role={role} />;
 
-    // Show Coach Dashboard for coaches only
-    if (role === 'coach') {
-        return <CoachDashboard />;
-    }
-
-    // Show Reception Dashboard
-    if (role === 'reception' || role === 'receptionist') {
-        return <ReceptionDashboard role={role} />;
-    }
-
-    // If Admin or any other role, continue to show the main admin dashboard stats below
-
-    // Default stats to avoid undefined errors during loading
+    // Main Admin Dashboard Logic
     const displayStats = stats || {
         totalStudents: 0,
         activeCoaches: 0,
@@ -98,12 +94,8 @@ export default function Dashboard() {
         }
     ];
 
-    console.log('Dashboard Render. Role:', role, 'FullName:', fullName, 'Stats:', stats, 'Loading:', loading);
-    console.log('Is Reception?', role === 'reception');
-
     return (
         <div className="space-y-10">
-
             {/* Premium Welcome Header */}
             <div className="relative group p-8 rounded-[3rem] bg-white/[0.02] border border-white/5 backdrop-blur-md overflow-hidden mb-10 transition-all hover:border-white/10">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 blur-[100px] rounded-full -mr-32 -mt-32"></div>
@@ -117,7 +109,6 @@ export default function Dashboard() {
                         </h1>
                     </div>
 
-                    {/* Compact Date & Clock Widget */}
                     <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 mt-4 sm:mt-0">
                         <button
                             onClick={() => navigate('/app/evaluations')}
@@ -136,7 +127,7 @@ export default function Dashboard() {
                 </div>
             </div>
 
-            {/* Stats Grid - Balanced & Elite */}
+            {/* Stats Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 {statCards.map((stat, index) => (
                     <div key={index} className="glass-card p-7 rounded-[2.5rem] border border-white/10 shadow-premium group hover:scale-[1.03] transition-all duration-500 hover:border-primary/30 relative overflow-hidden bg-white/[0.02]">
@@ -200,14 +191,12 @@ export default function Dashboard() {
                 <GroupsList showAll={true} />
             </div>
 
-            {/* Live Floor & Recent Activity Grid */}
+            {/* Live Floor & Recent Activity */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                {/* Live Floor Widget */}
                 <div className="lg:col-span-1 h-full min-h-[500px]">
                     <LiveStudentsWidget />
                 </div>
 
-                {/* Recent Activity */}
                 <div className="lg:col-span-2 glass-card rounded-[2.5rem] border border-white/10 shadow-premium overflow-hidden">
                     <div className="p-8 border-b border-white/5 bg-white/[0.02] flex items-center justify-between">
                         <h3 className="text-xl font-black text-white uppercase tracking-tight flex items-center gap-3">
@@ -227,7 +216,7 @@ export default function Dashboard() {
                                 <div key={student.id} className="flex items-center justify-between p-5 bg-white/[0.02] rounded-3xl border border-white/5 hover:bg-white/5 transition-all duration-300 group">
                                     <div className="flex items-center gap-4 min-w-0 flex-1 mr-4">
                                         <div className="w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center font-black group-hover:scale-110 transition-transform flex-shrink-0">
-                                            {student.full_name.charAt(0)}
+                                            {student.full_name?.charAt(0) || 'S'}
                                         </div>
                                         <div className="min-w-0 flex-1">
                                             <p className="font-extrabold text-white group-hover:text-primary transition-colors text-lg truncate uppercase tracking-tight">{student.full_name}</p>
@@ -245,10 +234,8 @@ export default function Dashboard() {
             <BatchAssessmentModal
                 isOpen={showBatchTest}
                 onClose={() => setShowBatchTest(false)}
-                onSuccess={() => {
-                    // Refetch data/stats if needed
-                }}
-                currentCoachId={null} // Pass null for admin to allow selecting any group
+                onSuccess={() => { }}
+                currentCoachId={null}
             />
 
             <AssessmentHistoryModal

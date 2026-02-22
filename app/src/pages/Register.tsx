@@ -102,7 +102,7 @@ export default function Register() {
                         <div className="absolute -inset-1 bg-gradient-to-r from-primary to-accent rounded-full blur opacity-25 group-hover:opacity-50 transition duration-1000"></div>
                         <img
                             src="/logo.png"
-                            alt="Healy Academy Logo"
+                            alt="Xheni Academy Logo"
                             className="relative h-24 w-auto mx-auto drop-shadow-[0_0_15px_rgba(251,191,36,0.2)] transition-transform hover:scale-105 duration-500"
                         />
                     </div>
@@ -113,7 +113,7 @@ export default function Register() {
                     <div className="p-10 md:p-14">
                         <div className="mb-10 text-center">
                             <h1 className="text-4xl font-black text-white uppercase tracking-tighter premium-gradient-text">
-                                {t('common.register') || 'Create Account'}
+                                Xheni Academy
                             </h1>
                             <p className="text-white/30 mt-3 text-xs font-black uppercase tracking-[0.3em]">
                                 Join the Academy Elite

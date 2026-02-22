@@ -1,0 +1,13 @@
+﻿
+F:\MyRestoredProjects\xheni-gymnastic\app\src\layouts\DashboardLayout.tsx
+   16:5   warning  'Wrench' is defined but never used. Allowed unused vars must match /^_/u                                                                          @typescript-eslint/no-unused-vars
+   17:5   warning  'Building2' is defined but never used. Allowed unused vars must match /^_/u                                                                       @typescript-eslint/no-unused-vars
+   20:5   warning  'MessageSquare' is defined but never used. Allowed unused vars must match /^_/u                                                                   @typescript-eslint/no-unused-vars
+   23:5   warning  'ExternalLink' is defined but never used. Allowed unused vars must match /^_/u                                                                    @typescript-eslint/no-unused-vars
+   85:19  warning  'userRole' is assigned a value but never used. Allowed unused vars must match /^_/u                                                               @typescript-eslint/no-unused-vars
+   87:17  error    'query' is never reassigned. Use 'const' instead                                                                                                  prefer-const
+  238:8   warning  React Hook useEffect has missing dependencies: 'fullName', 'role', 'userEmail', and 'userId'. Either include them or remove the dependency array  react-hooks/exhaustive-deps
+
+Γ£û 7 problems (1 error, 6 warnings)
+  1 error and 0 warnings potentially fixable with the `--fix` option.
+

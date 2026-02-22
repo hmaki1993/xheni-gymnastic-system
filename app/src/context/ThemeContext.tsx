@@ -36,21 +36,27 @@ export const applySettingsToRoot = (settings: GymSettings) => {
     const root = document.documentElement;
 
     // Helper to calculate luminance
-    const getLuminance = (hex: string) => {
+    const getLuminance = (color: string) => {
         try {
-            if (!hex || typeof hex !== 'string' || !hex.startsWith('#')) {
-                console.warn('Invalid hex color provided to getLuminance:', hex);
-                return 0; // Default to dark luminance
-            }
-            const c = hex.substring(1);
-            const rgb = parseInt(c, 16);
-            if (isNaN(rgb)) {
-                console.warn('Could not parse hex color:', hex);
+            if (!color || typeof color !== 'string') return 0;
+
+            let r, g, b;
+            if (color.startsWith('rgba') || color.startsWith('rgb')) {
+                const match = color.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+                if (!match) return 0;
+                r = parseInt(match[1]);
+                g = parseInt(match[2]);
+                b = parseInt(match[3]);
+            } else if (color.startsWith('#')) {
+                const c = color.substring(1);
+                const rgb = parseInt(c.length === 3 ? c.split('').map(s => s + s).join('') : c.slice(0, 6), 16);
+                if (isNaN(rgb)) return 0;
+                r = (rgb >> 16) & 0xff;
+                g = (rgb >> 8) & 0xff;
+                b = (rgb >> 0) & 0xff;
+            } else {
                 return 0;
             }
-            const r = (rgb >> 16) & 0xff;
-            const g = (rgb >> 8) & 0xff;
-            const b = (rgb >> 0) & 0xff;
 
             const uR = r / 255;
             const uG = g / 255;
@@ -131,7 +137,13 @@ interface ThemeContextType {
     updateSettings: (newSettings: Partial<GymSettings>) => Promise<void>;
     isLoading: boolean;
     resetToDefaults: () => Promise<void>;
-    userProfile: { id: string; email: string; full_name: string | null; role: string | null; avatar_url: string | null } | null;
+    userProfile: {
+        id: string;
+        email: string;
+        full_name: string | null;
+        role: string | null;
+        avatar_url: string | null;
+    } | null;
 }
 
 export const defaultSettings: GymSettings = {
@@ -156,9 +168,9 @@ export const defaultSettings: GymSettings = {
     language: 'en',
     premium_badge_color: '#A30000',
     brand_label_color: '#A30000',
-    academy_name: 'Healy Academy',
-    gym_address: 'Cairo, Egypt',
-    gym_phone: '+20 123 456 7890'
+    academy_name: 'Xheni Academy',
+    gym_address: 'Tirana, Albania',
+    gym_phone: '+355 69 000 0000'
 };
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
@@ -221,8 +233,29 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     }, []);
 
     const fetchSettings = async () => {
+        // Safety Timeout: Force loading to end after 5 seconds
+        const timeoutId = setTimeout(() => {
+            if (isLoading) {
+                console.warn('🛡️ ThemeContext: fetchSettings TIMEOUT. Forcing loading to end.');
+                setIsLoading(false);
+            }
+        }, 5000);
+
         try {
-            const { data: { user } } = await supabase.auth.getUser();
+            let { data: { user } } = await supabase.auth.getUser();
+
+            // 🛡️ FALLBACK: If getUser fails (strict check), try getSession (loose check)
+            if (!user) {
+                const { data: { session } } = await supabase.auth.getSession();
+                user = session?.user || null;
+                if (user) console.log('🛡️ ThemeContext: getUser() failed but session found. Using session user.');
+            }
+
+            // Expose for debugging
+            if (typeof window !== 'undefined') {
+                (window as any)._supabaseUser = user;
+                (window as any)._forceClearLoading = () => setIsLoading(false);
+            }
 
             console.log('📥 LOADING SETTINGS FOR USER:', user?.id, user?.email);
 
@@ -230,6 +263,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
             const { data: globalData, error: globalError } = await supabase
                 .from('gym_settings')
                 .select('*')
+                .limit(1)
                 .maybeSingle();
 
             if (globalError) {
@@ -273,77 +307,67 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
                     setUserProfile(null);
                 }
 
-                // Fetch user settings, profile, and coach record in parallel
-                const [userSettingsRes, profileRes, coachRes] = await Promise.all([
-                    supabase
-                        .from('user_settings')
-                        .select('*')
-                        .eq('user_id', user.id)
-                        .maybeSingle(),
-                    supabase
+                // Fetch user settings, profile, and coach record with individual handling to prevent total failure
+                try {
+                    const { data: profileData } = await supabase
                         .from('profiles')
                         .select('full_name, role, avatar_url')
                         .eq('id', user.id)
-                        .maybeSingle(),
-                    supabase
+                        .maybeSingle();
+
+                    const { data: userSettingsData } = await supabase
+                        .from('user_settings')
+                        .select('*')
+                        .eq('user_id', user.id)
+                        .maybeSingle();
+
+                    const { data: coachData } = await supabase
                         .from('coaches')
                         .select('id')
                         .eq('profile_id', user.id)
-                        .maybeSingle()
-                ]);
+                        .maybeSingle();
 
-                if (userSettingsRes.error) console.warn('📥 User settings fetch error:', userSettingsRes.error);
-                if (profileRes.error) console.warn('📥 User profile fetch error:', profileRes.error);
+                    if (userSettingsData) {
+                        console.log('📥 Found user personal settings');
+                        const filteredUser = Object.fromEntries(
+                            Object.entries(userSettingsData).filter(([_, v]) => v !== null)
+                        );
+                        finalSettings = { ...finalSettings, ...filteredUser };
+                    }
 
-                if (userSettingsRes.data) {
-                    console.log('📥 Found user personal settings:', userSettingsRes.data);
-                    // Filter out nulls from user settings
-                    const filteredUser = Object.fromEntries(
-                        Object.entries(userSettingsRes.data).filter(([_, v]) => v !== null)
-                    );
-                    finalSettings = { ...finalSettings, ...filteredUser };
-                }
+                    // 🛡️ DEEP SANITY CHECK: 
+                    const isCoach = profileData?.role?.toLowerCase() === 'coach';
+                    const hasCoachRecord = !!coachData;
+                    const isUnauthorizedGhost = isCoach && !hasCoachRecord;
 
-                // 🛡️ DEEP SANITY CHECK: 
-                // A coach must have a record in both 'profiles' AND 'coaches' tables.
-                const isCoach = profileRes.data?.role?.toLowerCase() === 'coach';
-                const hasCoachRecord = !!coachRes.data;
-                const isUnauthorizedGhost = isCoach && !hasCoachRecord;
-
-                if (profileRes.data && !isUnauthorizedGhost) {
-                    console.log('🛡️ ThemeContext: Found valid user profile:', profileRes.data);
-                    setUserProfile({
-                        id: user.id,
-                        email: user.email || '',
-                        ...profileRes.data
-                    });
-                } else if (isAdminEmail) {
-                    // 🛡️ ADMIN FALLBACK: If they have an admin email but no profile record, 
-                    // allow them to stay logged in as an admin to fix the issue.
-                    console.warn('🛡️ ThemeContext: Admin profile missing in DB, using fallback.');
+                    if (profileData && !isUnauthorizedGhost) {
+                        console.log('🛡️ ThemeContext: Found valid user profile');
+                        setUserProfile({
+                            id: user.id,
+                            email: user.email || '',
+                            ...profileData
+                        });
+                    } else {
+                        // FALLBACK: User exists but profile record is missing or invalid
+                        console.warn('🛡️ ThemeContext: Profile missing or invalid, using fallback.');
+                        setUserProfile({
+                            id: user.id,
+                            email: user.email || '',
+                            full_name: user.user_metadata?.full_name || 'Administrator',
+                            role: isAdminEmail ? 'admin' : (profileData?.role || 'admin'),
+                            avatar_url: profileData?.avatar_url || null
+                        });
+                    }
+                } catch (innerError) {
+                    console.error('🛡️ ThemeContext: Error during detailed profile fetch:', innerError);
+                    // Critical Fallback
                     setUserProfile({
                         id: user.id,
                         email: user.email || '',
                         full_name: user.user_metadata?.full_name || 'Administrator',
-                        role: 'admin',
+                        role: isAdminEmail ? 'admin' : 'admin',
                         avatar_url: null
                     });
-                } else {
-                    // 🛡️ SECURITY LOCK: Either profile is missing, or it's a "Ghost" coach profile without a record.
-                    const reason = isUnauthorizedGhost ? 'Ghost Profile detected' : 'Profile missing';
-                    console.error(`🛡️ ThemeContext: SECURITY LOCK (${reason}) - User logged in but unauthorized. Signing out...`);
-
-                    // Delay sign out slightly to prevent infinite loops during transition
-                    setTimeout(async () => {
-                        const { data: { session } } = await supabase.auth.getSession();
-                        if (session) {
-                            await supabase.auth.signOut();
-                            toast.error(isUnauthorizedGhost ? 'Account inactive or deleted.' : 'Session expired or deleted.');
-                            window.location.href = '/login';
-                        }
-                    }, 1500);
-
-                    setUserProfile(null);
                 }
             } else {
                 setUserProfile(null);
@@ -379,6 +403,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         } catch (error) {
             console.error('Error fetching theme settings:', error);
         } finally {
+            clearTimeout(timeoutId);
             setIsLoading(false);
         }
     };
@@ -471,7 +496,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
                 const { error: userError } = await supabase
                     .from('user_settings')
-                    .upsert(userPayload);
+                    .upsert(userPayload, { onConflict: 'user_id' });
 
                 if (userError) {
                     console.error('💾 USER SETTINGS SAVE FAILED:', userError);

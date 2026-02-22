@@ -4,7 +4,7 @@
 -- 1. Create GYM SETTINGS table
 CREATE TABLE IF NOT EXISTS public.gym_settings (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    gym_name TEXT DEFAULT 'Healy Academy',
+    gym_name TEXT DEFAULT 'Xheni Academy',
     address TEXT DEFAULT 'Cairo, Egypt',
     phone TEXT DEFAULT '+20 123 456 7890',
     logo_url TEXT,
@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS public.gym_settings (
 CREATE UNIQUE INDEX IF NOT EXISTS gym_settings_singleton ON public.gym_settings ((true));
 
 -- Insert default settings if empty
-INSERT INTO public.gym_settings (gym_name) VALUES ('Healy Academy') ON CONFLICT DO NOTHING;
+INSERT INTO public.gym_settings (gym_name) VALUES ('Xheni Academy') ON CONFLICT DO NOTHING;
 
 -- 2. Create USER SETTINGS table
 CREATE TABLE IF NOT EXISTS public.user_settings (
